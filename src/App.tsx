@@ -695,7 +695,7 @@ export default function App() {
 
         {/* Categories Grid with hover previews */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <div className="mb-12 mt-4">
+          <div className="mb-12 mt-8 md:mt-10 lg:mt-12">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6 lg:gap-8">
               {Object.entries(CATEGORY_DATA)
                 .filter(([name]) => (productCountByCategory[name] || 0) > 0)
