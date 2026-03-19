@@ -294,11 +294,23 @@ export default function App() {
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setUser(registrationForm);
     setIsUserModalOpen(false);
     setModalStep('welcome');
+
+    // Save to Google Sheets in background
+    try {
+      const API_URL = import.meta.env.DEV ? 'http://localhost:3001' : '';
+      await fetch(`${API_URL}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(registrationForm),
+      });
+    } catch {
+      // Silent fail - registration saved locally regardless
+    }
   };
 
   const openUserModal = () => {

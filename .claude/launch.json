@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["vite", "--port=3000", "--host=0.0.0.0"],
       "port": 3000
+    },
+    {
+      "name": "entre-peces-api",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["server/register.py"],
+      "port": 3001
     }
   ]
 }
