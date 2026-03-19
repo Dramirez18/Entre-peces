@@ -43,6 +43,46 @@ const PRODUCTS_PER_PAGE = 20;
 const API_URL = import.meta.env.DEV ? 'http://localhost:3001' : '';
 const PLACEHOLDER_IMG = 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=60&w=400';
 
+// Payment methods
+const PAYMENT_METHODS = [
+  {
+    id: 'nequi',
+    name: 'Nequi',
+    description: 'Escanea el QR con tu app Nequi',
+    color: 'bg-[#200020]',
+    textColor: 'text-white',
+    qrImage: '/payment/nequi-qr.jpg',
+    available: true,
+  },
+  {
+    id: 'daviplata',
+    name: 'Daviplata',
+    description: 'Próximamente',
+    color: 'bg-red-600',
+    textColor: 'text-white',
+    qrImage: null,
+    available: false,
+  },
+  {
+    id: 'bold',
+    name: 'Bold',
+    description: 'Próximamente',
+    color: 'bg-blue-700',
+    textColor: 'text-white',
+    qrImage: null,
+    available: false,
+  },
+  {
+    id: 'bitcoin',
+    name: 'Bitcoin',
+    description: 'Próximamente',
+    color: 'bg-orange-500',
+    textColor: 'text-white',
+    qrImage: null,
+    available: false,
+  },
+];
+
 // Custom Shrimp SVG icon
 const ShrimpIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -188,6 +228,8 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
 
   // Persist cart to localStorage
   useEffect(() => {
@@ -932,6 +974,200 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* ===== PAYMENT GATEWAY MODAL ===== */}
+      <AnimatePresence>
+        {isPaymentOpen && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => { setIsPaymentOpen(false); setSelectedPayment(null); }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-brand-blue to-brand-dark p-5 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold">Pasarela de Pagos</h2>
+                    <p className="text-white/70 text-sm mt-0.5">
+                      Total: <span className="font-bold text-white">${cartTotal.toLocaleString('es-CO')}</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setIsPaymentOpen(false); setSelectedPayment(null); }}
+                    className="p-2 hover:bg-white/10 rounded-full"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-5">
+                {!selectedPayment ? (
+                  <>
+                    {/* Order Summary */}
+                    <div className="bg-slate-50 rounded-xl p-4 mb-5">
+                      <h3 className="font-bold text-sm text-slate-700 mb-2">Resumen del pedido</h3>
+                      <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                        {cart.map(item => (
+                          <div key={item.id} className="flex justify-between text-xs text-slate-600">
+                            <span className="truncate flex-1">{item.name} x{item.quantity}</span>
+                            <span className="font-medium ml-2">${(item.price * item.quantity).toLocaleString('es-CO')}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="border-t border-slate-200 mt-2 pt-2 flex justify-between font-bold text-sm">
+                        <span>Total</span>
+                        <span className="text-brand-dark">${cartTotal.toLocaleString('es-CO')}</span>
+                      </div>
+                      {cartTotal >= FREE_SHIPPING_THRESHOLD && (
+                        <p className="text-xs text-green-600 font-medium mt-1">🚚 Envío gratis incluido</p>
+                      )}
+                    </div>
+
+                    {/* Payment Methods */}
+                    <h3 className="font-bold text-sm text-slate-700 mb-3">Selecciona método de pago</h3>
+                    <div className="space-y-3">
+                      {PAYMENT_METHODS.map(method => (
+                        <button
+                          key={method.id}
+                          onClick={() => method.available && setSelectedPayment(method.id)}
+                          disabled={!method.available}
+                          className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${
+                            method.available
+                              ? 'border-slate-200 hover:border-brand-blue hover:shadow-md cursor-pointer'
+                              : 'border-slate-100 opacity-50 cursor-not-allowed'
+                          }`}
+                        >
+                          <div className={`w-12 h-12 rounded-xl ${method.color} ${method.textColor} flex items-center justify-center font-bold text-sm shrink-0`}>
+                            {method.name.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div className="text-left flex-1">
+                            <span className="font-bold text-slate-800">{method.name}</span>
+                            <p className="text-xs text-slate-500">{method.description}</p>
+                          </div>
+                          {method.available && (
+                            <ChevronRight className="w-5 h-5 text-slate-400" />
+                          )}
+                          {!method.available && (
+                            <span className="text-[10px] font-bold bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full">PRONTO</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* WhatsApp option */}
+                    <div className="mt-4 pt-4 border-t border-slate-100">
+                      <a
+                        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                          `🐟 *Pedido Entre Peces*\n\n` +
+                          cart.map(item => `• ${item.name}${item.size ? ' (' + item.size + ')' : ''} x${item.quantity} — $${(item.price * item.quantity).toLocaleString('es-CO')}`).join('\n') +
+                          `\n\n💰 *Total: $${cartTotal.toLocaleString('es-CO')}*` +
+                          (cartTotal >= FREE_SHIPPING_THRESHOLD ? '\n🚚 Envío gratis' : '') +
+                          (user ? `\n\n👤 ${user.name}\n📱 ${user.phone}\n📍 ${user.address}` : '')
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center gap-4 p-4 rounded-2xl bg-green-50 border-2 border-green-200 hover:border-green-400 transition-all"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-green-500 text-white flex items-center justify-center shrink-0">
+                          <Phone className="w-6 h-6" />
+                        </div>
+                        <div className="text-left flex-1">
+                          <span className="font-bold text-green-800">Pagar por WhatsApp</span>
+                          <p className="text-xs text-green-600">Coordina el pago directamente</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-green-400" />
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* QR Payment View */}
+                    {(() => {
+                      const method = PAYMENT_METHODS.find(m => m.id === selectedPayment)!;
+                      return (
+                        <div className="text-center">
+                          <button
+                            onClick={() => setSelectedPayment(null)}
+                            className="flex items-center gap-1 text-sm text-slate-500 hover:text-brand-blue mb-4"
+                          >
+                            ← Volver a métodos de pago
+                          </button>
+
+                          <div className={`inline-block ${method.color} ${method.textColor} px-4 py-2 rounded-xl font-bold text-lg mb-4`}>
+                            {method.name}
+                          </div>
+
+                          <p className="text-sm text-slate-600 mb-1">
+                            Monto a pagar:
+                          </p>
+                          <p className="text-3xl font-bold text-slate-900 mb-4">
+                            ${cartTotal.toLocaleString('es-CO')}
+                          </p>
+
+                          {method.qrImage && (
+                            <div className="bg-white border-2 border-slate-200 rounded-2xl p-4 inline-block mb-4">
+                              <img
+                                src={method.qrImage}
+                                alt={`QR ${method.name}`}
+                                className="w-64 h-64 object-contain mx-auto"
+                              />
+                              <p className="text-xs text-slate-500 mt-2 font-medium">DAVID RAMIREZ</p>
+                            </div>
+                          )}
+
+                          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-left mb-4">
+                            <p className="text-xs text-amber-800">
+                              <span className="font-bold">Instrucciones:</span><br />
+                              1. Abre tu app de {method.name}<br />
+                              2. Escanea el código QR<br />
+                              3. Ingresa el monto exacto: <span className="font-bold">${cartTotal.toLocaleString('es-CO')}</span><br />
+                              4. Confirma el pago y envía el comprobante por WhatsApp
+                            </p>
+                          </div>
+
+                          <a
+                            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                              `✅ *Comprobante de Pago*\n\n` +
+                              `📋 Pedido:\n` +
+                              cart.map(item => `• ${item.name} x${item.quantity}`).join('\n') +
+                              `\n\n💰 Total: $${cartTotal.toLocaleString('es-CO')}` +
+                              `\n💳 Método: ${method.name}` +
+                              (user ? `\n👤 ${user.name}\n📱 ${user.phone}` : '') +
+                              `\n\n📸 Adjunto comprobante de pago`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => {
+                              setIsPaymentOpen(false);
+                              setSelectedPayment(null);
+                              setCart([]);
+                            }}
+                            className="w-full bg-green-500 text-white py-3.5 rounded-2xl font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                          >
+                            <Phone className="w-5 h-5" />
+                            Enviar comprobante por WhatsApp
+                          </a>
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Floating WhatsApp Button */}
       <a
         href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido`}
@@ -1114,34 +1350,28 @@ export default function App() {
                     ${cartTotal.toLocaleString('es-CO')}
                   </span>
                 </div>
-                <a
-                  href={cart.length > 0 ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                    `🐟 *Pedido Entre Peces*\n\n` +
-                    cart.map(item => `• ${item.name}${item.size ? ' (' + item.size + ')' : ''} x${item.quantity} — $${(item.price * item.quantity).toLocaleString('es-CO')}`).join('\n') +
-                    `\n\n💰 *Total: $${cartTotal.toLocaleString('es-CO')}*` +
-                    (cartTotal >= FREE_SHIPPING_THRESHOLD ? '\n🚚 Envío gratis' : '') +
-                    (user ? `\n\n👤 ${user.name}\n📱 ${user.phone}\n📍 ${user.address}` : '')
-                  )}` : '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (cart.length === 0) { e.preventDefault(); return; }
+                <button
+                  disabled={cart.length === 0}
+                  onClick={() => {
                     if (!user) {
-                      e.preventDefault();
                       setIsUserModalOpen(true);
                       setIsCartOpen(false);
                       setModalStep('welcome');
+                    } else {
+                      setIsCartOpen(false);
+                      setIsPaymentOpen(true);
+                      setSelectedPayment(null);
                     }
                   }}
                   className={`w-full py-4 rounded-2xl font-bold transition-colors flex items-center justify-center gap-2 ${
                     cart.length === 0
                       ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                      : 'bg-green-500 text-white hover:bg-green-600'
+                      : 'bg-brand-blue text-white hover:bg-brand-dark'
                   }`}
                 >
-                  <Phone className="w-5 h-5" />
-                  {user ? 'Enviar Pedido por WhatsApp' : 'Registrarse para Comprar'}
-                </a>
+                  <CheckCircle2 className="w-5 h-5" />
+                  {user ? 'Proceder al Pago' : 'Registrarse para Comprar'}
+                </button>
               </div>
             </motion.div>
           </>
