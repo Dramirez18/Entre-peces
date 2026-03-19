@@ -177,6 +177,9 @@ export default function App() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [modalStep, setModalStep] = useState<'welcome' | 'register' | 'profile'>('welcome');
   const [sortBy, setSortBy] = useState<'relevance' | 'price-asc' | 'price-desc' | 'name'>('relevance');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const PRODUCTS_PER_PAGE = 20;
 
   // Persist cart to localStorage
   useEffect(() => {
@@ -237,6 +240,16 @@ export default function App() {
     }
     return result;
   }, [products, activeTab, searchQuery, isAdmin, sortBy]);
+
+  // Reset page when filters change
+  useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortBy]);
+
+  // Paginated products
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
 
   const productCountByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -637,13 +650,14 @@ export default function App() {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filteredProducts.map((product) => (
+          {paginatedProducts.map((product) => (
             <motion.div
               layout
               key={product.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-brand-blue/20 transition-all duration-300 group flex flex-col"
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-brand-blue/20 transition-all duration-300 group flex flex-col cursor-pointer"
+              onClick={() => setSelectedProduct(product)}
             >
               {/* Image */}
               <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
@@ -670,7 +684,7 @@ export default function App() {
                 {/* Quick add overlay */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={(e) => { e.stopPropagation(); addToCart(product); }}
                     disabled={product.stock === 0}
                     className="w-full bg-brand-blue text-white py-2 rounded-xl text-sm font-bold hover:bg-brand-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                   >
@@ -727,7 +741,164 @@ export default function App() {
             </motion.div>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-10">
+            <button
+              onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-brand-blue hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              ← Anterior
+            </button>
+
+            {/* Page numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+              .reduce<(number | string)[]>((acc, p, i, arr) => {
+                if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push('...');
+                acc.push(p);
+                return acc;
+              }, [])
+              .map((p, i) =>
+                typeof p === 'string' ? (
+                  <span key={`dots-${i}`} className="px-2 text-slate-400">...</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => { setCurrentPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className={`w-10 h-10 rounded-xl text-sm font-bold transition-colors ${
+                      currentPage === p
+                        ? 'bg-brand-blue text-white shadow-lg'
+                        : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+            <button
+              onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-brand-blue hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Siguiente →
+            </button>
+          </div>
+        )}
+        <p className="text-center text-xs text-slate-400 mt-3">
+          Mostrando {((currentPage - 1) * PRODUCTS_PER_PAGE) + 1}-{Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)} de {filteredProducts.length}
+        </p>
       </main>
+
+      {/* ===== PRODUCT DETAIL MODAL ===== */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProduct(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-4 right-4 z-10 bg-black/30 backdrop-blur text-white p-2 rounded-full hover:bg-black/50 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Product Image */}
+              <div className="aspect-[4/3] relative bg-slate-100 shrink-0">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/50 to-transparent h-20" />
+                <span className="absolute bottom-3 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold uppercase text-slate-600">
+                  {selectedProduct.category}
+                </span>
+              </div>
+
+              {/* Product Info */}
+              <div className="p-6 overflow-y-auto">
+                <span className="text-3xl font-bold text-slate-900">
+                  ${selectedProduct.price.toLocaleString('es-CO')}
+                </span>
+
+                <h2 className="text-xl font-bold text-slate-800 mt-3">
+                  {selectedProduct.name}
+                  {selectedProduct.size && (
+                    <span className="ml-2 text-base font-normal text-slate-400">{selectedProduct.size}</span>
+                  )}
+                </h2>
+
+                {selectedProduct.scientificName && (
+                  <p className="text-sm italic text-slate-500 mt-1">{selectedProduct.scientificName}</p>
+                )}
+
+                <div className="mt-4 flex items-center gap-3">
+                  {selectedProduct.stock > 0 ? (
+                    <span className="bg-green-50 text-green-700 text-sm font-medium px-3 py-1 rounded-full">
+                      ✓ Disponible ({selectedProduct.stock} en stock)
+                    </span>
+                  ) : (
+                    <span className="bg-red-50 text-red-600 text-sm font-medium px-3 py-1 rounded-full">
+                      Agotado
+                    </span>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 mt-6">
+                  <button
+                    onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); setIsCartOpen(true); }}
+                    disabled={selectedProduct.stock === 0}
+                    className="flex-1 bg-brand-blue text-white py-3.5 rounded-2xl font-bold hover:bg-brand-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                    Agregar al carrito
+                  </button>
+                  <a
+                    href={`https://wa.me/573001234567?text=${encodeURIComponent(
+                      `Hola Entre Peces! Me interesa: ${selectedProduct.name}${selectedProduct.size ? ' (' + selectedProduct.size + ')' : ''} - $${selectedProduct.price.toLocaleString('es-CO')}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-green-500 text-white py-3.5 px-5 rounded-2xl font-bold hover:bg-green-600 transition-colors flex items-center gap-2 text-sm"
+                  >
+                    <Phone className="w-5 h-5" />
+                    WhatsApp
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/573001234567?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-40 bg-green-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-green-600 transition-all hover:scale-110 flex items-center justify-center"
+      >
+        <Phone className="w-6 h-6" />
+      </a>
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12">
@@ -903,30 +1074,34 @@ export default function App() {
                     ${cartTotal.toLocaleString('es-CO')}
                   </span>
                 </div>
-                <button
-                  disabled={cart.length === 0}
-                  onClick={() => {
+                <a
+                  href={cart.length > 0 ? `https://wa.me/573001234567?text=${encodeURIComponent(
+                    `🐟 *Pedido Entre Peces*\n\n` +
+                    cart.map(item => `• ${item.name}${item.size ? ' (' + item.size + ')' : ''} x${item.quantity} — $${(item.price * item.quantity).toLocaleString('es-CO')}`).join('\n') +
+                    `\n\n💰 *Total: $${cartTotal.toLocaleString('es-CO')}*` +
+                    (cartTotal >= 200000 ? '\n🚚 Envío gratis' : '') +
+                    (user ? `\n\n👤 ${user.name}\n📱 ${user.phone}\n📍 ${user.address}` : '')
+                  )}` : '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (cart.length === 0) { e.preventDefault(); return; }
                     if (!user) {
+                      e.preventDefault();
                       setIsUserModalOpen(true);
                       setIsCartOpen(false);
                       setModalStep('welcome');
-                    } else {
-                      alert('¡Gracias por tu pedido! En breve te contactaremos por WhatsApp.');
-                      setProducts(prev => prev.map(p => {
-                        const cartItem = cart.find(item => item.id === p.id);
-                        if (cartItem) {
-                          return { ...p, stock: p.stock - cartItem.quantity };
-                        }
-                        return p;
-                      }));
-                      setCart([]);
-                      setIsCartOpen(false);
                     }
                   }}
-                  className="w-full bg-brand-blue text-white py-4 rounded-2xl font-bold hover:bg-brand-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`w-full py-4 rounded-2xl font-bold transition-colors flex items-center justify-center gap-2 ${
+                    cart.length === 0
+                      ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                      : 'bg-green-500 text-white hover:bg-green-600'
+                  }`}
                 >
-                  {user ? 'Finalizar Pedido' : 'Registrarse para Comprar'}
-                </button>
+                  <Phone className="w-5 h-5" />
+                  {user ? 'Enviar Pedido por WhatsApp' : 'Registrarse para Comprar'}
+                </a>
               </div>
             </motion.div>
           </>
