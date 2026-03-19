@@ -19,7 +19,7 @@ import unicodedata
 # ── Config ──────────────────────────────────────────────────────────────
 SPREADSHEET_ID = "1VJQQYndKRoIC4Y9itm57hqGN2yspitCuBMdDHFxbn9M"
 SHEET_NAME = "ENTREPECES"
-DATA_RANGE = f"{SHEET_NAME}!A3:I1000"  # Cols A-I (incl TALLA, STOCK, LINK DE IMAGEN)
+DATA_RANGE = f"{SHEET_NAME}!A3:J1000"  # Cols A-J: A=Cientifico C=Nombre F=Tamaño G=Precio J=Imagen
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "products.json")
 
@@ -323,11 +323,16 @@ def extract_talla_from_name(name: str) -> str:
 def process_rows(rows: list) -> list:
     """Process raw sheet rows into Product objects.
 
-    The ENTREPECES sheet has TWO data layouts:
-      1. Fish section (rows 3-98):  Col A=Scientific, Col C=Name, Col F=Price,
-         Col G=Talla, Col H=Stock, Col I=Image URL
-      2. Products section (row 99+): Col A=Name, Col D=Price
-         With section headers in ALL CAPS (e.g., "FERTILIZANTES")
+    ENTREPECES sheet layout (updated March 2026):
+      Fish section (rows 3-~100):
+        Col A = Nombre Científico
+        Col C = Nombre Común
+        Col F = Tamaño (e.g. "3cm", "7cm")
+        Col G = Precio (e.g. "$8,000")
+        Col J = LINK DE IMAGEN
+      Products section (row ~100+):
+        Col A = Nombre, Col D = Precio
+        With section headers in ALL CAPS (e.g., "FERTILIZANTES")
     """
     products = []
     seen_ids = set()
@@ -347,8 +352,8 @@ def process_rows(rows: list) -> list:
                 image_map[item["name"]] = item["image"]
 
     for row in rows:
-        # Pad row to 9 columns (A-I)
-        while len(row) < 9:
+        # Pad row to 10 columns (A-J)
+        while len(row) < 10:
             row.append("")
 
         # Check for section header
@@ -358,24 +363,31 @@ def process_rows(rows: list) -> list:
             current_section_category = get_section_category(header)
             continue
 
-        # Read all columns
-        col_a = row[0].strip()
-        col_c = row[2].strip()
-        col_d = row[3].strip()
-        col_f = row[5].strip()
-        col_g = row[6].strip()  # TALLA
-        col_h = row[7].strip()  # STOCK
-        col_i = row[8].strip()  # LINK DE IMAGEN
+        # Read all columns (new layout)
+        col_a = row[0].strip()  # Científico / Nombre producto
+        col_c = row[2].strip()  # Nombre Común
+        col_d = row[3].strip()  # Precio (layout 2)
+        col_f = row[5].strip()  # Tamaño (fish section)
+        col_g = row[6].strip()  # Precio (fish section)
+        col_j = row[9].strip()  # LINK DE IMAGEN
 
         name = None
         scientific_name = None
         price_raw = None
+        talla = ""
 
-        if col_c and col_f and any(c.isdigit() for c in col_f):
-            # Layout 1: fish section
+        if col_c and col_g and any(c.isdigit() for c in col_g):
+            # Layout 1: fish section — name in C, size in F, price in G
             name = col_c
             scientific_name = col_a if col_a else None
-            price_raw = col_f
+            price_raw = col_g
+            # Tamaño from column F
+            talla_raw = col_f.strip()
+            if talla_raw:
+                # Normalize: "3cm" -> "3 cm", "7cm" -> "7 cm"
+                size_match = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:cm)?", talla_raw, re.IGNORECASE)
+                if size_match:
+                    talla = size_match.group(1).replace(",", ".") + " cm"
         elif col_a and col_d and any(c.isdigit() for c in col_d):
             # Layout 2: products section (name in A, price in D)
             name = col_a
@@ -387,24 +399,23 @@ def process_rows(rows: list) -> list:
 
         # Skip header rows
         name_upper = name.upper().strip()
-        if name_upper in ("NOMBRE COMUN", "NOMBRE COMUN\n", "COMMON NAME", "PRECIO"):
+        if name_upper in ("NOMBRE COMUN", "NOMBRE COMUN\n", "COMMON NAME", "PRECIO", "TAMAÑO", "TAMANO"):
             continue
 
         price = parse_price(price_raw)
         if price is None or price <= 0:
             continue
 
-        # Extract talla from Sheet column or from name
-        talla = col_g if col_g else extract_talla_from_name(name)
+        # If no talla from col F, try extracting from name
+        if not talla:
+            talla = extract_talla_from_name(name)
 
         # Clean names
         cleaned_name = clean_name(name, talla)
         cleaned_scientific = clean_scientific_name(scientific_name) if scientific_name else None
 
-        # Stock from Sheet column or default
+        # Stock: default (no stock column currently)
         stock = DEFAULT_STOCK
-        if col_h and col_h.isdigit():
-            stock = int(col_h)
 
         # Deduplicate: skip if same name + same size already seen
         dedup_key = (cleaned_name.lower().strip(), talla)
@@ -429,13 +440,14 @@ def process_rows(rows: list) -> list:
         else:
             category = classify_product(name)  # Use original name for better matching
 
-        # Image priority: Sheet > image_map (constants.ts) > category default
-        image = col_i if col_i else None
+        # Image priority: Sheet col J > image_map (constants.ts) > category default
+        image = col_j if col_j and col_j.startswith("http") else None
         if not image:
             name_lower = cleaned_name.lower().strip()
             image = image_map.get(name_lower)
         if not image:
             # Try fuzzy match on image_map
+            name_lower = cleaned_name.lower().strip()
             for map_name, map_img in image_map.items():
                 if map_name in name_lower or name_lower in map_name:
                     image = map_img
