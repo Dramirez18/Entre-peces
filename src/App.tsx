@@ -747,27 +747,25 @@ export default function App() {
               <p className="text-sm md:text-base text-slate-500">Aprende sobre acuariofilia y mejora tu acuario</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 max-w-6xl mx-auto">
               {/* Noticias */}
               <motion.div
-                whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden cursor-pointer group"
+                whileHover={{ y: -6 }}
+                className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
               >
-                <div className="h-2 bg-gradient-to-r from-blue-500 to-cyan-400" />
-                <div className="p-6 lg:p-8">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Newspaper className="w-5 h-5 text-blue-600" />
+                <div className="h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-t-3xl" />
+                <div className="p-7 lg:p-8 flex flex-col flex-1">
+                  <div className="text-center mb-6">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                      <Newspaper className="w-7 h-7 text-blue-600" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg">Noticias</h3>
-                      <p className="text-xs text-slate-400">Últimas novedades</p>
-                    </div>
+                    <h3 className="font-bold text-slate-800 text-xl">Noticias</h3>
+                    <p className="text-xs text-slate-400 mt-1">Últimas novedades</p>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
+                  <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
                     Las últimas novedades del mundo de la acuariofilia, tendencias y consejos de expertos.
                   </p>
-                  <div className="space-y-3">
+                  <div className="space-y-3 flex-1">
                     <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
                       <p className="text-sm font-semibold text-blue-800">🐠 Temporada de Discos 2026</p>
                       <p className="text-xs text-slate-500 mt-1">Nuevas variedades disponibles en Colombia</p>
@@ -777,7 +775,7 @@ export default function App() {
                       <p className="text-xs text-slate-500 mt-1">Cómo proteger tu acuario del clima</p>
                     </div>
                   </div>
-                  <p className="text-sm text-blue-500 font-bold mt-6 group-hover:underline flex items-center gap-1">
+                  <p className="text-sm text-blue-500 font-bold mt-6 group-hover:underline flex items-center justify-center gap-1">
                     Próximamente <span className="text-lg">→</span>
                   </p>
                 </div>
@@ -785,24 +783,22 @@ export default function App() {
 
               {/* Datos Curiosos */}
               <motion.div
-                whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden cursor-pointer group"
+                whileHover={{ y: -6 }}
+                className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
               >
-                <div className="h-2 bg-gradient-to-r from-amber-400 to-orange-400" />
-                <div className="p-6 lg:p-8">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-11 h-11 rounded-xl bg-amber-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <LightbulbIcon className="w-5 h-5 text-amber-600" />
+                <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-3xl" />
+                <div className="p-7 lg:p-8 flex flex-col flex-1">
+                  <div className="text-center mb-6">
+                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                      <LightbulbIcon className="w-7 h-7 text-amber-600" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg">Datos Curiosos</h3>
-                      <p className="text-xs text-slate-400">Sabías que...</p>
-                    </div>
+                    <h3 className="font-bold text-slate-800 text-xl">Datos Curiosos</h3>
+                    <p className="text-xs text-slate-400 mt-1">Sabías que...</p>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
+                  <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
                     Descubre hechos fascinantes sobre las especies de agua dulce y su hábitat natural.
                   </p>
-                  <div className="space-y-3">
+                  <div className="space-y-3 flex-1">
                     <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
                       <p className="text-sm text-amber-900">🐟 El pez disco puede reconocer a su dueño y cambiar de color según su estado de ánimo.</p>
                     </div>
@@ -810,45 +806,45 @@ export default function App() {
                       <p className="text-sm text-amber-900">🦐 Los camarones Cherry pueden vivir hasta 2 años y se reproducen fácilmente en acuarios.</p>
                     </div>
                   </div>
-                  <p className="text-sm text-amber-500 font-bold mt-6 group-hover:underline flex items-center gap-1">
+                  <p className="text-sm text-amber-500 font-bold mt-6 group-hover:underline flex items-center justify-center gap-1">
                     Próximamente <span className="text-lg">→</span>
                   </p>
                 </div>
               </motion.div>
 
               {/* Tabla de Compatibilidad */}
-              <motion.button
-                whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}
+              <motion.div
+                whileHover={{ y: -6 }}
                 onClick={() => setIsCompatOpen(true)}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden cursor-pointer group text-left w-full"
+                role="button"
+                tabIndex={0}
+                className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
               >
-                <div className="h-2 bg-gradient-to-r from-emerald-500 to-green-400" />
-                <div className="p-6 lg:p-8">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Table2 className="w-5 h-5 text-emerald-600" />
+                <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-green-400 rounded-t-3xl" />
+                <div className="p-7 lg:p-8 flex flex-col flex-1">
+                  <div className="text-center mb-6">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                      <Table2 className="w-7 h-7 text-emerald-600" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg">Compatibilidad</h3>
-                      <p className="text-xs text-slate-400">25 especies analizadas</p>
-                    </div>
+                    <h3 className="font-bold text-slate-800 text-xl">Compatibilidad</h3>
+                    <p className="text-xs text-slate-400 mt-1">25 especies analizadas</p>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
+                  <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
                     Consulta qué especies pueden convivir juntas en tu acuario de forma segura.
                   </p>
-                  <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
-                    <div className="flex items-center justify-center gap-5 mb-3">
+                  <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-100 flex-1">
+                    <div className="flex items-center justify-center gap-5 mb-3 flex-wrap">
                       <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-green-500" /><span className="text-xs text-slate-700 font-medium">Compatible</span></div>
                       <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-yellow-400" /><span className="text-xs text-slate-700 font-medium">Precaución</span></div>
                       <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-red-500" /><span className="text-xs text-slate-700 font-medium">Incompatible</span></div>
                     </div>
-                    <p className="text-xs text-slate-500 text-center">Tabla interactiva · Toca para explorar</p>
+                    <p className="text-xs text-slate-500 text-center mt-2">Tabla interactiva · Toca para explorar</p>
                   </div>
-                  <p className="text-sm text-emerald-500 font-bold mt-6 group-hover:underline flex items-center gap-1">
+                  <p className="text-sm text-emerald-500 font-bold mt-6 group-hover:underline flex items-center justify-center gap-1">
                     Ver tabla completa <span className="text-lg">→</span>
                   </p>
                 </div>
-              </motion.button>
+              </motion.div>
             </div>
           </section>
         )}
