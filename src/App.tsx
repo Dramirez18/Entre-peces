@@ -415,7 +415,7 @@ export default function App() {
           {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer shrink-0"
-            onClick={() => setActiveTab('Inicio')}
+            onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setSortBy('relevance'); setCurrentPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           >
             <img
               src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
@@ -513,58 +513,64 @@ export default function App() {
               </div>
 
               {/* Sidebar Content */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto py-3">
                 {/* Inicio */}
                 <button
-                  onClick={() => { setActiveTab('Inicio'); setIsSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-5 py-3.5 text-sm font-medium transition-colors ${
+                  onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); }}
+                  className={`w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold transition-all ${
                     activeTab === 'Inicio'
-                      ? 'bg-brand-blue/10 text-brand-blue border-r-3 border-brand-blue'
+                      ? 'bg-brand-blue/10 text-brand-blue border-r-4 border-brand-blue'
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <Home className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                    <Home className="w-5 h-5 text-slate-600" />
+                  </div>
                   <span>Inicio</span>
                 </button>
 
-                <div className="h-px bg-slate-100 mx-4 my-1" />
+                <div className="h-px bg-slate-100 mx-6 my-3" />
 
-                {/* Categorías con subcategorías */}
-                <div className="py-1">
-                  <p className="px-5 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Categorías</p>
+                {/* Categorías */}
+                <p className="px-6 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Categorías</p>
 
-                  {Object.entries(CATEGORY_DATA).map(([name, cat]) => {
+                <div className="space-y-1 px-3">
+                  {Object.entries(CATEGORY_DATA)
+                    .filter(([name]) => (productCountByCategory[name] || 0) > 0)
+                    .map(([name, cat]) => {
                     const CatIcon = cat.icon;
                     const isExpanded = expandedCategory === name;
                     const isActive = activeTab === name;
                     const count = productCountByCategory[name] || 0;
 
                     return (
-                      <div key={name}>
+                      <div key={name} className="rounded-xl overflow-hidden">
                         {/* Category row */}
-                        <div className={`flex items-center ${isActive ? 'bg-brand-blue/5' : ''}`}>
+                        <div className={`flex items-center rounded-xl transition-all ${
+                          isActive ? 'bg-brand-blue/8' : 'hover:bg-slate-50'
+                        }`}>
                           <button
                             onClick={() => { setActiveTab(name as Category); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                            className={`flex-1 flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors ${
-                              isActive
-                                ? 'text-brand-blue'
-                                : 'text-slate-700 hover:text-brand-blue'
+                            className={`flex-1 flex items-center gap-3.5 px-3 py-3.5 text-sm font-medium transition-colors ${
+                              isActive ? 'text-brand-blue' : 'text-slate-700'
                             }`}
                           >
-                            <div className={`w-8 h-8 rounded-lg ${cat.color} flex items-center justify-center text-white shrink-0`}>
-                              <CatIcon className="w-4 h-4" />
+                            <div className={`w-10 h-10 rounded-xl ${cat.color} flex items-center justify-center text-white shrink-0 shadow-sm`}>
+                              <CatIcon className="w-5 h-5" />
                             </div>
-                            <span className="flex-1 text-left">{name}</span>
-                            <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">{count}</span>
+                            <div className="flex-1 text-left">
+                              <span className="block">{name}</span>
+                              <span className="text-[10px] text-slate-400 font-normal">{count} productos</span>
+                            </div>
                           </button>
 
-                          {/* Expand/collapse toggle */}
+                          {/* Expand/collapse toggle - bigger */}
                           {cat.subcategories.length > 0 && (
                             <button
                               onClick={() => setExpandedCategory(isExpanded ? null : name)}
-                              className="p-3 text-slate-400 hover:text-slate-600 transition-colors"
+                              className="p-3 mr-1 text-slate-400 hover:text-brand-blue hover:bg-white rounded-lg transition-all"
                             >
-                              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                              <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                             </button>
                           )}
                         </div>
@@ -579,14 +585,14 @@ export default function App() {
                               transition={{ duration: 0.2 }}
                               className="overflow-hidden"
                             >
-                              <div className="bg-slate-50 py-1 ml-5 mr-3 rounded-lg mb-1">
+                              <div className="bg-slate-50 py-2 ml-6 mr-2 rounded-xl mb-2">
                                 {cat.subcategories.map((sub) => (
                                   <button
                                     key={sub}
                                     onClick={() => { setActiveTab(name as Category); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-slate-600 hover:text-brand-blue hover:bg-white rounded-md transition-colors"
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-600 hover:text-brand-blue hover:bg-white rounded-lg transition-colors"
                                   >
-                                    <CircleDot className="w-2.5 h-2.5 text-slate-300" />
+                                    <CircleDot className="w-2 h-2 text-slate-300" />
                                     {sub}
                                   </button>
                                 ))}
@@ -600,11 +606,23 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Sidebar Footer */}
-              <div className="border-t border-slate-100 p-4">
+              {/* Sidebar Footer - Carrito + Usuario */}
+              <div className="border-t border-slate-100 p-4 space-y-2">
+                <button
+                  onClick={() => { setIsCartOpen(true); setIsSidebarOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-brand-blue/5 hover:text-brand-blue rounded-xl transition-colors"
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                  <span className="flex-1 text-left">Mi Carrito</span>
+                  {cart.length > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                      {cart.reduce((s, i) => s + i.quantity, 0)}
+                    </span>
+                  )}
+                </button>
                 <button
                   onClick={() => { openUserModal(); setIsSidebarOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50 rounded-xl transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-brand-blue/5 hover:text-brand-blue rounded-xl transition-colors"
                 >
                   <UserIcon className="w-5 h-5" />
                   <span>{user ? user.name : 'Iniciar sesión'}</span>
