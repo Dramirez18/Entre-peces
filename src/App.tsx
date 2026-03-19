@@ -738,7 +738,7 @@ export default function App() {
 
         {/* ===== CONOCIMIENTO SECTION ===== */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <section id="conocimiento" className="mb-16 mt-12 md:mt-16 lg:mt-20">
+          <section id="conocimiento" className="mb-16" style={{ marginTop: '40px' }}>
             <div className="text-center mb-10 md:mb-12">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <BookOpen className="w-7 h-7 text-emerald-500" />
