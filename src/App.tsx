@@ -1043,7 +1043,7 @@ export default function App() {
 
         {/* "Ver Catálogo" button on home */}
         {isHomeFeatured && filteredProducts.length > 8 && (
-          <div className="flex flex-col items-center mt-12 mb-16">
+          <div className="flex flex-col items-center" style={{ marginTop: '40px', marginBottom: '60px' }}>
             <button
               onClick={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="bg-brand-blue text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-brand-dark transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
