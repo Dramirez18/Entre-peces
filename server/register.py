@@ -71,6 +71,31 @@ def register_client(name: str, email: str, phone: str, address: str) -> bool:
         return "error"
 
 
+ORDERS_SHEET = "Pedidos del dia"
+
+
+def save_order(nombre: str, celular: str, direccion: str, fecha: str, hora: str, productos: str, total: int) -> str:
+    """Append an order to the Pedidos del dia sheet."""
+    try:
+        result = sheets_service.spreadsheets().values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range=f"'{ORDERS_SHEET}'!A4:A1000",
+        ).execute()
+        existing = result.get("values", [])
+        next_row = len(existing) + 4
+
+        sheets_service.spreadsheets().values().update(
+            spreadsheetId=SPREADSHEET_ID,
+            range=f"'{ORDERS_SHEET}'!A{next_row}:G{next_row}",
+            valueInputOption="RAW",
+            body={"values": [[nombre, celular, direccion, fecha, hora, productos, f"${total:,.0f}"]]},
+        ).execute()
+        return "ok"
+    except Exception as e:
+        print(f"Error saving order: {e}")
+        return "error"
+
+
 class Handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
@@ -78,14 +103,18 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
-        if self.path != "/api/register":
-            self.send_response(404)
-            self.end_headers()
-            return
-
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
 
+        if self.path == "/api/register":
+            self._handle_register(body)
+        elif self.path == "/api/order":
+            self._handle_order(body)
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def _handle_register(self, body: bytes):
         try:
             data = json.loads(body)
             name = data.get("name", "").strip()
@@ -109,6 +138,31 @@ class Handler(BaseHTTPRequestHandler):
         except json.JSONDecodeError:
             self._json_response(400, {"error": "JSON inválido"})
 
+    def _handle_order(self, body: bytes):
+        try:
+            data = json.loads(body)
+            nombre = data.get("nombre", "").strip()
+            celular = data.get("celular", "").strip()
+            direccion = data.get("direccion", "").strip()
+            fecha = data.get("fecha", "").strip()
+            hora = data.get("hora", "").strip()
+            productos = data.get("productos", "").strip()
+            total = data.get("total", 0)
+
+            if not all([nombre, celular, direccion, fecha, hora]):
+                self._json_response(400, {"error": "Los 5 campos son obligatorios"})
+                return
+
+            result = save_order(nombre, celular, direccion, fecha, hora, productos, total)
+
+            if result == "ok":
+                self._json_response(200, {"success": True, "message": "Pedido registrado"})
+            else:
+                self._json_response(500, {"error": "Error al guardar pedido"})
+
+        except json.JSONDecodeError:
+            self._json_response(400, {"error": "JSON inválido"})
+
     def _cors_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -128,6 +182,7 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     print(f"Entre Peces API server running on http://localhost:{PORT}")
     print(f"  POST /api/register -> Google Sheets '{SHEET_NAME}'")
+    print(f"  POST /api/order   -> Google Sheets '{ORDERS_SHEET}'")
     server = HTTPServer(("", PORT), Handler)
     try:
         server.serve_forever()

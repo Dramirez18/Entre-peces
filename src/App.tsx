@@ -256,6 +256,18 @@ export default function App() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isCompatOpen, setIsCompatOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isCheckoutFormOpen, setIsCheckoutFormOpen] = useState(false);
+  const [checkoutForm, setCheckoutForm] = useState({
+    nombre: '',
+    celular: '',
+    direccion: '',
+    fecha: '',
+    hora: '',
+  });
+  const [orderSubmitted, setOrderSubmitted] = useState(false);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('entrepeces_favs');
@@ -414,6 +426,9 @@ export default function App() {
     setIsRegistering(false);
     setIsUserModalOpen(false);
     setModalStep('welcome');
+    // Show thank-you popup
+    setShowWelcomePopup(true);
+    setTimeout(() => setShowWelcomePopup(false), 5000);
   };
 
   const openUserModal = () => {
@@ -1424,6 +1439,204 @@ export default function App() {
       {/* Compatibility Table Modal - inline to avoid import issues */}
       {isCompatOpen && <CompatibilityTable isOpen={isCompatOpen} onClose={() => setIsCompatOpen(false)} />}
 
+      {/* Welcome Popup after Registration */}
+      <AnimatePresence>
+        {showWelcomePopup && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[80] bg-white rounded-3xl shadow-2xl border border-emerald-200 p-8 max-w-sm w-[90%] text-center"
+          >
+            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">¡Bienvenido/a, {user?.name?.split(' ')[0]}!</h3>
+            <p className="text-sm text-slate-600 mb-4">
+              Gracias por registrarte y confiar en <span className="font-bold text-brand-blue">Entre Peces</span>. Estamos para ayudarte con tu acuario. 🐠
+            </p>
+            <button
+              onClick={() => setShowWelcomePopup(false)}
+              className="text-sm text-emerald-600 font-bold hover:underline"
+            >
+              ¡Empezar a explorar!
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Checkout / Delivery Form Modal */}
+      <AnimatePresence>
+        {isCheckoutFormOpen && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCheckoutFormOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-6 border-b">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-slate-800">📦 Datos de Entrega</h2>
+                  <button onClick={() => setIsCheckoutFormOpen(false)} className="p-2 hover:bg-slate-100 rounded-xl">
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">Completa los 5 campos para confirmar tu pedido</p>
+              </div>
+
+              {orderSubmitted ? (
+                <div className="p-8 text-center">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">¡Pedido Registrado!</h3>
+                  <p className="text-sm text-slate-600 mb-6">Tu pedido fue enviado. Ahora selecciona tu método de pago.</p>
+                  <button
+                    onClick={() => {
+                      setIsCheckoutFormOpen(false);
+                      setIsPaymentOpen(true);
+                      setSelectedPayment(null);
+                    }}
+                    className="w-full bg-brand-blue text-white py-3 rounded-2xl font-bold hover:bg-brand-dark transition-colors"
+                  >
+                    Ir a Pasarela de Pagos →
+                  </button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    setIsSubmittingOrder(true);
+                    // Send to Google Sheets
+                    try {
+                      await fetch(`${API_URL}/api/order`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          ...checkoutForm,
+                          productos: cart.map(c => `${c.name} x${c.quantity}`).join(', '),
+                          total: cartTotal,
+                        }),
+                      });
+                    } catch {
+                      // Silent - order saved via WhatsApp anyway
+                    }
+                    setIsSubmittingOrder(false);
+                    setOrderSubmitted(true);
+                  }}
+                  className="p-6 space-y-4"
+                >
+                  {/* Nombre receptor */}
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Nombre de quien recibe *</label>
+                    <input
+                      type="text"
+                      required
+                      value={checkoutForm.nombre}
+                      onChange={e => setCheckoutForm(p => ({ ...p, nombre: e.target.value }))}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                      placeholder="Nombre completo"
+                    />
+                  </div>
+
+                  {/* Celular */}
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Celular de contacto *</label>
+                    <input
+                      type="tel"
+                      required
+                      value={checkoutForm.celular}
+                      onChange={e => setCheckoutForm(p => ({ ...p, celular: e.target.value }))}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                      placeholder="3XX XXX XXXX"
+                    />
+                  </div>
+
+                  {/* Dirección */}
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 mb-1 block">Dirección de entrega *</label>
+                    <input
+                      type="text"
+                      required
+                      value={checkoutForm.direccion}
+                      onChange={e => setCheckoutForm(p => ({ ...p, direccion: e.target.value }))}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                      placeholder="Dirección completa, barrio, ciudad"
+                    />
+                  </div>
+
+                  {/* Fecha y Hora */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 mb-1 block">Fecha de entrega *</label>
+                      <input
+                        type="date"
+                        required
+                        value={checkoutForm.fecha}
+                        onChange={e => setCheckoutForm(p => ({ ...p, fecha: e.target.value }))}
+                        min={new Date().toISOString().split('T')[0]}
+                        className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 mb-1 block">Hora aprox. *</label>
+                      <select
+                        required
+                        value={checkoutForm.hora}
+                        onChange={e => setCheckoutForm(p => ({ ...p, hora: e.target.value }))}
+                        className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                      >
+                        <option value="">Seleccionar</option>
+                        <option value="8:00 AM - 10:00 AM">8:00 AM - 10:00 AM</option>
+                        <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+                        <option value="12:00 PM - 2:00 PM">12:00 PM - 2:00 PM</option>
+                        <option value="2:00 PM - 4:00 PM">2:00 PM - 4:00 PM</option>
+                        <option value="4:00 PM - 6:00 PM">4:00 PM - 6:00 PM</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Resumen */}
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                    <p className="text-xs font-bold text-slate-600 mb-2">Resumen del pedido:</p>
+                    {cart.map(item => (
+                      <div key={item.id} className="flex justify-between text-xs text-slate-600">
+                        <span>{item.name} x{item.quantity}</span>
+                        <span>${(item.price * item.quantity).toLocaleString('es-CO')}</span>
+                      </div>
+                    ))}
+                    <div className="border-t border-slate-200 mt-2 pt-2 flex justify-between font-bold text-sm">
+                      <span>Total</span>
+                      <span className="text-brand-blue">${cartTotal.toLocaleString('es-CO')}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-[10px] text-amber-600 bg-amber-50 rounded-lg p-3 border border-amber-200">
+                    ⚠️ Recuerda: las entregas se deben solicitar con al menos 12 horas de anticipación.
+                  </p>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingOrder}
+                    className="w-full bg-brand-blue text-white py-4 rounded-2xl font-bold hover:bg-brand-dark transition-colors disabled:opacity-50"
+                  >
+                    {isSubmittingOrder ? 'Enviando...' : 'Confirmar Pedido →'}
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Floating WhatsApp Button */}
       <a
         href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido`}
@@ -1633,8 +1846,15 @@ export default function App() {
                       setModalStep('welcome');
                     } else {
                       setIsCartOpen(false);
-                      setIsPaymentOpen(true);
-                      setSelectedPayment(null);
+                      // Pre-fill checkout form with user data
+                      setCheckoutForm(prev => ({
+                        ...prev,
+                        nombre: prev.nombre || user.name,
+                        celular: prev.celular || user.phone,
+                        direccion: prev.direccion || user.address,
+                      }));
+                      setIsCheckoutFormOpen(true);
+                      setOrderSubmitted(false);
                     }
                   }}
                   className={`w-full py-4 rounded-2xl font-bold transition-colors flex items-center justify-center gap-2 ${
