@@ -994,7 +994,7 @@ export default function App() {
               </div>
 
               {/* Info */}
-              <div className="p-4 flex-1 flex flex-col">
+              <div className="px-5 py-4 flex-1 flex flex-col">
                 {/* Price first - MercadoLibre style */}
                 <span className="text-xl font-bold text-slate-900">
                   ${product.price.toLocaleString('es-CO')}
@@ -1002,12 +1002,12 @@ export default function App() {
 
                 <h3 className="font-medium text-sm text-slate-700 mt-2 group-hover:text-brand-blue transition-colors line-clamp-2">
                   {product.name}
-                  {product.size && <span className="text-slate-400"> - {product.size}</span>}
+                  {product.size && <span className="text-slate-400 ml-1">· {product.size}</span>}
                 </h3>
 
-                {/* Scientific name + size badge */}
+                {/* Scientific name */}
                 {product.scientificName && (
-                  <p className="text-[11px] italic text-slate-400 mt-0.5">{product.scientificName}</p>
+                  <p className="text-[11px] italic text-slate-400 mt-1">{product.scientificName}</p>
                 )}
 
                 {/* Stock indicator */}
@@ -1043,14 +1043,15 @@ export default function App() {
 
         {/* "Ver Catálogo" button on home */}
         {isHomeFeatured && filteredProducts.length > 8 && (
-          <div className="flex justify-center mt-8">
+          <div className="flex flex-col items-center mt-12 mb-16">
             <button
               onClick={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="bg-brand-blue text-white px-8 py-3 rounded-2xl font-bold hover:bg-brand-dark transition-colors flex items-center gap-2"
+              className="bg-brand-blue text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-brand-dark transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               Ver Catálogo Completo
               <ChevronRight className="w-5 h-5" />
             </button>
+            <p className="text-sm text-slate-400 mt-3">Mostrando 8 de {filteredProducts.length} productos</p>
           </div>
         )}
 
