@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   ShoppingBag,
   Search,
@@ -21,7 +21,6 @@ import {
   Gauge,
   Lightbulb,
   CheckCircle2,
-  Shell,
   CircleDot,
   Star,
   Heart,
@@ -29,11 +28,20 @@ import {
   Eye,
   EyeOff,
   Menu,
-  Home
+  Home,
+  SearchX,
+  AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from './constants';
 import { Product, CartItem, Category, User } from './types';
+
+// ── Constants ──────────────────────────────────────────────────────────
+const WHATSAPP_NUMBER = '573124380879';
+const FREE_SHIPPING_THRESHOLD = 200000;
+const PRODUCTS_PER_PAGE = 20;
+const API_URL = import.meta.env.DEV ? 'http://localhost:3001' : '';
+const PLACEHOLDER_IMG = 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=60&w=400';
 
 // Custom Shrimp SVG icon
 const ShrimpIcon = ({ className }: { className?: string }) => (
@@ -61,7 +69,7 @@ const PumpIcon = ({ className }: { className?: string }) => (
 
 // Category data with previews and subcategories
 const CATEGORY_DATA: Record<string, {
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
   gradient: string;
   preview: string[];
@@ -179,7 +187,7 @@ export default function App() {
   const [sortBy, setSortBy] = useState<'relevance' | 'price-asc' | 'price-desc' | 'name'>('relevance');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const PRODUCTS_PER_PAGE = 20;
+  const [isRegistering, setIsRegistering] = useState(false);
 
   // Persist cart to localStorage
   useEffect(() => {
@@ -296,13 +304,11 @@ export default function App() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsRegistering(true);
     setUser(registrationForm);
-    setIsUserModalOpen(false);
-    setModalStep('welcome');
 
     // Save to Google Sheets in background
     try {
-      const API_URL = import.meta.env.DEV ? 'http://localhost:3001' : '';
       await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -311,6 +317,10 @@ export default function App() {
     } catch {
       // Silent fail - registration saved locally regardless
     }
+
+    setIsRegistering(false);
+    setIsUserModalOpen(false);
+    setModalStep('welcome');
   };
 
   const openUserModal = () => {
@@ -467,7 +477,7 @@ export default function App() {
                         {/* Category row */}
                         <div className={`flex items-center ${isActive ? 'bg-brand-blue/5' : ''}`}>
                           <button
-                            onClick={() => { setActiveTab(name as any); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            onClick={() => { setActiveTab(name as Category); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                             className={`flex-1 flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors ${
                               isActive
                                 ? 'text-brand-blue'
@@ -506,7 +516,7 @@ export default function App() {
                                 {cat.subcategories.map((sub) => (
                                   <button
                                     key={sub}
-                                    onClick={() => { setActiveTab(name as any); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    onClick={() => { setActiveTab(name as Category); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                                     className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-slate-600 hover:text-brand-blue hover:bg-white rounded-md transition-colors"
                                   >
                                     <CircleDot className="w-2.5 h-2.5 text-slate-300" />
@@ -582,7 +592,7 @@ export default function App() {
                 <motion.button
                   key={name}
                   whileHover={{ y: -4 }}
-                  onClick={() => { setActiveTab(name as any); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { setActiveTab(name as Category); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-transparent hover:shadow-xl transition-all text-left relative overflow-hidden"
                 >
                   {/* Gradient overlay on hover */}
@@ -620,7 +630,7 @@ export default function App() {
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3 mb-6 flex items-center gap-3">
             <span className="text-green-600 text-lg">🚚</span>
             <p className="text-sm text-green-800">
-              <span className="font-bold">¡Envío gratis</span> en compras superiores a $200.000!
+              <span className="font-bold">¡Envío gratis</span> en compras superiores a ${FREE_SHIPPING_THRESHOLD.toLocaleString('es-CO')}!
               <span className="text-green-600 ml-1">Envíos a toda Colombia.</span>
             </p>
           </div>
@@ -638,7 +648,7 @@ export default function App() {
             <span className="text-xs text-slate-500">Ordenar:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
               className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
             >
               <option value="relevance">Relevancia</option>
@@ -661,6 +671,25 @@ export default function App() {
           </div>
         )}
 
+        {/* Empty state */}
+        {!isLoading && filteredProducts.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <SearchX className="w-16 h-16 text-slate-300 mb-4" />
+            <h3 className="text-xl font-bold text-slate-600 mb-2">No encontramos resultados</h3>
+            <p className="text-slate-400 max-w-md">
+              {searchQuery
+                ? `No hay productos que coincidan con "${searchQuery}". Intenta con otro término.`
+                : `No hay productos en esta categoría.`}
+            </p>
+            <button
+              onClick={() => { setSearchQuery(''); setActiveTab('Inicio'); }}
+              className="mt-6 bg-brand-blue text-white px-6 py-2.5 rounded-xl font-medium hover:bg-brand-dark transition-colors"
+            >
+              Ver todo el catálogo
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {paginatedProducts.map((product) => (
             <motion.div
@@ -675,10 +704,11 @@ export default function App() {
               <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
                 <img
                   src={product.image}
-                  alt={product.name}
+                  alt={`${product.name}${product.scientificName ? ' - ' + product.scientificName : ''}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                   loading="lazy"
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                 />
                 {/* Badges top */}
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
@@ -885,7 +915,7 @@ export default function App() {
                     Agregar al carrito
                   </button>
                   <a
-                    href={`https://wa.me/573124380879?text=${encodeURIComponent(
+                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
                       `Hola Entre Peces! Me interesa: ${selectedProduct.name}${selectedProduct.size ? ' (' + selectedProduct.size + ')' : ''} - $${selectedProduct.price.toLocaleString('es-CO')}`
                     )}`}
                     target="_blank"
@@ -904,7 +934,7 @@ export default function App() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/573124380879?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido"
+        href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 bg-green-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-green-600 transition-all hover:scale-110 flex items-center justify-center"
@@ -923,15 +953,13 @@ export default function App() {
                 className="w-10 h-10 object-contain"
                 referrerPolicy="no-referrer"
               />
-              <h2 className="text-2xl font-bold">Entre Peces</h2>
-              <button
-                onClick={() => setIsAdmin(!isAdmin)}
-                className={`ml-4 text-xs px-2 py-1 rounded border transition-colors ${
-                  isAdmin ? 'bg-brand-blue text-white border-brand-blue' : 'border-slate-600 text-slate-500 hover:text-white'
-                }`}
+              <h2
+                className="text-2xl font-bold select-none"
+                onDoubleClick={() => setIsAdmin(!isAdmin)}
+                title=""
               >
-                Admin
-              </button>
+                Entre Peces
+              </h2>
             </div>
             <p className="max-w-sm mb-6">
               El primer marketplace especializado en acuariofilia de agua dulce en Colombia.
@@ -1061,19 +1089,19 @@ export default function App() {
                 {/* Free shipping progress */}
                 {cart.length > 0 && (
                   <div className="mb-4">
-                    {cartTotal >= 200000 ? (
+                    {cartTotal >= FREE_SHIPPING_THRESHOLD ? (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-2 text-center">
                         <span className="text-green-700 text-sm font-bold">🚚 ¡Envío gratis aplicado!</span>
                       </div>
                     ) : (
                       <div>
                         <p className="text-xs text-slate-500 mb-1">
-                          Te faltan <span className="font-bold text-brand-blue">${(200000 - cartTotal).toLocaleString('es-CO')}</span> para envío gratis
+                          Te faltan <span className="font-bold text-brand-blue">${(FREE_SHIPPING_THRESHOLD - cartTotal).toLocaleString('es-CO')}</span> para envío gratis
                         </p>
                         <div className="w-full bg-slate-200 rounded-full h-1.5">
                           <div
                             className="bg-green-500 h-1.5 rounded-full transition-all"
-                            style={{ width: `${Math.min(100, (cartTotal / 200000) * 100)}%` }}
+                            style={{ width: `${Math.min(100, (cartTotal / FREE_SHIPPING_THRESHOLD) * 100)}%` }}
                           />
                         </div>
                       </div>
@@ -1087,11 +1115,11 @@ export default function App() {
                   </span>
                 </div>
                 <a
-                  href={cart.length > 0 ? `https://wa.me/573124380879?text=${encodeURIComponent(
+                  href={cart.length > 0 ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
                     `🐟 *Pedido Entre Peces*\n\n` +
                     cart.map(item => `• ${item.name}${item.size ? ' (' + item.size + ')' : ''} x${item.quantity} — $${(item.price * item.quantity).toLocaleString('es-CO')}`).join('\n') +
                     `\n\n💰 *Total: $${cartTotal.toLocaleString('es-CO')}*` +
-                    (cartTotal >= 200000 ? '\n🚚 Envío gratis' : '') +
+                    (cartTotal >= FREE_SHIPPING_THRESHOLD ? '\n🚚 Envío gratis' : '') +
                     (user ? `\n\n👤 ${user.name}\n📱 ${user.phone}\n📍 ${user.address}` : '')
                   )}` : '#'}
                   target="_blank"
