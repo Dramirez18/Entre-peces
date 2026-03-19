@@ -40,6 +40,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from './constants';
 import { Product, CartItem, Category, User } from './types';
 import CompatibilityTable from './CompatibilityTable';
+import HeroCarousel from './HeroCarousel';
 
 // ── Constants ──────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = '573124380879';
@@ -428,48 +429,48 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans">
       {/* Header */}
       <header className="bg-brand-blue text-white sticky top-0 z-40 shadow-lg">
-        <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 h-14 flex items-center gap-3">
-          {/* Hamburger */}
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors shrink-0"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-
-          {/* Logo */}
-          <div
-            className="flex items-center gap-2 cursor-pointer shrink-0"
-            onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setSortBy('relevance'); setCurrentPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          >
-            <img
-              src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
-              alt="Entre Peces Logo"
-              className="w-9 h-9 object-contain"
-              referrerPolicy="no-referrer"
-            />
-            <h1 className="text-xl font-bold tracking-tighter hidden sm:block">Entre Peces</h1>
+        <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 h-16 flex items-center">
+          {/* Left: Hamburger + Logo */}
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <div
+              className="flex items-center gap-2.5 cursor-pointer"
+              onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setSortBy('relevance'); setCurrentPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            >
+              <img
+                src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
+                alt="Entre Peces Logo"
+                className="w-10 h-10 object-contain"
+                referrerPolicy="no-referrer"
+              />
+              <h1 className="text-xl font-bold tracking-tight hidden md:block">Entre Peces</h1>
+            </div>
           </div>
 
-          {/* Search bar */}
-          <div className="flex-1 max-w-xl">
+          {/* Center: Search bar */}
+          <div className="flex-1 mx-4 md:mx-8 lg:mx-16 max-w-2xl">
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Buscar peces, plantas, accesorios..."
-                className="w-full bg-white text-slate-800 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 transition-all placeholder:text-slate-400"
+                className="w-full bg-white text-slate-800 rounded-full py-2.5 pl-11 pr-5 text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-cyan-300 transition-all placeholder:text-slate-400 placeholder:tracking-wide"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1 shrink-0">
+          {/* Right: User + Cart (pushed to far right) */}
+          <div className="flex items-center gap-2 md:gap-3 shrink-0 ml-auto">
             <button
               onClick={openUserModal}
-              className="flex items-center gap-2 hover:bg-white/10 py-2 px-3 rounded-full transition-colors"
+              className="flex items-center gap-2 hover:bg-white/10 py-2 px-3 md:px-4 rounded-full transition-colors"
             >
               <UserIcon className="w-5 h-5" />
               <span className="hidden lg:inline text-sm font-medium">
@@ -478,14 +479,14 @@ export default function App() {
             </button>
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 hover:bg-white/10 rounded-full transition-colors"
+              className="relative p-2.5 hover:bg-white/10 rounded-full transition-colors"
             >
               <ShoppingBag className="w-5 h-5" />
               {cart.length > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-brand-blue"
+                  className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-brand-blue"
                 >
                   {cart.reduce((s, i) => s + i.quantity, 0)}
                 </motion.span>
@@ -686,80 +687,55 @@ export default function App() {
       </AnimatePresence>
 
       <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 md:px-8 lg:px-12 py-8">
-        {/* Hero Section for Home */}
+        {/* Hero Section for Home — Carousel */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 md:mb-12 relative rounded-2xl md:rounded-3xl overflow-hidden aspect-[16/10] md:aspect-[21/9] bg-brand-dark flex items-end md:items-center"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=1200"
-              alt="Aquarium"
-              className="absolute inset-0 w-full h-full object-cover opacity-40"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent md:bg-none" />
-            <div className="relative z-10 px-6 pb-6 md:px-12 md:pb-0 max-w-2xl">
-              <h2 className="text-2xl md:text-6xl font-bold text-white mb-2 md:mb-4 leading-tight">
-                Tu pasión por el agua, <br />
-                <span className="text-cyan-300">en un solo lugar.</span>
-              </h2>
-              <p className="text-white/80 text-sm md:text-lg mb-4 md:mb-8 hidden sm:block">
-                Descubre la mejor selección de peces, plantas y accesorios para tu acuario en Colombia.
-              </p>
-              <button
-                onClick={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="bg-white text-brand-dark px-8 py-3 rounded-full font-bold hover:bg-cyan-50 transition-colors flex items-center gap-2"
-              >
-                Ver Catálogo <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </motion.section>
+          <HeroCarousel onViewCatalog={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
         )}
 
         {/* Categories Grid with hover previews */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-5 mb-12">
-            {Object.entries(CATEGORY_DATA)
-              .filter(([name]) => (productCountByCategory[name] || 0) > 0)
-              .map(([name, cat]) => {
-              const CatIcon = cat.icon;
-              const count = productCountByCategory[name] || 0;
-              return (
-                <motion.button
-                  key={name}
-                  whileHover={{ y: -4 }}
-                  onClick={() => { setActiveTab(name as Category); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-transparent hover:shadow-xl transition-all text-left relative overflow-hidden"
-                >
-                  {/* Gradient overlay on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
+          <div className="mb-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
+              {Object.entries(CATEGORY_DATA)
+                .filter(([name]) => (productCountByCategory[name] || 0) > 0)
+                .map(([name, cat]) => {
+                const CatIcon = cat.icon;
+                const count = productCountByCategory[name] || 0;
+                return (
+                  <motion.button
+                    key={name}
+                    whileHover={{ y: -6, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
+                    onClick={() => { setActiveTab(name as Category); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="group p-5 md:p-6 rounded-2xl bg-white border border-slate-200 hover:border-transparent transition-all text-left relative overflow-hidden"
+                  >
+                    {/* Gradient overlay on hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
 
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`${cat.color} w-11 h-11 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg`}>
-                        <CatIcon className="w-5 h-5" />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`${cat.color} w-12 h-12 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg`}>
+                          <CatIcon className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
+                          {count}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                        {count}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-sm text-slate-800 group-hover:text-brand-blue transition-colors mb-1">{name}</h3>
+                      <h3 className="font-bold text-sm md:text-base text-slate-800 group-hover:text-brand-blue transition-colors mb-1.5">{name}</h3>
 
-                    {/* Preview text - visible on hover */}
-                    <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
-                      <p className="text-[11px] text-slate-500 leading-relaxed mt-1">
-                        {cat.preview.join(' · ')}
-                      </p>
+                      {/* Preview text - visible on hover */}
+                      <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
+                        <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                          {cat.preview.join(' · ')}
+                        </p>
+                      </div>
+                      <p className="text-slate-400 text-xs mt-1 group-hover:hidden">Explorar catálogo</p>
                     </div>
-                    <p className="text-slate-400 text-[10px] mt-1 group-hover:hidden">Explorar catálogo</p>
-                  </div>
 
-                  <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </motion.button>
-              );
-            })}
+                    <ChevronRight className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </motion.button>
+                );
+              })}
+            </div>
           </div>
         )}
 
