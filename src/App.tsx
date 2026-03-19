@@ -39,6 +39,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from './constants';
 import { Product, CartItem, Category, User } from './types';
+import CompatibilityTable from './CompatibilityTable';
 
 // ── Constants ──────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = '573124380879';
@@ -252,6 +253,7 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isCompatOpen, setIsCompatOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>(() => {
     try {
@@ -819,9 +821,10 @@ export default function App() {
               </motion.div>
 
               {/* Tabla de Compatibilidad */}
-              <motion.div
+              <motion.button
                 whileHover={{ y: -4 }}
-                className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100 cursor-pointer hover:shadow-lg transition-all group"
+                onClick={() => setIsCompatOpen(true)}
+                className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100 cursor-pointer hover:shadow-lg transition-all group text-left"
               >
                 <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
                   <Table2 className="w-6 h-6" />
@@ -831,23 +834,15 @@ export default function App() {
                   Consulta qué especies pueden convivir juntas en tu acuario de forma segura.
                 </p>
                 <div className="bg-white/70 rounded-lg p-3">
-                  <div className="grid grid-cols-3 gap-1 text-[9px] font-bold text-center">
-                    <div className="bg-slate-100 rounded p-1">Especie</div>
-                    <div className="bg-slate-100 rounded p-1">Betta</div>
-                    <div className="bg-slate-100 rounded p-1">Tetra</div>
-                    <div className="text-left p-1">Corydora</div>
-                    <div className="bg-green-100 text-green-700 rounded p-1">✓</div>
-                    <div className="bg-green-100 text-green-700 rounded p-1">✓</div>
-                    <div className="text-left p-1">Guppy</div>
-                    <div className="bg-red-100 text-red-600 rounded p-1">✗</div>
-                    <div className="bg-green-100 text-green-700 rounded p-1">✓</div>
-                    <div className="text-left p-1">Escalar</div>
-                    <div className="bg-red-100 text-red-600 rounded p-1">✗</div>
-                    <div className="bg-yellow-100 text-yellow-700 rounded p-1">~</div>
+                  <div className="flex items-center gap-3 justify-center">
+                    <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-500" /><span className="text-[9px] text-slate-600">Compatible</span></div>
+                    <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-yellow-400" /><span className="text-[9px] text-slate-600">Precaución</span></div>
+                    <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-500" /><span className="text-[9px] text-slate-600">Incompatible</span></div>
                   </div>
+                  <p className="text-[10px] text-slate-500 text-center mt-2">25 especies · Tabla interactiva</p>
                 </div>
                 <p className="text-xs text-emerald-500 font-bold mt-4 group-hover:underline">Ver tabla completa →</p>
-              </motion.div>
+              </motion.button>
             </div>
           </section>
         )}
@@ -1403,6 +1398,9 @@ export default function App() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Compatibility Table Modal - inline to avoid import issues */}
+      {isCompatOpen && <CompatibilityTable isOpen={isCompatOpen} onClose={() => setIsCompatOpen(false)} />}
 
       {/* Floating WhatsApp Button */}
       <a
