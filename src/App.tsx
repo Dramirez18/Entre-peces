@@ -740,14 +740,14 @@ export default function App() {
         {activeTab === 'Inicio' && !searchQuery && (
           <section id="conocimiento" className="mb-16 mt-12 md:mt-16 lg:mt-20">
             <div className="text-center mb-10 md:mb-12">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-7 h-7 text-white" />
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <BookOpen className="w-7 h-7 text-emerald-500" />
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Conocimiento</h2>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Conocimiento</h2>
               <p className="text-sm md:text-base text-slate-500">Aprende sobre acuariofilia y mejora tu acuario</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
               {/* Noticias */}
               <motion.div
                 whileHover={{ y: -6 }}
@@ -756,11 +756,13 @@ export default function App() {
                 <div className="h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-t-3xl" />
                 <div className="p-7 lg:p-8 flex flex-col flex-1">
                   <div className="text-center mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                      <Newspaper className="w-7 h-7 text-blue-600" />
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                        <Newspaper className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <h3 className="font-bold text-slate-800 text-xl">Noticias</h3>
                     </div>
-                    <h3 className="font-bold text-slate-800 text-xl">Noticias</h3>
-                    <p className="text-xs text-slate-400 mt-1">Últimas novedades</p>
+                    <p className="text-xs text-slate-400">Últimas novedades</p>
                   </div>
                   <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
                     Las últimas novedades del mundo de la acuariofilia, tendencias y consejos de expertos.
@@ -789,11 +791,13 @@ export default function App() {
                 <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-3xl" />
                 <div className="p-7 lg:p-8 flex flex-col flex-1">
                   <div className="text-center mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                      <LightbulbIcon className="w-7 h-7 text-amber-600" />
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                        <LightbulbIcon className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <h3 className="font-bold text-slate-800 text-xl">Datos Curiosos</h3>
                     </div>
-                    <h3 className="font-bold text-slate-800 text-xl">Datos Curiosos</h3>
-                    <p className="text-xs text-slate-400 mt-1">Sabías que...</p>
+                    <p className="text-xs text-slate-400">Sabías que...</p>
                   </div>
                   <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
                     Descubre hechos fascinantes sobre las especies de agua dulce y su hábitat natural.
@@ -823,11 +827,13 @@ export default function App() {
                 <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-green-400 rounded-t-3xl" />
                 <div className="p-7 lg:p-8 flex flex-col flex-1">
                   <div className="text-center mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                      <Table2 className="w-7 h-7 text-emerald-600" />
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                        <Table2 className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <h3 className="font-bold text-slate-800 text-xl">Compatibilidad</h3>
                     </div>
-                    <h3 className="font-bold text-slate-800 text-xl">Compatibilidad</h3>
-                    <p className="text-xs text-slate-400 mt-1">25 especies analizadas</p>
+                    <p className="text-xs text-slate-400">25 especies analizadas</p>
                   </div>
                   <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
                     Consulta qué especies pueden convivir juntas en tu acuario de forma segura.
@@ -864,10 +870,10 @@ export default function App() {
         <div className="mt-12 md:mt-16 lg:mt-20 mb-8">
           {activeTab === 'Inicio' && !searchQuery ? (
             <div className="text-center mb-10">
-              <div className="w-14 h-14 rounded-2xl bg-brand-blue flex items-center justify-center mx-auto mb-4">
-                <Star className="w-7 h-7 text-white" />
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <Star className="w-7 h-7 text-brand-blue" />
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Productos Destacados</h2>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Productos Destacados</h2>
               <p className="text-sm md:text-base text-slate-500">Los peces más vendidos esta semana</p>
             </div>
           ) : (
