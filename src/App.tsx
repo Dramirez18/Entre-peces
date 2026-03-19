@@ -695,8 +695,8 @@ export default function App() {
 
         {/* Categories Grid with hover previews */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <div className="mb-12">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
+          <div className="mb-12 mt-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6 lg:gap-8">
               {Object.entries(CATEGORY_DATA)
                 .filter(([name]) => (productCountByCategory[name] || 0) > 0)
                 .map(([name, cat]) => {
@@ -707,21 +707,19 @@ export default function App() {
                     key={name}
                     whileHover={{ y: -6, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
                     onClick={() => { setActiveTab(name as Category); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    className="group p-5 md:p-6 rounded-2xl bg-white border border-slate-200 hover:border-transparent transition-all text-left relative overflow-hidden"
+                    className="group p-6 md:p-7 lg:p-8 rounded-2xl bg-white border border-slate-200 hover:border-transparent transition-all text-center relative overflow-hidden"
                   >
                     {/* Gradient overlay on hover */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
 
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className={`${cat.color} w-12 h-12 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg`}>
-                          <CatIcon className="w-5 h-5" />
-                        </div>
-                        <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
-                          {count}
-                        </span>
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className={`${cat.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg mb-4`}>
+                        <CatIcon className="w-6 h-6" />
                       </div>
-                      <h3 className="font-bold text-sm md:text-base text-slate-800 group-hover:text-brand-blue transition-colors mb-1.5">{name}</h3>
+                      <h3 className="font-bold text-sm md:text-base text-slate-800 group-hover:text-brand-blue transition-colors mb-2">{name}</h3>
+                      <span className="text-[11px] font-medium text-slate-400 mb-2">
+                        Disponibles: {count}
+                      </span>
 
                       {/* Preview text - visible on hover */}
                       <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
@@ -729,10 +727,8 @@ export default function App() {
                           {cat.preview.join(' · ')}
                         </p>
                       </div>
-                      <p className="text-slate-400 text-xs mt-1 group-hover:hidden">Explorar catálogo</p>
+                      <p className="text-brand-blue text-xs font-semibold mt-1 group-hover:underline">Explorar catálogo →</p>
                     </div>
-
-                    <ChevronRight className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.button>
                 );
               })}
