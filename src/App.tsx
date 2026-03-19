@@ -429,9 +429,9 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans">
       {/* Header */}
       <header className="bg-brand-blue text-white sticky top-0 z-40 shadow-lg">
-        <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 h-16 flex items-center">
+        <div className="w-full px-4 md:px-8 lg:px-16 xl:px-24 h-16 flex items-center">
           {/* Left: Hamburger + Logo */}
-          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+          <div className="flex items-center gap-3 md:gap-4 shrink-0">
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -439,7 +439,7 @@ export default function App() {
               <Menu className="w-6 h-6" />
             </button>
             <div
-              className="flex items-center gap-2.5 cursor-pointer"
+              className="flex items-center gap-3 cursor-pointer"
               onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setSortBy('relevance'); setCurrentPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             >
               <img
@@ -448,26 +448,27 @@ export default function App() {
                 className="w-10 h-10 object-contain"
                 referrerPolicy="no-referrer"
               />
-              <h1 className="text-xl font-bold tracking-tight hidden md:block">Entre Peces</h1>
+              <h1 className="text-xl font-bold tracking-tight hidden md:block whitespace-nowrap">Entre Peces</h1>
             </div>
           </div>
 
-          {/* Center: Search bar */}
-          <div className="flex-1 mx-4 md:mx-8 lg:mx-16 max-w-2xl">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+          {/* Center: Search bar — fills all available space */}
+          <div className="flex-1 mx-6 md:mx-12 lg:mx-20 xl:mx-28">
+            <div className="relative max-w-4xl mx-auto">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Buscar peces, plantas, accesorios..."
-                className="w-full bg-white text-slate-800 rounded-full py-2.5 pl-11 pr-5 text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-cyan-300 transition-all placeholder:text-slate-400 placeholder:tracking-wide"
+                className="w-full bg-white text-slate-800 rounded-full py-3 pl-13 pr-6 text-base tracking-wide focus:outline-none focus:ring-2 focus:ring-cyan-300 transition-all placeholder:text-slate-400 placeholder:tracking-wider"
+                style={{ paddingLeft: '52px' }}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          {/* Right: User + Cart (pushed to far right) */}
-          <div className="flex items-center gap-2 md:gap-3 shrink-0 ml-auto">
+          {/* Right: User + Cart — far right edge */}
+          <div className="flex items-center gap-3 md:gap-4 shrink-0">
             <button
               onClick={openUserModal}
               className="flex items-center gap-2 hover:bg-white/10 py-2 px-3 md:px-4 rounded-full transition-colors"
