@@ -331,6 +331,7 @@ def process_rows(rows: list) -> list:
     """
     products = []
     seen_ids = set()
+    seen_products = set()  # Deduplicate by name+size
     current_section = None
     current_section_category = None
 
@@ -404,6 +405,12 @@ def process_rows(rows: list) -> list:
         stock = DEFAULT_STOCK
         if col_h and col_h.isdigit():
             stock = int(col_h)
+
+        # Deduplicate: skip if same name + same size already seen
+        dedup_key = (cleaned_name.lower().strip(), talla)
+        if dedup_key in seen_products:
+            continue
+        seen_products.add(dedup_key)
 
         # Generate unique ID
         base_id = slugify(cleaned_name)

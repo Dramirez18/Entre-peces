@@ -590,6 +590,17 @@ export default function App() {
           </div>
         )}
 
+        {/* Free shipping banner */}
+        {activeTab !== 'Inicio' && (
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3 mb-6 flex items-center gap-3">
+            <span className="text-green-600 text-lg">🚚</span>
+            <p className="text-sm text-green-800">
+              <span className="font-bold">¡Envío gratis</span> en compras superiores a $200.000!
+              <span className="text-green-600 ml-1">Envíos a toda Colombia.</span>
+            </p>
+          </div>
+        )}
+
         {/* Product Grid Header with Sort */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
           <div>
@@ -645,14 +656,9 @@ export default function App() {
                 />
                 {/* Badges top */}
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
-                  {product.price >= 50000 && (
-                    <span className="bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
-                      ENVÍO GRATIS
-                    </span>
-                  )}
                   {product.stock > 0 && product.stock <= 3 && (
                     <span className="bg-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
-                      ÚLTIMAS {product.stock}
+                      ¡ÚLTIMAS {product.stock}!
                     </span>
                   )}
                 </div>
@@ -680,9 +686,6 @@ export default function App() {
                 <span className="text-xl font-bold text-slate-900">
                   ${product.price.toLocaleString('es-CO')}
                 </span>
-                {product.price >= 50000 && (
-                  <span className="text-[11px] text-green-600 font-medium">Envío gratis a toda Colombia</span>
-                )}
 
                 <h3 className="font-medium text-sm text-slate-700 mt-2 group-hover:text-brand-blue transition-colors line-clamp-2">
                   {product.name}
@@ -872,6 +875,28 @@ export default function App() {
               </div>
 
               <div className="p-6 border-t bg-slate-50">
+                {/* Free shipping progress */}
+                {cart.length > 0 && (
+                  <div className="mb-4">
+                    {cartTotal >= 200000 ? (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-2 text-center">
+                        <span className="text-green-700 text-sm font-bold">🚚 ¡Envío gratis aplicado!</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">
+                          Te faltan <span className="font-bold text-brand-blue">${(200000 - cartTotal).toLocaleString('es-CO')}</span> para envío gratis
+                        </p>
+                        <div className="w-full bg-slate-200 rounded-full h-1.5">
+                          <div
+                            className="bg-green-500 h-1.5 rounded-full transition-all"
+                            style={{ width: `${Math.min(100, (cartTotal / 200000) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div className="flex justify-between mb-4">
                   <span className="text-slate-600">Subtotal</span>
                   <span className="text-xl font-bold text-slate-900">
