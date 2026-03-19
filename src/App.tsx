@@ -873,7 +873,7 @@ export default function App() {
                     Agregar al carrito
                   </button>
                   <a
-                    href={`https://wa.me/573001234567?text=${encodeURIComponent(
+                    href={`https://wa.me/573124380879?text=${encodeURIComponent(
                       `Hola Entre Peces! Me interesa: ${selectedProduct.name}${selectedProduct.size ? ' (' + selectedProduct.size + ')' : ''} - $${selectedProduct.price.toLocaleString('es-CO')}`
                     )}`}
                     target="_blank"
@@ -892,7 +892,7 @@ export default function App() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/573001234567?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido"
+        href="https://wa.me/573124380879?text=Hola%20Entre%20Peces!%20Quiero%20hacer%20un%20pedido"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 bg-green-500 text-white w-14 h-14 rounded-full shadow-lg hover:bg-green-600 transition-all hover:scale-110 flex items-center justify-center"
@@ -1075,7 +1075,7 @@ export default function App() {
                   </span>
                 </div>
                 <a
-                  href={cart.length > 0 ? `https://wa.me/573001234567?text=${encodeURIComponent(
+                  href={cart.length > 0 ? `https://wa.me/573124380879?text=${encodeURIComponent(
                     `🐟 *Pedido Entre Peces*\n\n` +
                     cart.map(item => `• ${item.name}${item.size ? ' (' + item.size + ')' : ''} x${item.quantity} — $${(item.price * item.quantity).toLocaleString('es-CO')}`).join('\n') +
                     `\n\n💰 *Total: $${cartTotal.toLocaleString('es-CO')}*` +
