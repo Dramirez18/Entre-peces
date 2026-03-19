@@ -1,20 +1,19 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Entre Peces
 
-# Run and deploy your AI Studio app
+Marketplace de acuariofilia de agua dulce en Colombia.
 
-This contains everything you need to run your app locally.
+## Tech Stack
 
-View your app in AI Studio: https://ai.studio/apps/f0378610-c275-4119-b501-572759ea3630
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
 
-## Run Locally
+## Setup
 
-**Prerequisites:**  Node.js
+```bash
+npm install
+npm run dev
+```
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Abre http://localhost:3000

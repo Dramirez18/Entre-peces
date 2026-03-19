@@ -1,0 +1,1197 @@
+[
+  {
+    "name": "barbo tigre",
+    "description": "Pez muy activo con rayas negras verticales.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "betta crowntail",
+    "description": "Betta con aletas en forma de corona.",
+    "image": "https://images.unsplash.com/photo-1534043464124-3be32fe000c9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "betta halfmoon",
+    "description": "Betta con aletas en forma de media luna.",
+    "image": "https://images.unsplash.com/photo-1534043464124-3be32fe000c9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "betta macho",
+    "description": "Pez combatiente de hermosas aletas.",
+    "image": "https://images.unsplash.com/photo-1534043464124-3be32fe000c9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "colisa lalia",
+    "description": "Pez laberinto de colores azul y rojo vibrantes.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "corydora albina",
+    "description": "Pez de fondo pacífico y excelente limpiador.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "corydora bronce",
+    "description": "Corydora clásica de color bronce metálico.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "corydora julii",
+    "description": "Corydora con patrón de puntos finos y elegantes.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "corydora panda",
+    "description": "Corydora con manchas negras en ojos y cola.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "corydora pimienta",
+    "description": "Corydora con manchas oscuras tipo pimienta.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "corydora sterbai",
+    "description": "Corydora con aletas naranjas y puntos blancos.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "cucha albina",
+    "description": "Limpiador de vidrios de coloración clara.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "cucha albina de punto",
+    "description": "Cucha con patrón de puntos finos.",
+    "image": "https://i.postimg.cc/rF9bQWTM/Albina_de_punto.jpg"
+  },
+  {
+    "name": "cucha albina lisa",
+    "description": "Variedad de cucha con piel más lisa.",
+    "image": "https://i.postimg.cc/3JZ6nphM/Albina_lisa.jpg"
+  },
+  {
+    "name": "cucha atabapo",
+    "description": "Pleco mariposa con capacidad de cambiar de color.",
+    "image": "https://i.postimg.cc/pLXS7TVV/Atabapo.jpg"
+  },
+  {
+    "name": "cucha bandera",
+    "description": "Pleco con aletas de color naranja vibrante.",
+    "image": "https://i.postimg.cc/tCzf2PbR/Bandera.jpg"
+  },
+  {
+    "name": "cucha carachama",
+    "description": "Pleco espinoso de gran tamaño.",
+    "image": "https://i.postimg.cc/VLFTDMwJ/Carachama.jpg"
+  },
+  {
+    "name": "cucha cebra fina",
+    "description": "L-number muy buscado por su patrón definido.",
+    "image": "https://i.postimg.cc/135dTtRt/Cebra_fina.jpg"
+  },
+  {
+    "name": "cucha chenguele",
+    "description": "Pleco negro con puntos blancos brillantes.",
+    "image": "https://i.postimg.cc/rwFHbmyR/VAMPIRO.jpg"
+  },
+  {
+    "name": "cucha común",
+    "description": "El pleco más común y resistente.",
+    "image": "https://i.postimg.cc/bwN5MJYC/Hypostomuns.jpg"
+  },
+  {
+    "name": "cucha del magdalena",
+    "description": "Pez látigo originario del río Magdalena.",
+    "image": "https://i.postimg.cc/SNG5D84q/Magdalena.jpg"
+  },
+  {
+    "name": "cucha diamante azul l-128",
+    "description": "Pleco de coloración azulada con puntos claros.",
+    "image": "https://i.postimg.cc/VkLhT6sb/Azul_L128.jpg"
+  },
+  {
+    "name": "cucha diamante plana",
+    "description": "Pleco de cuerpo aplanado y puntos blancos.",
+    "image": "https://i.postimg.cc/GmhfN23k/Diamante_plana.jpg"
+  },
+  {
+    "name": "cucha falsa cebra",
+    "description": "Pleco con patrón de rayas similar a la cebra.",
+    "image": "https://i.postimg.cc/mg2nqDZ2/Falsa_cebra.jpg"
+  },
+  {
+    "name": "cucha guacacebra",
+    "description": "Pleco con patrón de manchas grandes y definidas.",
+    "image": "https://i.postimg.cc/RZVY8FCP/Guacacebra.jpg"
+  },
+  {
+    "name": "cucha lapicero",
+    "description": "Pez con forma de rama, excelente camuflaje.",
+    "image": "https://i.postimg.cc/8zKYVSsL/Lapicero.jpg"
+  },
+  {
+    "name": "cucha piña",
+    "description": "Pequeño pleco con patrón de rayas marrones.",
+    "image": "https://i.postimg.cc/XYHP0bXP/Piña.jpg"
+  },
+  {
+    "name": "cucha policia",
+    "description": "Pez gato acorazado de forma muy estilizada.",
+    "image": "https://i.postimg.cc/8zKYVSs0/Policia.jpg"
+  },
+  {
+    "name": "cucha punto naranja",
+    "description": "Pleco oscuro con puntos de color naranja.",
+    "image": "https://i.postimg.cc/SxTPphj3/Punto_naranja.jpg"
+  },
+  {
+    "name": "cucha punto oro",
+    "description": "Pleco negro con grandes puntos amarillos.",
+    "image": "https://i.postimg.cc/x1xZS2cV/Punto_de_oro.jpg"
+  },
+  {
+    "name": "cucha xenocara albina de velo",
+    "description": "Ancistrus albino con aletas largas y elegantes.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "danio cebra",
+    "description": "Pez muy activo y resistente con rayas horizontales.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "danio leopardo",
+    "description": "Variedad de danio con puntos tipo leopardo.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "disco blue diamond",
+    "description": "Pez disco de color azul sólido brillante.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "disco checkbord 4 cm",
+    "description": "Cíclido disco con patrón de tablero de ajedrez.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "disco pigeon blood",
+    "description": "Disco de color naranja con puntos blancos.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "disco red turquoise",
+    "description": "Disco con rayas rojas y turquesas.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "emperador arcoiris",
+    "description": "Tetra emperador con reflejos multicolores.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "escalar común",
+    "description": "Pez ángel clásico de rayas negras.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "escalar gold",
+    "description": "Escalar de color dorado brillante.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "escalar koi",
+    "description": "Escalar con manchas naranjas, blancas y negras.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "escalar mármol",
+    "description": "Escalar con patrón de manchas blancas y negras.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "escalar negro",
+    "description": "Escalar de color negro sólido muy elegante.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "escalar plateado",
+    "description": "Escalar de color plateado con reflejos metálicos.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "espada neón",
+    "description": "Pez espada con reflejos neón.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "espada roja",
+    "description": "Pez espada de color rojo intenso.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "gancho amarillo 5cm",
+    "description": "Pez activo con aletas amarillas vibrantes.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "gancho azul",
+    "description": "Pez de nado rápido y reflejos azulados.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "golfish ranchun 6 cm",
+    "description": "Goldfish de forma redondeada y sin aleta dorsal.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "gourami azul",
+    "description": "Gourami de tres puntos de color azul.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "gourami perla",
+    "description": "Gourami con patrón de puntos perlados.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "guppy black metal pareja",
+    "description": "Pareja de guppys de coloración oscura metálica.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "guppy hembra comercial",
+    "description": "Hembras de guppy resistentes.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "guppy mosaico macho",
+    "description": "Macho con cola de patrón mosaico.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "hoplocharax goethe",
+    "description": "Tetra raro y muy apreciado por coleccionistas.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "hopplo comun",
+    "description": "Pez gato acorazado muy pacífico.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "iguano linea roja",
+    "description": "Variedad de iguano con una marcada línea roja.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "juan viejo surinamensis 10cm",
+    "description": "Cíclido comedor de tierra con hermosos reflejos.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "lenguado agua salubre",
+    "description": "Pez plano curioso para acuarios específicos.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "leporino rayado",
+    "description": "Pez con rayas amarillas y negras muy marcadas.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "loricarida",
+    "description": "Pez látigo de cuerpo acorazado.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "mojarra fina",
+    "description": "Pez autóctono de cuerpo comprimido.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "molly balón",
+    "description": "Molly de cuerpo redondeado y colores variados.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "molly mármol",
+    "description": "Molly con patrón de manchas blancas y negras.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "monja blanca",
+    "description": "Variedad albina de la monjita común.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "nannostomus linea roja",
+    "description": "Pez lápiz con una marcada línea roja lateral.",
+    "image": "https://i.postimg.cc/fTspcC61/Nanostomus_Linea_roja.jpg"
+  },
+  {
+    "name": "nannostomus trifasciatus",
+    "description": "Pez lápiz de tres bandas, muy colorido.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "oscar albino",
+    "description": "Variedad albina del cíclido Oscar.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "oscar tigre 6 cm",
+    "description": "Cíclido grande y muy inteligente.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "panaque de punto",
+    "description": "Panaque de gran tamaño con patrón moteado.",
+    "image": "https://i.postimg.cc/SxTPphJ4/Real_de_punto.jpg"
+  },
+  {
+    "name": "panaque de raya",
+    "description": "El famoso Royal Pleco con rayas grises y negras.",
+    "image": "https://i.postimg.cc/MpPL8Svz/Real_de_rayas.jpg"
+  },
+  {
+    "name": "parrot polar blue pareja",
+    "description": "Pareja de cíclidos loro azul de tamaño pequeño.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "pez hoja 4 cm",
+    "description": "Maestro del camuflaje, parece una hoja seca.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "pez hoja 7 cm",
+    "description": "Ejemplar adulto del pez hoja.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "platy azul",
+    "description": "Platy de color azul metálico.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "platy red top",
+    "description": "Platy con la parte superior roja.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "platy verde esmeralda",
+    "description": "Platy de coloración verde brillante.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "ramirezi amarillo",
+    "description": "Cíclido enano de coloración amarilla intensa.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "ramirezi full color",
+    "description": "Ejemplares con coloración máxima.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "rasbora arlequín",
+    "description": "Pequeño pez con una mancha negra en forma de cuña.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "telescopio 5 cm",
+    "description": "Goldfish con ojos protuberantes.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "telescopio 6 cm",
+    "description": "Pez telescopio de tamaño medio.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "telescopio 7 cm",
+    "description": "Pez telescopio de tamaño medio-grande.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "telescopio 8 cm",
+    "description": "Ejemplar grande de pez telescopio.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "terror verde",
+    "description": "Cíclido imponente de colores verdes y naranjas.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tetra alemán",
+    "description": "Variedad de tetra con colores muy definidos.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tetra azul",
+    "description": "Tetra de coloración azul metálica.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tetra brillante",
+    "description": "Tetra con escamas que reflejan la luz como diamantes.",
+    "image": "https://i.postimg.cc/sxY8FGZc/brillante.jpg"
+  },
+  {
+    "name": "tetra cardenal",
+    "description": "Pez brillante con una franja roja que recorre todo su cuerpo.",
+    "image": "https://i.postimg.cc/52wJWYbC/cardenal.jpg"
+  },
+  {
+    "name": "tetra corazón",
+    "description": "Conocido como tetra corazón sangrante.",
+    "image": "https://i.postimg.cc/KcBC3ws8/Corazon_sangrante.jpg"
+  },
+  {
+    "name": "tetra diamante",
+    "description": "Tetra con reflejos plateados intensos.",
+    "image": "https://i.postimg.cc/x8v7rNb7/Diamante.jpg"
+  },
+  {
+    "name": "tetra hilo negro",
+    "description": "Tetra con aletas alargadas tipo hilo.",
+    "image": "https://i.postimg.cc/gkK5NRWt/Hilo_negro.jpg"
+  },
+  {
+    "name": "tetra iguano",
+    "description": "Tetra de cuerpo alargado y colores verdosos.",
+    "image": "https://i.postimg.cc/9XZswKNy/Iguanodonte.jpg"
+  },
+  {
+    "name": "tetra llama",
+    "description": "Tetra de color rojo fuego en la parte posterior.",
+    "image": "https://i.postimg.cc/QxDwQmRm/Llama.jpg"
+  },
+  {
+    "name": "tetra loreto",
+    "description": "Tetra elegante con una franja negra y dorada.",
+    "image": "https://i.postimg.cc/GhRVFKZv/Loreto.jpg"
+  },
+  {
+    "name": "tetra malirole",
+    "description": "Tetra pacífico ideal para acuarios plantados.",
+    "image": "https://i.postimg.cc/nVBN9gwv/marilore.jpg"
+  },
+  {
+    "name": "tetra matupiri",
+    "description": "Tetra de nado rápido y colores plateados.",
+    "image": "https://i.postimg.cc/J7ZSHvd5/matupiri.jpg"
+  },
+  {
+    "name": "tetra neón",
+    "description": "El clásico tetra neón, azul y rojo brillante.",
+    "image": "https://i.postimg.cc/prf7N5nD/Neon.jpg"
+  },
+  {
+    "name": "tetra neón negro",
+    "description": "Elegante tetra con franjas negras y blancas.",
+    "image": "https://i.postimg.cc/hPn6LsHL/Neon_negro.jpg"
+  },
+  {
+    "name": "tetra neón verde",
+    "description": "Similar al neón pero con una franja verde azulada más larga.",
+    "image": "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tetra pencil",
+    "description": "Pez lápiz con nado oblicuo característico.",
+    "image": "https://i.postimg.cc/KjPVX3gD/Pencil.jpg"
+  },
+  {
+    "name": "tetra pinguino",
+    "description": "Tetra que nada en ángulo con una franja negra oblicua.",
+    "image": "https://i.postimg.cc/QxDwQmRy/Pinguino.jpg"
+  },
+  {
+    "name": "tetra pulcher",
+    "description": "Tetra de ojos brillantes y colores suaves.",
+    "image": "https://i.postimg.cc/KvbwPf6h/Pulcher.jpg"
+  },
+  {
+    "name": "tetra rodostomo",
+    "description": "Conocido por su nariz roja y cola rayada.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tetra rojito x 12",
+    "description": "Combo de 12 tetras rojos.",
+    "image": "https://i.postimg.cc/yxm5q3SQ/Rojito_fino.jpg"
+  },
+  {
+    "name": "tetra rosado x 1",
+    "description": "Tetra con una línea rosada brillante.",
+    "image": "https://i.postimg.cc/MH74kfj3/Rosado.jpg"
+  },
+  {
+    "name": "tetra rubi",
+    "description": "Pequeño tetra de color rojo intenso.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tetra spirilus",
+    "description": "Tetra de nado activo y colores plateados.",
+    "image": "https://i.postimg.cc/VLFTDM82/Spirilus.jpg"
+  },
+  {
+    "name": "tiburon colombiano",
+    "description": "Pez gato que asemeja a un tiburón.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tiburon cuatro líneas 7cm",
+    "description": "Pez activo con patrón de líneas longitudinales.",
+    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "anubia nana",
+    "description": "Planta de crecimiento lento, muy resistente.",
+    "image": "https://images.unsplash.com/photo-1509100194014-d49809396daa?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "espada amazónica",
+    "description": "Planta de fondo con hojas grandes y verdes.",
+    "image": "https://images.unsplash.com/photo-1516528387618-afa90b13e000?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "camarón red cherry",
+    "description": "Pequeño camarón rojo, excelente limpiador.",
+    "image": "https://i.postimg.cc/9MnTWLy5/Parana2.jpg"
+  },
+  {
+    "name": "acualeaf forte 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf forte 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf forte 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf fósforo 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf fósforo 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf fósforo 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf gh-up 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf gh-up 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf gh-up 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf hierro 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf hierro 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf hierro 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf macros 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf macros 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf macros 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf micros 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf micros 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf micros 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf nitrógeno 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf nitrógeno 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf nitrógeno 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf potasio 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf potasio 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf potasio 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf total 120ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf total 240ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "acualeaf total 450ml",
+    "description": "Fertilizante líquido de alta calidad para plantas de acuario.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "tijeras spring",
+    "description": "Tijeras de precisión para poda en acuarios plantados.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "kit de 5 herramientas aquascaping negro",
+    "description": "Set completo de herramientas para el mantenimiento profesional de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sustrato amazonia deacua 3litros x bolsa",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "flourite black 3.5 kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "flourite black 7kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "flourite red 3.5 kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "flourite red 7 kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "aquasolum 2kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "aquasolum 4 kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "shrimp sand x bolsa de 2kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "aqua sand x bolsa de 4kg",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "aqua soil 3l",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "aqua soil 9l",
+    "description": "Sustrato nutritivo ideal para el crecimiento vigoroso de las plantas.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "co2 booster 237ml",
+    "description": "Suplemento de carbono líquido para plantas.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "co2 booster 473ml",
+    "description": "Suplemento de carbono líquido para plantas.",
+    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "cilindro de aluminio 2 litros (descargado)",
+    "description": "Cilindro para sistema de CO2 profesional.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "regulador de co2 con solenoide",
+    "description": "Regulador de precisión para control automático de CO2.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "calentador heatup 25",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "calentador heatup 50",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "calentador heatup 100",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "calentador heatup 300",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato ht 100w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato ht 200w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato ht 300w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato nano 15w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato nano 75w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato rising 100w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "termostato rising 200w",
+    "description": "Termostato sumergible de alta precisión para mantener la temperatura ideal.",
+    "image": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "biomaster 250",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "biomaster 600",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "biomaster 850",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtosmart 60",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtosmart 100",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtosmart 300",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "bioplus 50",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "bioplus 100",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "bioplus 200",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtro cascada alto oxigeno ca-f-017-sk250",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtro cascada alto oxigeno ca-f-017-sk850",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtro de canasta d-aex- 230",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtro de canasta d-aex- 450",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "filtro externo 500 l/h minicanister",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "matrix 500ml",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "purigen 100 ml",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "nitra-zorb sz 6",
+    "description": "Sistema de filtración eficiente para un agua cristalina y saludable.",
+    "image": "https://images.unsplash.com/photo-1524591431368-c26985ec246d?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "nutridiet betta 30gr",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "red bee shrimp alimento para gambas",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera vipagran nature frasco x 80g",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera vipan nature frasco x 60g",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera discus granulat nature frasco x 105g",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera goldy nature frasco x 60g",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera koi professional spirulina 500g",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera raffy p nature x 55g",
+    "description": "Alimento balanceado con ingredientes naturales para una nutrición óptima.",
+    "image": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "prime 100 ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "prime 500 ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "stability 100 ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "stability 500ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "clarity 100ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "pristine 100ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "stressguard 50 ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "amguard 100 ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "melafix 118ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "pimafix 118ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "quick start 118ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "stress coat 118ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera aquatan x 100ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera bio nitrivec x 50ml",
+    "description": "Acondicionador esencial para preparar el agua y proteger a tus peces.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "roca dragón x kilo",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "roca seiryu x kilo",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "roca volcánica negra x kilo",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "driftwood pequeña (15 a 20cm)",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "driftwood mediana (25 a 30cm)",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "madera dragón mediana (20 a 30cm)",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "pearl beach 3.5 kg",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "meridian 3.5 kg",
+    "description": "Elementos naturales para crear un paisaje acuático impresionante.",
+    "image": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "5 en 1 test strips tubo x 25 unidades",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "ammonia test kit",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "calcium test kit",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "freshwater master test kit",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "gh y kh test kit",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "ph test kit",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "nitrite test kit",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "medidor electronico tds",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "ph alert",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "ammonia alert",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "sera quick test 6 en 1 x 50 tiras",
+    "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
+    "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "serie a301 ii",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "serie a601 ii",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "serie a1201 ii",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "serie b 20",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "serie b 60",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "serie b 120",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "wrgbii slim 30",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "wrgbii slim 60",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "wrgbii slim 120",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "wrgbii60",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "wrgbii90",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "rgb vivid mini",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  },
+  {
+    "name": "rgb vividii th10 anniversary",
+    "description": "Iluminación LED de espectro completo para resaltar los colores y el crecimiento.",
+    "image": "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?auto=format&fit=crop&q=80&w=400"
+  }
+]

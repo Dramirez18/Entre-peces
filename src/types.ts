@@ -9,6 +9,7 @@ export interface Product {
   category: Category;
   image: string;
   stock: number;
+  size?: string | null;
   active?: boolean;
 }
 
