@@ -230,6 +230,23 @@ export default function App() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('entrepeces_favs');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+
+  // Persist favorites
+  useEffect(() => {
+    localStorage.setItem('entrepeces_favs', JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = useCallback((productId: string) => {
+    setFavorites(prev =>
+      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+    );
+  }, []);
 
   // Persist cart to localStorage
   useEffect(() => {
@@ -294,12 +311,20 @@ export default function App() {
   // Reset page when filters change
   useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortBy]);
 
-  // Paginated products
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  // Paginated products - Home shows only 8 featured, categories paginate normally
+  const isHomeFeatured = activeTab === 'Inicio' && !searchQuery;
+  const totalPages = isHomeFeatured ? 1 : Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = useMemo(() => {
+    if (isHomeFeatured) {
+      // Show top 8 products from Peces category (most popular) sorted by price desc
+      return [...filteredProducts]
+        .filter(p => p.category === 'Peces')
+        .sort((a, b) => b.price - a.price)
+        .slice(0, 8);
+    }
     const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
     return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
-  }, [filteredProducts, currentPage]);
+  }, [filteredProducts, currentPage, isHomeFeatured]);
 
   const productCountByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -596,7 +621,7 @@ export default function App() {
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-12 relative rounded-3xl overflow-hidden aspect-[21/9] bg-brand-dark flex items-center"
+            className="mb-8 md:mb-12 relative rounded-2xl md:rounded-3xl overflow-hidden aspect-[16/10] md:aspect-[21/9] bg-brand-dark flex items-end md:items-center"
           >
             <img
               src="https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=1200"
@@ -604,12 +629,13 @@ export default function App() {
               className="absolute inset-0 w-full h-full object-cover opacity-40"
               referrerPolicy="no-referrer"
             />
-            <div className="relative z-10 px-8 md:px-12 max-w-2xl">
-              <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 leading-tight">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent md:bg-none" />
+            <div className="relative z-10 px-6 pb-6 md:px-12 md:pb-0 max-w-2xl">
+              <h2 className="text-2xl md:text-6xl font-bold text-white mb-2 md:mb-4 leading-tight">
                 Tu pasión por el agua, <br />
                 <span className="text-cyan-300">en un solo lugar.</span>
               </h2>
-              <p className="text-white/80 text-base md:text-lg mb-8">
+              <p className="text-white/80 text-sm md:text-lg mb-4 md:mb-8 hidden sm:block">
                 Descubre la mejor selección de peces, plantas y accesorios para tu acuario en Colombia.
               </p>
               <button
@@ -681,12 +707,16 @@ export default function App() {
         {/* Product Grid Header with Sort */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-slate-800">
-              {activeTab === 'Inicio' ? 'Productos Destacados' : activeTab}
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800">
+              {activeTab === 'Inicio' ? (searchQuery ? 'Resultados' : 'Productos Destacados') : activeTab}
             </h2>
-            <span className="text-slate-500 text-sm">{filteredProducts.length} productos</span>
+            <span className="text-slate-500 text-sm">
+              {activeTab === 'Inicio' && !searchQuery
+                ? `${Math.min(8, filteredProducts.length)} de ${filteredProducts.length} productos`
+                : `${filteredProducts.length} productos`}
+            </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className={`flex items-center gap-2 ${isHomeFeatured ? 'hidden' : ''}`}>
             <span className="text-xs text-slate-500">Ordenar:</span>
             <select
               value={sortBy}
@@ -760,7 +790,17 @@ export default function App() {
                     </span>
                   )}
                 </div>
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 right-2 flex items-center gap-1.5">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }}
+                    className={`p-1.5 rounded-full backdrop-blur transition-all ${
+                      favorites.includes(product.id)
+                        ? 'bg-red-500 text-white'
+                        : 'bg-white/80 text-slate-400 hover:text-red-500'
+                    }`}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${favorites.includes(product.id) ? 'fill-current' : ''}`} />
+                  </button>
                   <span className="bg-white/90 backdrop-blur px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider text-slate-500">
                     {product.category}
                   </span>
@@ -825,6 +865,19 @@ export default function App() {
             </motion.div>
           ))}
         </div>
+
+        {/* "Ver Catálogo" button on home */}
+        {isHomeFeatured && filteredProducts.length > 8 && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="bg-brand-blue text-white px-8 py-3 rounded-2xl font-bold hover:bg-brand-dark transition-colors flex items-center gap-2"
+            >
+              Ver Catálogo Completo
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
@@ -947,14 +1000,24 @@ export default function App() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 mt-6">
+                <div className="flex gap-2 mt-6">
                   <button
                     onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); setIsCartOpen(true); }}
                     disabled={selectedProduct.stock === 0}
-                    className="flex-1 bg-brand-blue text-white py-3.5 rounded-2xl font-bold hover:bg-brand-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                    className="flex-1 bg-brand-blue text-white py-3 rounded-2xl font-bold hover:bg-brand-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
                   >
-                    <ShoppingBag className="w-5 h-5" />
-                    Agregar al carrito
+                    <ShoppingBag className="w-4 h-4" />
+                    Agregar
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(selectedProduct.id)}
+                    className={`py-3 px-4 rounded-2xl font-bold transition-colors flex items-center gap-1.5 text-sm border-2 ${
+                      favorites.includes(selectedProduct.id)
+                        ? 'bg-red-50 border-red-300 text-red-500'
+                        : 'border-slate-200 text-slate-500 hover:border-red-300 hover:text-red-500'
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${favorites.includes(selectedProduct.id) ? 'fill-current' : ''}`} />
                   </button>
                   <a
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -962,10 +1025,9 @@ export default function App() {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-green-500 text-white py-3.5 px-5 rounded-2xl font-bold hover:bg-green-600 transition-colors flex items-center gap-2 text-sm"
+                    className="bg-green-500 text-white py-3 px-4 rounded-2xl font-bold hover:bg-green-600 transition-colors flex items-center text-sm"
                   >
-                    <Phone className="w-5 h-5" />
-                    WhatsApp
+                    <Phone className="w-4 h-4" />
                   </a>
                 </div>
               </div>
