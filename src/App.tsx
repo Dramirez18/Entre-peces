@@ -429,12 +429,12 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans">
       {/* Header */}
       <header className="bg-brand-blue text-white sticky top-0 z-40 shadow-lg">
-        <div className="w-full px-4 md:px-8 lg:px-16 xl:px-24 h-16 flex items-center">
+        <div className="w-full px-6 md:px-10 lg:px-16 xl:px-24 h-16 flex items-center gap-6 md:gap-8 lg:gap-12">
           {/* Left: Hamburger + Logo */}
-          <div className="flex items-center gap-3 md:gap-4 shrink-0">
+          <div className="flex items-center gap-4 md:gap-5 shrink-0">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-2.5 hover:bg-white/10 rounded-lg transition-colors"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -453,7 +453,7 @@ export default function App() {
           </div>
 
           {/* Center: Search bar — fills all available space */}
-          <div className="flex-1 mx-6 md:mx-12 lg:mx-20 xl:mx-28">
+          <div className="flex-1">
             <div className="relative max-w-4xl mx-auto">
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
