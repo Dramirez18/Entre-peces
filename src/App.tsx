@@ -738,15 +738,13 @@ export default function App() {
 
         {/* ===== CONOCIMIENTO SECTION ===== */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <section id="conocimiento" className="mb-16 mt-8">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-white" />
+          <section id="conocimiento" className="mb-16 mt-12 md:mt-16 lg:mt-20">
+            <div className="text-center mb-10 md:mb-12">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-7 h-7 text-white" />
               </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Conocimiento</h2>
-                <p className="text-sm text-slate-500">Aprende sobre acuariofilia y mejora tu acuario</p>
-              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Conocimiento</h2>
+              <p className="text-sm md:text-base text-slate-500">Aprende sobre acuariofilia y mejora tu acuario</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -867,17 +865,30 @@ export default function App() {
         )}
 
         {/* Product Grid Header with Sort */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800">
-              {activeTab === 'Inicio' ? (searchQuery ? 'Resultados' : 'Productos Destacados') : activeTab}
+        <div className="mt-12 md:mt-16 lg:mt-20 mb-8">
+          {activeTab === 'Inicio' && !searchQuery ? (
+            <div className="text-center mb-10">
+              <div className="w-14 h-14 rounded-2xl bg-brand-blue flex items-center justify-center mx-auto mb-4">
+                <Star className="w-7 h-7 text-white" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Productos Destacados</h2>
+              <p className="text-sm md:text-base text-slate-500">Los peces más vendidos esta semana</p>
+            </div>
+          ) : (
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-1">
+              {searchQuery ? 'Resultados' : activeTab}
             </h2>
+          )}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <span className="text-slate-500 text-sm">
               {activeTab === 'Inicio' && !searchQuery
                 ? `${Math.min(8, filteredProducts.length)} de ${filteredProducts.length} productos`
                 : `${filteredProducts.length} productos`}
             </span>
           </div>
+        </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
+          <div></div>
           <div className={`flex items-center gap-2 ${isHomeFeatured ? 'hidden' : ''}`}>
             <span className="text-xs text-slate-500">Ordenar:</span>
             <select
