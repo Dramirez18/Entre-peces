@@ -3,19 +3,19 @@ import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 const SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=1600',
+    image: 'https://i.postimg.cc/cJ4tpdqZ/Disco-snake-skin-Photoroom.jpg',
     title: 'Tu pasión por el agua,',
     highlight: 'en un solo lugar.',
     subtitle: 'Descubre la mejor selección de peces, plantas y accesorios para tu acuario en Colombia.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?auto=format&fit=crop&q=80&w=1600',
+    image: 'https://i.postimg.cc/Cx0q4jmM/Disco-salvaje-Photoroom.jpg',
     title: 'Peces tropicales',
     highlight: 'de todo el mundo.',
     subtitle: 'Discos, Bettas, Tetras, Cuchas y más de 90 especies disponibles.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=1600',
+    image: 'https://i.postimg.cc/m2HDJttQ/Disco-red-valantine-2-Photoroom.jpg',
     title: 'Acuarios plantados',
     highlight: 'llenos de vida.',
     subtitle: 'Todo lo que necesitas: CO2, sustratos, fertilizantes, herramientas y lámparas.',
@@ -46,21 +46,24 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
     <section className="mb-8 md:mb-12 relative rounded-2xl md:rounded-3xl overflow-hidden bg-brand-dark">
       {/* Aspect ratio container */}
       <div className="relative aspect-[16/10] sm:aspect-[21/9] lg:aspect-[24/9] flex items-end md:items-center">
-        {/* Background images — crossfade */}
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-[#0a2540] to-cyan-900" />
+
+        {/* Fish images — crossfade, positioned right */}
         {SLIDES.map((s, i) => (
           <img
             key={i}
             src={s.image}
             alt=""
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              i === current ? 'opacity-50' : 'opacity-0'
+            className={`absolute right-0 md:right-[5%] top-1/2 -translate-y-1/2 h-[80%] md:h-[90%] object-contain transition-all duration-1000 drop-shadow-[0_0_40px_rgba(0,200,255,0.3)] ${
+              i === current ? 'opacity-80 scale-100' : 'opacity-0 scale-90'
             }`}
             referrerPolicy="no-referrer"
           />
         ))}
 
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+        {/* Gradient overlays for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent md:hidden" />
 
         {/* Content */}

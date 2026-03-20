@@ -71,6 +71,31 @@ def register_client(name: str, email: str, phone: str, address: str) -> bool:
         return "error"
 
 
+def login_client(email: str) -> dict | None:
+    """Look up a client by email in Google Sheets. Returns client data or None."""
+    try:
+        result = sheets_service.spreadsheets().values().get(
+            spreadsheetId=SPREADSHEET_ID,
+            range=f"'{SHEET_NAME}'!A4:D1000",
+        ).execute()
+        rows = result.get("values", [])
+        for row in rows:
+            while len(row) < 4:
+                row.append("")
+            row_email = row[1].strip().lower()
+            if row_email == email.strip().lower():
+                return {
+                    "name": row[0].strip(),
+                    "email": row[1].strip(),
+                    "phone": row[2].strip(),
+                    "address": row[3].strip(),
+                }
+        return None
+    except Exception as e:
+        print(f"Error looking up client: {e}")
+        return None
+
+
 ORDERS_SHEET = "Pedidos del dia"
 
 
@@ -108,6 +133,8 @@ class Handler(BaseHTTPRequestHandler):
 
         if self.path == "/api/register":
             self._handle_register(body)
+        elif self.path == "/api/login":
+            self._handle_login(body)
         elif self.path == "/api/order":
             self._handle_order(body)
         else:
@@ -135,6 +162,21 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self._json_response(500, {"error": "Error al registrar"})
 
+        except json.JSONDecodeError:
+            self._json_response(400, {"error": "JSON inválido"})
+
+    def _handle_login(self, body: bytes):
+        try:
+            data = json.loads(body)
+            email = data.get("email", "").strip()
+            if not email:
+                self._json_response(400, {"error": "Correo requerido"})
+                return
+            client = login_client(email)
+            if client:
+                self._json_response(200, {"success": True, "user": client})
+            else:
+                self._json_response(404, {"success": False, "error": "No encontramos una cuenta con ese correo"})
         except json.JSONDecodeError:
             self._json_response(400, {"error": "JSON inválido"})
 
@@ -182,6 +224,7 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     print(f"Entre Peces API server running on http://localhost:{PORT}")
     print(f"  POST /api/register -> Google Sheets '{SHEET_NAME}'")
+    print(f"  POST /api/login   -> Google Sheets '{SHEET_NAME}' (validar email)")
     print(f"  POST /api/order   -> Google Sheets '{ORDERS_SHEET}'")
     server = HTTPServer(("", PORT), Handler)
     try:

@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Category {
+  Peces
+  Plantas
+  Camarones
+  Plantados
+  Termostatos
+  Filtros
+  Alimentos
+  Acondicionadores
+  Gravilla
+  Medidores
+  Lamparas
+}
+
+model Product {
+  id             String      @id
+  name           String
+  scientificName String?
+  description    String
+  price          Int
+  category       Category
+  image          String
+  stock          Int         @default(10)
+  size           String?
+  active         Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  orderItems     OrderItem[]
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String
+  address   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  clientId  Int
+  client    Client      @relation(fields: [clientId], references: [id])
+  address   String
+  date      String
+  time      String
+  total     Int
+  createdAt DateTime    @default(now())
+
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+  name      String
+  quantity  Int      @default(1)
+  price     Int
+
+  @@index([orderId])
+}

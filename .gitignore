@@ -30,3 +30,5 @@ coverage/
 # Temp
 *.tmp
 *.bak
+
+/src/generated/prisma
