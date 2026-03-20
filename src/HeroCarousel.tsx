@@ -43,7 +43,7 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
   const slide = SLIDES[current];
 
   return (
-    <section className="mb-8 md:mb-12 relative rounded-2xl md:rounded-3xl overflow-hidden bg-brand-dark">
+    <section className="mb-10 md:mb-14 relative rounded-2xl md:rounded-3xl overflow-hidden bg-brand-dark shadow-xl">
       {/* Aspect ratio container */}
       <div className="relative aspect-[16/10] sm:aspect-[21/9] lg:aspect-[24/9] flex items-end md:items-center">
         {/* Background gradient */}
@@ -67,7 +67,7 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent md:hidden" />
 
         {/* Content */}
-        <div className="relative z-10 px-8 pb-10 md:px-16 lg:px-24 md:pb-0 max-w-3xl">
+        <div className="relative z-10 px-8 pb-10 md:px-20 lg:px-28 md:pb-0 max-w-3xl">
           <h2
             key={current}
             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-5 leading-tight animate-[fadeInUp_0.6s_ease-out]"

@@ -907,7 +907,7 @@ export default function App() {
                     key={name}
                     whileHover={{ y: -6, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
                     onClick={() => { setActiveTab(name as Category); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    className="group p-6 md:p-7 lg:p-8 rounded-2xl bg-white border border-slate-200 hover:border-transparent transition-all text-center relative overflow-hidden"
+                    className="group p-6 md:p-7 lg:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-transparent transition-all text-center relative overflow-hidden"
                   >
                     {/* Gradient overlay on hover */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
@@ -951,7 +951,7 @@ export default function App() {
               {/* Noticias */}
               <motion.div
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
+                className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
               >
                 <div className="h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-t-3xl" />
                 <div className="p-7 lg:p-8 flex flex-col flex-1">
@@ -986,7 +986,7 @@ export default function App() {
               {/* Datos Curiosos */}
               <motion.div
                 whileHover={{ y: -6 }}
-                className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
+                className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
               >
                 <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-400 rounded-t-3xl" />
                 <div className="p-7 lg:p-8 flex flex-col flex-1">
@@ -1022,7 +1022,7 @@ export default function App() {
                 onClick={() => setIsCompatOpen(true)}
                 role="button"
                 tabIndex={0}
-                className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
+                className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
               >
                 <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-green-400 rounded-t-3xl" />
                 <div className="p-7 lg:p-8 flex flex-col flex-1">
@@ -1067,7 +1067,7 @@ export default function App() {
         )}
 
         {/* Product Grid Header with Sort */}
-        <div className="mt-12 md:mt-16 lg:mt-20 mb-8">
+        <div className="mt-14 md:mt-20 lg:mt-24 mb-10">
           {activeTab === 'Inicio' && !searchQuery ? (
             <div className="text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-2">
@@ -1137,14 +1137,14 @@ export default function App() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-7">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6 lg:gap-8">
           {paginatedProducts.map((product) => (
             <motion.div
               layout
               key={product.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-brand-blue/20 transition-all duration-300 group flex flex-col cursor-pointer"
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-xl hover:border-brand-blue/20 transition-all duration-300 group flex flex-col cursor-pointer"
               onClick={() => setSelectedProduct(product)}
             >
               {/* Image */}
@@ -1194,7 +1194,7 @@ export default function App() {
               </div>
 
               {/* Info */}
-              <div className="px-4 sm:px-5 py-4 sm:py-5 flex-1 flex flex-col">
+              <div className="px-5 sm:px-6 py-5 sm:py-6 flex-1 flex flex-col">
                 {/* Price first - MercadoLibre style */}
                 <span className="text-lg sm:text-xl font-bold text-slate-900">
                   ${product.price.toLocaleString('es-CO')}
@@ -1859,7 +1859,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 md:py-16">
-        <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-14">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 text-white mb-4">
               <img
@@ -1912,7 +1912,7 @@ export default function App() {
           </div>
           <div>
             <h4 className="text-white font-bold mb-4">Categorías</h4>
-            <ul className="grid grid-cols-2 gap-2 text-sm">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm">
               {Object.keys(CATEGORY_DATA).map(cat => (
                 <li key={cat} className="hover:text-white cursor-pointer transition-colors" onClick={() => setActiveTab(cat as any)}>{cat}</li>
               ))}
@@ -1920,7 +1920,7 @@ export default function App() {
           </div>
           <div>
             <h4 className="text-white font-bold mb-4">Información</h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-sm">
               <li className="hover:text-white cursor-pointer transition-colors">Sobre Nosotros</li>
               <li className="hover:text-white cursor-pointer transition-colors">Envíos Nacionales</li>
               <li className="hover:text-white cursor-pointer transition-colors">Términos y Condiciones</li>
