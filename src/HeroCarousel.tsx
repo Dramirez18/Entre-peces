@@ -67,7 +67,7 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent md:hidden" />
 
         {/* Content */}
-        <div className="relative z-10 px-6 pb-8 md:px-16 lg:px-20 md:pb-0 max-w-3xl">
+        <div className="relative z-10 px-8 pb-10 md:px-16 lg:px-24 md:pb-0 max-w-3xl">
           <h2
             key={current}
             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-5 leading-tight animate-[fadeInUp_0.6s_ease-out]"

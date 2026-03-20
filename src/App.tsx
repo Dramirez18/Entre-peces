@@ -542,7 +542,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans bg-slate-50">
       {/* Header */}
       <header className="bg-brand-blue text-white sticky top-0 z-40 shadow-lg">
-        <div className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 h-16 md:h-[68px] flex items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
+        <div className="w-full px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 h-16 md:h-[68px] flex items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
           {/* Left: Hamburger + Logo */}
           <div className="flex items-center gap-4 md:gap-5 shrink-0">
             <button
@@ -837,7 +837,7 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white"
         >
-          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-3 flex items-center justify-between gap-3">
+          <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
                 <Table2 className="w-5 h-5" />
@@ -862,7 +862,7 @@ export default function App() {
         </motion.div>
       )}
 
-      <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-6 md:py-10">
+      <main className="flex-1 max-w-[1400px] mx-auto w-full px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-6 md:py-10">
         {/* ===== USER PROFILE PAGE ===== */}
         {activeTab === 'MiPerfil' && (
           <UserProfilePage
@@ -938,7 +938,7 @@ export default function App() {
 
         {/* ===== CONOCIMIENTO SECTION ===== */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <section id="conocimiento" style={{ marginTop: '40px', marginBottom: '40px' }}>
+          <section id="conocimiento" className="mt-12 md:mt-16 mb-12 md:mb-16">
             <div className="text-center mb-10 md:mb-12">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <BookOpen className="w-7 h-7 text-emerald-500" />
@@ -1243,7 +1243,7 @@ export default function App() {
 
         {/* "Ver Catálogo" button on home */}
         {isHomeFeatured && filteredProducts.length > 8 && (
-          <div className="flex flex-col items-center" style={{ marginTop: '40px', marginBottom: '60px' }}>
+          <div className="flex flex-col items-center mt-12 md:mt-16 mb-14 md:mb-20">
             <button
               onClick={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="bg-brand-blue text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-brand-dark transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
@@ -1859,7 +1859,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 md:py-16">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 text-white mb-4">
               <img
@@ -1928,7 +1928,7 @@ export default function App() {
             </ul>
           </div>
         </div>
-        <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 mt-12 pt-8 border-t border-slate-800 text-center text-xs">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 mt-12 pt-8 border-t border-slate-800 text-center text-xs">
           &copy; {new Date().getFullYear()} Entre Peces Colombia. Todos los derechos reservados.
         </div>
       </footer>
@@ -2158,7 +2158,7 @@ export default function App() {
                 </motion.div>
               </div>
 
-              <div className="p-6">
+              <div className="p-6 md:p-8">
                   {/* ── WELCOME STEP ── */}
                   {modalStep === 'welcome' && !user && (
                     <div className="space-y-4">
