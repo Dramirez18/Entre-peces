@@ -442,48 +442,89 @@ export default function App() {
     setIsLoggingIn(true);
     setLoginError('');
     try {
-      const res = await fetch(`${API_URL}/api/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginEmail }),
-      });
-      const data = await res.json();
-      if (data.success && data.user) {
-        setUser(data.user);
+      if (!supabase) throw new Error('Supabase no disponible');
+      const { data, error } = await supabase
+        .from('Client')
+        .select('name, email, phone, address')
+        .eq('email', loginEmail.trim().toLowerCase())
+        .limit(1)
+        .single();
+      if (error || !data) {
+        setLoginError('Correo no registrado. ¿Quieres crear una cuenta?');
+      } else {
+        setUser(data as User);
         setIsUserModalOpen(false);
         setModalStep('welcome');
         setLoginEmail('');
         setShowWelcomePopup(true);
         setTimeout(() => setShowWelcomePopup(false), 4000);
-      } else {
-        setLoginError(data.error || 'Correo no registrado');
       }
     } catch {
-      setLoginError('Error de conexión. Verifica que el servidor esté activo.');
+      setLoginError('Error de conexión. Intenta de nuevo.');
     }
     setIsLoggingIn(false);
   };
 
+  const handleGoogleLogin = async () => {
+    if (!supabase) return;
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+  };
+
+  // Listen for Supabase Auth state (Google OAuth callback)
+  useEffect(() => {
+    if (!supabase) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const gUser = session.user;
+        const name = gUser.user_metadata?.full_name || gUser.email?.split('@')[0] || '';
+        const email = gUser.email || '';
+        // Upsert into Client table
+        await supabase.from('Client').upsert({
+          name,
+          email,
+          phone: gUser.phone || '',
+          address: '',
+          updatedAt: new Date().toISOString(),
+        }, { onConflict: 'email' });
+        setUser({ name, email, phone: gUser.phone || '', address: '' });
+        setIsUserModalOpen(false);
+        setShowWelcomePopup(true);
+        setTimeout(() => setShowWelcomePopup(false), 4000);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRegistering(true);
-    setUser(registrationForm);
+    const formData = {
+      ...registrationForm,
+      email: registrationForm.email.trim().toLowerCase(),
+    };
+    setUser(formData);
 
-    // Save to Google Sheets in background
-    try {
-      await fetch(`${API_URL}/api/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(registrationForm),
-      });
-    } catch {
-      // Silent fail - registration saved locally regardless
+    // Save to Supabase Client table
+    if (supabase) {
+      try {
+        await supabase.from('Client').upsert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          updatedAt: new Date().toISOString(),
+        }, { onConflict: 'email' });
+      } catch {
+        // Saved locally regardless
+      }
     }
 
     setIsRegistering(false);
     setIsUserModalOpen(false);
     setModalStep('welcome');
-    // Show thank-you popup
     setShowWelcomePopup(true);
     setTimeout(() => setShowWelcomePopup(false), 5000);
   };
@@ -498,10 +539,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans bg-slate-50">
       {/* Header */}
       <header className="bg-brand-blue text-white sticky top-0 z-40 shadow-lg">
-        <div className="w-full px-6 md:px-10 lg:px-16 xl:px-24 h-16 flex items-center gap-6 md:gap-8 lg:gap-12">
+        <div className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 h-16 md:h-[68px] flex items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
           {/* Left: Hamburger + Logo */}
           <div className="flex items-center gap-4 md:gap-5 shrink-0">
             <button
@@ -525,14 +566,14 @@ export default function App() {
           </div>
 
           {/* Center: Search bar — fills all available space */}
-          <div className="flex-1">
-            <div className="relative max-w-4xl mx-auto">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <div className="flex-1 mx-2 md:mx-4 lg:mx-8">
+            <div className="relative max-w-3xl mx-auto">
+              <Search className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Buscar peces, plantas, accesorios..."
-                className="w-full bg-white text-slate-800 rounded-full py-3 pl-13 pr-6 text-base tracking-wide focus:outline-none focus:ring-2 focus:ring-cyan-300 transition-all placeholder:text-slate-400 placeholder:tracking-wider"
-                style={{ paddingLeft: '52px' }}
+                className="w-full bg-white/95 backdrop-blur-sm text-slate-800 rounded-full py-2.5 md:py-3 pr-5 text-sm md:text-base tracking-wide focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:bg-white transition-all placeholder:text-slate-400 placeholder:tracking-wider shadow-inner"
+                style={{ paddingLeft: '48px' }}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -796,7 +837,7 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white"
         >
-          <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 py-3 flex items-center justify-between gap-3">
+          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
                 <Table2 className="w-5 h-5" />
@@ -821,7 +862,7 @@ export default function App() {
         </motion.div>
       )}
 
-      <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 md:px-8 lg:px-12 py-8">
+      <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-6 md:py-10">
         {/* ===== USER PROFILE PAGE ===== */}
         {activeTab === 'MiPerfil' && (
           <UserProfilePage
@@ -1048,14 +1089,14 @@ export default function App() {
             </span>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-3">
           <div></div>
           <div className={`flex items-center gap-2 ${isHomeFeatured ? 'hidden' : ''}`}>
-            <span className="text-xs text-slate-500">Ordenar:</span>
+            <span className="text-xs text-slate-500 font-medium">Ordenar:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+              className="text-sm border border-slate-200 rounded-xl px-4 py-2 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 shadow-sm"
             >
               <option value="relevance">Relevancia</option>
               <option value="price-asc">Menor precio</option>
@@ -1096,7 +1137,7 @@ export default function App() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-7">
           {paginatedProducts.map((product) => (
             <motion.div
               layout
@@ -1153,9 +1194,9 @@ export default function App() {
               </div>
 
               {/* Info */}
-              <div className="px-5 py-4 flex-1 flex flex-col">
+              <div className="px-4 sm:px-5 py-4 sm:py-5 flex-1 flex flex-col">
                 {/* Price first - MercadoLibre style */}
-                <span className="text-xl font-bold text-slate-900">
+                <span className="text-lg sm:text-xl font-bold text-slate-900">
                   ${product.price.toLocaleString('es-CO')}
                 </span>
 
@@ -1659,19 +1700,44 @@ export default function App() {
                   onSubmit={async (e) => {
                     e.preventDefault();
                     setIsSubmittingOrder(true);
-                    // Send to Google Sheets
-                    try {
-                      await fetch(`${API_URL}/api/order`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          ...checkoutForm,
-                          productos: cart.map(c => `${c.name} x${c.quantity}`).join(', '),
-                          total: cartTotal,
-                        }),
-                      });
-                    } catch {
-                      // Silent - order saved via WhatsApp anyway
+                    // Save order to Supabase
+                    if (supabase && user) {
+                      try {
+                        // Find or create client
+                        const { data: client } = await supabase
+                          .from('Client')
+                          .select('id')
+                          .eq('email', user.email)
+                          .single();
+                        if (client) {
+                          // Insert Order
+                          const { data: order } = await supabase
+                            .from('Order')
+                            .insert({
+                              clientId: client.id,
+                              address: checkoutForm.direccion,
+                              date: checkoutForm.fecha,
+                              time: checkoutForm.hora,
+                              total: cartTotal,
+                            })
+                            .select('id')
+                            .single();
+                          // Insert OrderItems
+                          if (order) {
+                            await supabase.from('OrderItem').insert(
+                              cart.map(item => ({
+                                orderId: order.id,
+                                productId: item.id,
+                                name: item.name,
+                                quantity: item.quantity,
+                                price: item.price,
+                              }))
+                            );
+                          }
+                        }
+                      } catch {
+                        // Silent - order still sent via WhatsApp
+                      }
                     }
                     setIsSubmittingOrder(false);
                     setOrderSubmitted(true);
@@ -1792,8 +1858,8 @@ export default function App() {
       </a>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-12">
-        <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-slate-900 text-slate-400 py-12 md:py-16">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 text-white mb-4">
               <img
@@ -2125,6 +2191,23 @@ export default function App() {
                       >
                         Crear cuenta gratis
                       </button>
+                      <div className="flex items-center gap-3 pt-1">
+                        <div className="flex-1 h-px bg-slate-200" />
+                        <span className="text-xs text-slate-400">o</span>
+                        <div className="flex-1 h-px bg-slate-200" />
+                      </div>
+                      <button
+                        onClick={handleGoogleLogin}
+                        className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 py-3.5 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Continuar con Google
+                      </button>
                     </div>
                   )}
 
@@ -2178,6 +2261,19 @@ export default function App() {
                           <span className="text-xs text-slate-400">o</span>
                           <div className="flex-1 h-px bg-slate-200" />
                         </div>
+                        <button
+                          type="button"
+                          onClick={handleGoogleLogin}
+                          className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 py-3 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                        >
+                          <svg className="w-5 h-5" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                          </svg>
+                          Continuar con Google
+                        </button>
                         <button
                           type="button"
                           onClick={() => { setModalStep('register'); setLoginError(''); }}

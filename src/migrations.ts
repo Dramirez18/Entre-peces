@@ -187,4 +187,23 @@ FROM "Client" c WHERE c."phone" = '3209876543' LIMIT 1;`,
 --   4. Env vars: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
 --   5. Fallback: Supabase → products.json → PRODUCTS constant`,
   },
+
+  {
+    id: '003_auth_supabase_direct',
+    title: 'Auth: Login & Register via Supabase',
+    description: 'Replaced /api/login and /api/register (Express + Google Sheets) with direct Supabase queries. Login queries Client table by email. Register upserts into Client table. Added Google OAuth button (requires Supabase Auth provider setup). Orders now saved to Supabase Order + OrderItem tables. Desktop UI padding improvements.',
+    createdAt: '2026-03-20',
+    sql: `-- No schema changes required.
+-- This migration tracks frontend auth changes:
+--   1. Login: SELECT FROM "Client" WHERE email = ? (replaces /api/login)
+--   2. Register: UPSERT INTO "Client" (replaces /api/register)
+--   3. Google OAuth: supabase.auth.signInWithOAuth({ provider: 'google' })
+--   4. Orders: INSERT INTO "Order" + "OrderItem" (replaces /api/order)
+--   5. Desktop UI: improved padding across header, main, footer, cards
+--
+-- REQUIRED: Enable Google Auth provider in Supabase Dashboard:
+--   Authentication → Providers → Google → Enable
+--   Set Google Client ID + Secret from Google Cloud Console
+--   Add redirect URL: https://entre-peces.vercel.app`,
+  },
 ];
