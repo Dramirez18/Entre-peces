@@ -261,4 +261,48 @@ ALTER TABLE "BugReport" ADD COLUMN IF NOT EXISTS "elementInfo" TEXT;
 ALTER TABLE "BugReport" ADD COLUMN IF NOT EXISTS "viewport" TEXT;
 ALTER TABLE "BugReport" ADD COLUMN IF NOT EXISTS "userAgent" TEXT;`,
   },
+
+  {
+    id: '006_disable_rls_all_tables',
+    title: 'Disable RLS on all tables (fix access issues)',
+    description: 'After migration 005, products stopped loading and bug reports stopped saving. Most likely cause: RLS was enabled on one or more tables. This migration explicitly disables RLS on ALL tables to restore access via anon key.',
+    createdAt: '2026-03-21',
+    sql: `-- ============================================================
+-- Migration 006: Disable RLS on ALL tables
+-- Fixes: Products not loading + BugReport not saving
+-- ============================================================
+
+ALTER TABLE "Product" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "Client" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "Order" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "OrderItem" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "BugReport" DISABLE ROW LEVEL SECURITY;`,
+  },
+
+  {
+    id: '007_aunap_news_table',
+    title: 'Create AunapNews table for AUNAP news feed',
+    description: 'Creates AunapNews table to store news articles from AUNAP (aunap.gov.co/noticias/). Seeded with 3 current articles. Frontend reads from this table to display in the Conocimiento section.',
+    createdAt: '2026-03-21',
+    sql: `-- ============================================================
+-- Migration 007: AunapNews table + seed data
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS "AunapNews" (
+    "id" SERIAL PRIMARY KEY,
+    "title" TEXT NOT NULL,
+    "url" TEXT NOT NULL UNIQUE,
+    "publishedDate" TEXT,
+    "imageUrl" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE "AunapNews" DISABLE ROW LEVEL SECURITY;
+
+INSERT INTO "AunapNews" ("title", "url", "publishedDate") VALUES
+  ('La AUNAP fortalece la pesca artesanal en el Caribe con entregas en Sucre, Cesar, Magdalena y Bolívar', 'https://aunap.gov.co/la-aunap-fortalecen-la-pesca-artesanal-en-el-caribe-con-entregas-en-sucre-cesar-magdalena-y-bolivar/', '19 marzo, 2026'),
+  ('AUNAP socializa en San Marcos el Programa de Repoblamiento 2026', 'https://aunap.gov.co/aunap-socializa-en-san-marcos-el-programa-de-repoblamiento-2026-y-prioriza-acciones-en-la-mojana/', '3 marzo, 2026'),
+  ('Asociaciones pesqueras reciben embarcaciones y motores en cuatro municipios', 'https://aunap.gov.co/asociaciones-pesqueras-reciben-embarcaciones-y-motores-en-cuatro-municipios/', '3 marzo, 2026')
+ON CONFLICT ("url") DO NOTHING;`,
+  },
 ];

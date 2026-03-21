@@ -54,7 +54,7 @@ export default function BugReportWidget({ user, activeTab }: Props) {
   const captureScreenshot = async (): Promise<string | null> => {
     try {
       // html2canvas doesn't support oklch() colors (Tailwind CSS 4)
-      // We capture what we can and ignore color parse errors
+      // We must neutralize all oklch references in the cloned document
       const canvas = await html2canvas(document.body, {
         useCORS: true,
         allowTaint: true,
@@ -62,16 +62,50 @@ export default function BugReportWidget({ user, activeTab }: Props) {
         logging: false,
         ignoreElements: (el) => el.id === 'bug-report-widget',
         onclone: (clonedDoc) => {
-          // Remove oklch colors that html2canvas can't parse
+          // 1. Inject a stylesheet that overrides ALL color properties to safe values
           const style = clonedDoc.createElement('style');
-          style.textContent = '*, *::before, *::after { color: inherit !important; }';
+          style.textContent = `
+            *, *::before, *::after {
+              --tw-ring-color: #3b82f6 !important;
+              --tw-ring-offset-color: #fff !important;
+              --tw-shadow-color: transparent !important;
+              border-color: #e5e7eb !important;
+              outline-color: #3b82f6 !important;
+              caret-color: auto !important;
+              accent-color: auto !important;
+              text-decoration-color: currentColor !important;
+              column-rule-color: transparent !important;
+            }
+          `;
           clonedDoc.head.appendChild(style);
+
+          // 2. Walk all elements and replace inline oklch values in computed styles
+          const allElements = clonedDoc.querySelectorAll('*');
+          allElements.forEach((el) => {
+            const htmlEl = el as HTMLElement;
+            const s = htmlEl.style;
+            // Replace any oklch() values in inline styles
+            for (let i = 0; i < s.length; i++) {
+              const prop = s[i];
+              const val = s.getPropertyValue(prop);
+              if (val && val.includes('oklch')) {
+                s.setProperty(prop, 'inherit', 'important');
+              }
+            }
+          });
+
+          // 3. Remove all <style> tags that contain oklch (like Tailwind's generated CSS)
+          clonedDoc.querySelectorAll('style').forEach((tag) => {
+            if (tag !== style && tag.textContent && tag.textContent.includes('oklch')) {
+              // Replace oklch() function calls with fallback hex
+              tag.textContent = tag.textContent.replace(/oklch\([^)]*\)/g, '#888888');
+            }
+          });
         },
       });
-      return canvas.toDataURL('image/jpeg', 0.6);
+      return canvas.toDataURL('image/jpeg', 0.4);
     } catch (err) {
-      console.warn('Screenshot failed (oklch colors not supported by html2canvas):', err);
-      // Return null — the bug report works without screenshot
+      console.warn('[BugReport] Screenshot failed:', err);
       return null;
     }
   };
@@ -136,16 +170,16 @@ export default function BugReportWidget({ user, activeTab }: Props) {
     setSaving(true);
 
     try {
-      // Limit screenshot size — base64 can be huge and exceed Supabase limits
+      // Limit screenshot size — base64 can be huge and exceed Supabase REST payload limits
       let screenshotToSave = screenshot;
-      if (screenshotToSave && screenshotToSave.length > 500_000) {
+      if (screenshotToSave && screenshotToSave.length > 200_000) {
         console.warn(`[BugReport] Screenshot too large (${(screenshotToSave.length / 1024).toFixed(0)}KB), skipping`);
         screenshotToSave = null;
       }
 
-      const { error } = await supabase.from('BugReport').insert({
+      const payload = {
         title: form.title.trim(),
-        description: form.description.trim(),
+        description: form.description.trim() || '',
         priority: form.priority,
         status: 'open',
         reportedBy: user!.email,
@@ -153,8 +187,11 @@ export default function BugReportWidget({ user, activeTab }: Props) {
         screenshot: screenshotToSave || null,
         elementInfo: elementData ? JSON.stringify(elementData) : null,
         viewport: JSON.stringify({ width: window.innerWidth, height: window.innerHeight }),
-        userAgent: navigator.userAgent,
-      });
+        userAgent: navigator.userAgent.slice(0, 500),
+      };
+      console.log('[BugReport] Inserting payload:', { ...payload, screenshot: payload.screenshot ? `${(payload.screenshot.length / 1024).toFixed(0)}KB` : null });
+
+      const { error } = await supabase.from('BugReport').insert(payload);
 
       if (error) {
         console.error('[BugReport] Insert error:', error.message, error.details, error.hint, error.code);

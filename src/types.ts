@@ -43,3 +43,12 @@ export interface BugReport {
   updatedAt: string;
   resolvedAt?: string;
 }
+
+export interface AunapNews {
+  id: number;
+  title: string;
+  url: string;
+  publishedDate: string | null;
+  imageUrl: string | null;
+  createdAt: string;
+}
