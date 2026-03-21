@@ -916,8 +916,51 @@ export default function App() {
           <AdminPanel
             user={user}
             products={products}
-            onUpdateProduct={(id, updates) => setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p))}
-            onToggleActive={(id) => setProducts(prev => prev.map(p => p.id === id ? { ...p, active: !p.active } : p))}
+            onUpdateProduct={async (id, updates) => {
+              // 1. Update local state immediately
+              setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+              // 2. Persist to Supabase
+              if (supabase) {
+                const { error } = await supabase.from('Product').update({ ...updates, updatedAt: new Date().toISOString() }).eq('id', id);
+                if (error) {
+                  console.error('[Product] Update error:', error.message);
+                  alert(`Error al actualizar producto: ${error.message}`);
+                } else {
+                  console.log(`[Product] Updated ${id} in Supabase`);
+                }
+              }
+            }}
+            onToggleActive={async (id) => {
+              const product = products.find(p => p.id === id);
+              if (!product) return;
+              const newActive = product.active === false ? true : false;
+              // 1. Update local state
+              setProducts(prev => prev.map(p => p.id === id ? { ...p, active: newActive } : p));
+              // 2. Persist to Supabase
+              if (supabase) {
+                const { error } = await supabase.from('Product').update({ active: newActive, updatedAt: new Date().toISOString() }).eq('id', id);
+                if (error) {
+                  console.error('[Product] Toggle error:', error.message);
+                  alert(`Error al cambiar estado: ${error.message}`);
+                } else {
+                  console.log(`[Product] Toggled ${id} active=${newActive}`);
+                }
+              }
+            }}
+            onDeleteProduct={async (id) => {
+              // 1. Remove from local state
+              setProducts(prev => prev.filter(p => p.id !== id));
+              // 2. Delete from Supabase
+              if (supabase) {
+                const { error } = await supabase.from('Product').delete().eq('id', id);
+                if (error) {
+                  console.error('[Product] Delete error:', error.message);
+                  alert(`Error al eliminar producto: ${error.message}`);
+                } else {
+                  console.log(`[Product] Deleted ${id} from Supabase`);
+                }
+              }
+            }}
             onBack={() => setActiveTab('Inicio')}
             onLogin={() => { setIsUserModalOpen(true); setModalStep('welcome'); }}
             isAdmin={isAdmin}

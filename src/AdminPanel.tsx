@@ -15,6 +15,7 @@ interface AdminPanelProps {
   products: Product[];
   onUpdateProduct: (id: string, updates: Partial<Product>) => void;
   onToggleActive: (id: string) => void;
+  onDeleteProduct: (id: string) => void;
   onBack: () => void;
   onLogin: () => void;
   isAdmin: boolean;
@@ -25,7 +26,7 @@ interface AdminPanelProps {
 type AdminTab = 'dashboard' | 'products' | 'clients' | 'orders' | 'sqlhistory' | 'bugs';
 
 export default function AdminPanel({
-  user, products, onUpdateProduct, onToggleActive, onBack, onLogin, isAdmin, setIsAdmin, initialTab,
+  user, products, onUpdateProduct, onToggleActive, onDeleteProduct, onBack, onLogin, isAdmin, setIsAdmin, initialTab,
 }: AdminPanelProps) {
   const [adminTab, setAdminTab] = useState<AdminTab>((initialTab as AdminTab) || 'dashboard');
   const [searchQuery, setSearchQuery] = useState('');
@@ -488,17 +489,30 @@ export default function AdminPanel({
                           <td className="px-4 py-3 text-center">
                             {isEd ? (
                               <div className="flex gap-1 justify-center">
-                                <button onClick={() => saveEdit(product.id)} className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors">
+                                <button onClick={() => saveEdit(product.id)} className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors" title="Guardar">
                                   <Save className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => setEditingProduct(null)} className="p-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors">
+                                <button onClick={() => setEditingProduct(null)} className="p-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors" title="Cancelar">
                                   <X className="w-4 h-4" />
                                 </button>
                               </div>
                             ) : (
-                              <button onClick={() => startEdit(product)} className="p-1.5 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors">
-                                <Edit3 className="w-4 h-4" />
-                              </button>
+                              <div className="flex gap-1 justify-center">
+                                <button onClick={() => startEdit(product)} className="p-1.5 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors" title="Editar">
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`¿Eliminar "${product.name}"? Esta acción no se puede deshacer.`)) {
+                                      onDeleteProduct(product.id);
+                                    }
+                                  }}
+                                  className="p-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                                  title="Eliminar"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>
