@@ -8,6 +8,7 @@ import type { User } from './types';
 interface Props {
   user: User | null;
   activeTab: string;
+  onBugReported?: () => void;
 }
 
 type WidgetState = 'collapsed' | 'menu' | 'inspecting' | 'form';
@@ -20,7 +21,7 @@ interface ElementData {
   rect: { x: number; y: number; width: number; height: number };
 }
 
-export default function BugReportWidget({ user, activeTab }: Props) {
+export default function BugReportWidget({ user, activeTab, onBugReported }: Props) {
   const [state, setState] = useState<WidgetState>('collapsed');
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [elementData, setElementData] = useState<ElementData | null>(null);
@@ -203,7 +204,10 @@ export default function BugReportWidget({ user, activeTab }: Props) {
       console.log('[BugReport] Saved successfully');
       setSaving(false);
       setSaved(true);
-      setTimeout(reset, 1500);
+      setTimeout(() => {
+        reset();
+        onBugReported?.();
+      }, 1200);
     } catch (e) {
       console.error('[BugReport] Unexpected error:', e);
       alert('Error inesperado al guardar el bug report');

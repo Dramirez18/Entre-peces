@@ -19,14 +19,15 @@ interface AdminPanelProps {
   onLogin: () => void;
   isAdmin: boolean;
   setIsAdmin: (val: boolean) => void;
+  initialTab?: string;
 }
 
 type AdminTab = 'dashboard' | 'products' | 'clients' | 'orders' | 'sqlhistory' | 'bugs';
 
 export default function AdminPanel({
-  user, products, onUpdateProduct, onToggleActive, onBack, onLogin, isAdmin, setIsAdmin,
+  user, products, onUpdateProduct, onToggleActive, onBack, onLogin, isAdmin, setIsAdmin, initialTab,
 }: AdminPanelProps) {
-  const [adminTab, setAdminTab] = useState<AdminTab>('dashboard');
+  const [adminTab, setAdminTab] = useState<AdminTab>((initialTab as AdminTab) || 'dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
@@ -46,6 +47,13 @@ export default function AdminPanel({
   const [bugForm, setBugForm] = useState({ title: '', description: '', priority: 'medium', page: '', steps: '' });
   const [savingBug, setSavingBug] = useState(false);
 
+  // Switch to initialTab when it changes (e.g. from BugReportWidget)
+  useEffect(() => {
+    if (initialTab && initialTab !== adminTab) {
+      setAdminTab(initialTab as AdminTab);
+    }
+  }, [initialTab]);
+
   // Load bugs from Supabase
   useEffect(() => {
     if (adminTab === 'bugs') loadBugs();
@@ -62,14 +70,19 @@ export default function AdminPanel({
   const createBug = async () => {
     if (!supabase || !user || !bugForm.title.trim()) return;
     setSavingBug(true);
-    await supabase.from('BugReport').insert({
+    const { error } = await supabase.from('BugReport').insert({
       title: bugForm.title.trim(),
-      description: bugForm.description.trim(),
+      description: bugForm.description.trim() || '',
       priority: bugForm.priority,
+      status: 'open',
       page: bugForm.page.trim() || null,
       steps: bugForm.steps.trim() || null,
       reportedBy: user.email,
     });
+    if (error) {
+      console.error('[AdminPanel] Bug insert error:', error.message, error.details, error.hint);
+      alert(`Error al crear bug: ${error.message}`);
+    }
     setBugForm({ title: '', description: '', priority: 'medium', page: '', steps: '' });
     setShowBugForm(false);
     setSavingBug(false);

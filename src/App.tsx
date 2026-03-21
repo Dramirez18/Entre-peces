@@ -268,6 +268,7 @@ export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const [aunapNews, setAunapNews] = useState<AunapNews[]>([]);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [adminInitialTab, setAdminInitialTab] = useState<string | undefined>(undefined);
   const [isCheckoutFormOpen, setIsCheckoutFormOpen] = useState(false);
   const [checkoutForm, setCheckoutForm] = useState({
     nombre: '',
@@ -921,6 +922,7 @@ export default function App() {
             onLogin={() => { setIsUserModalOpen(true); setModalStep('welcome'); }}
             isAdmin={isAdmin}
             setIsAdmin={setIsAdmin}
+            initialTab={adminInitialTab}
           />
         )}
         {activeTab === 'Admin' && (!user || user.role !== 'admin') && (
@@ -1926,7 +1928,15 @@ export default function App() {
       </a>
 
       {/* Bug Report Widget (admin only) */}
-      <BugReportWidget user={user} activeTab={activeTab} />
+      <BugReportWidget
+        user={user}
+        activeTab={activeTab}
+        onBugReported={() => {
+          setAdminInitialTab('bugs');
+          setActiveTab('Admin');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 md:py-16">
