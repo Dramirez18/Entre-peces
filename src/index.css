@@ -8,12 +8,64 @@
 }
 
 @layer base {
+  /* Explicit fallback colors for browsers that don't support oklch */
+  :root {
+    --fallback-slate-50: #f8fafc;
+    --fallback-slate-900: #0f172a;
+  }
+
   body {
+    background-color: #f8fafc;
+    color: #0f172a;
     @apply bg-slate-50 text-slate-900;
+  }
+
+  /* Cross-browser box-sizing reset */
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
 }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cross-browser compatibility: fallback for oklch colors */
+@supports not (color: oklch(0 0 0)) {
+  :root {
+    --tw-bg-opacity: 1;
+  }
+  .bg-slate-50 { background-color: #f8fafc !important; }
+  .bg-slate-100 { background-color: #f1f5f9 !important; }
+  .bg-slate-200 { background-color: #e2e8f0 !important; }
+  .bg-white { background-color: #ffffff !important; }
+  .text-slate-900 { color: #0f172a !important; }
+  .text-slate-800 { color: #1e293b !important; }
+  .text-slate-700 { color: #334155 !important; }
+  .text-slate-600 { color: #475569 !important; }
+  .text-slate-500 { color: #64748b !important; }
+  .text-slate-400 { color: #94a3b8 !important; }
+  .text-white { color: #ffffff !important; }
+  .border-slate-200 { border-color: #e2e8f0 !important; }
+  .border-slate-100 { border-color: #f1f5f9 !important; }
+  .bg-brand-blue { background-color: #2A8CB0 !important; }
+  .bg-brand-dark { background-color: #1A5F7A !important; }
+  .bg-brand-light { background-color: #E6F4F1 !important; }
+  .text-brand-blue { color: #2A8CB0 !important; }
+  .bg-blue-50 { background-color: #eff6ff !important; }
+  .bg-blue-100 { background-color: #dbeafe !important; }
+  .bg-blue-500 { background-color: #3b82f6 !important; }
+  .text-blue-600 { color: #2563eb !important; }
+  .text-blue-800 { color: #1e40af !important; }
+  .bg-emerald-100 { background-color: #d1fae5 !important; }
+  .text-emerald-600 { color: #059669 !important; }
+  .bg-red-500 { background-color: #ef4444 !important; }
+  .text-red-600 { color: #dc2626 !important; }
+  .bg-amber-100 { background-color: #fef3c7 !important; }
+  .text-amber-600 { color: #d97706 !important; }
+  .bg-cyan-300 { background-color: #67e8f9 !important; }
+  .text-cyan-300 { color: #67e8f9 !important; }
+  .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1) !important; }
+  .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1) !important; }
 }

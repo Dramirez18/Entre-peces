@@ -63,8 +63,16 @@ export default function AdminPanel({
   const loadBugs = async () => {
     if (!supabase) return;
     setBugsLoading(true);
-    const { data } = await supabase.from('BugReport').select('*').order('createdAt', { ascending: false });
-    if (data) setBugs(data as BugReport[]);
+    try {
+      const { data, error } = await supabase.from('BugReport').select('*').order('createdAt', { ascending: false });
+      if (error) {
+        console.error('[Bugs] Load error:', error.message, error.details, error.hint);
+      } else if (data) {
+        setBugs(data as BugReport[]);
+      }
+    } catch (e) {
+      console.error('[Bugs] Unexpected error:', e);
+    }
     setBugsLoading(false);
   };
 
