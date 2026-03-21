@@ -53,16 +53,25 @@ export default function BugReportWidget({ user, activeTab }: Props) {
 
   const captureScreenshot = async (): Promise<string | null> => {
     try {
+      // html2canvas doesn't support oklch() colors (Tailwind CSS 4)
+      // We capture what we can and ignore color parse errors
       const canvas = await html2canvas(document.body, {
         useCORS: true,
         allowTaint: true,
         scale: 0.5,
         logging: false,
         ignoreElements: (el) => el.id === 'bug-report-widget',
+        onclone: (clonedDoc) => {
+          // Remove oklch colors that html2canvas can't parse
+          const style = clonedDoc.createElement('style');
+          style.textContent = '*, *::before, *::after { color: inherit !important; }';
+          clonedDoc.head.appendChild(style);
+        },
       });
       return canvas.toDataURL('image/jpeg', 0.6);
     } catch (err) {
-      console.error('Screenshot failed:', err);
+      console.warn('Screenshot failed (oklch colors not supported by html2canvas):', err);
+      // Return null — the bug report works without screenshot
       return null;
     }
   };
@@ -126,22 +135,43 @@ export default function BugReportWidget({ user, activeTab }: Props) {
     if (!supabase || !form.title.trim()) return;
     setSaving(true);
 
-    await supabase.from('BugReport').insert({
-      title: form.title.trim(),
-      description: form.description.trim(),
-      priority: form.priority,
-      status: 'open',
-      reportedBy: user.email,
-      page: activeTab || 'Inicio',
-      screenshot: screenshot || null,
-      elementInfo: elementData ? JSON.stringify(elementData) : null,
-      viewport: JSON.stringify({ width: window.innerWidth, height: window.innerHeight }),
-      userAgent: navigator.userAgent,
-    });
+    try {
+      // Limit screenshot size — base64 can be huge and exceed Supabase limits
+      let screenshotToSave = screenshot;
+      if (screenshotToSave && screenshotToSave.length > 500_000) {
+        console.warn(`[BugReport] Screenshot too large (${(screenshotToSave.length / 1024).toFixed(0)}KB), skipping`);
+        screenshotToSave = null;
+      }
 
-    setSaving(false);
-    setSaved(true);
-    setTimeout(reset, 1500);
+      const { error } = await supabase.from('BugReport').insert({
+        title: form.title.trim(),
+        description: form.description.trim(),
+        priority: form.priority,
+        status: 'open',
+        reportedBy: user!.email,
+        page: activeTab || 'Inicio',
+        screenshot: screenshotToSave || null,
+        elementInfo: elementData ? JSON.stringify(elementData) : null,
+        viewport: JSON.stringify({ width: window.innerWidth, height: window.innerHeight }),
+        userAgent: navigator.userAgent,
+      });
+
+      if (error) {
+        console.error('[BugReport] Insert error:', error.message, error.details, error.hint, error.code);
+        alert(`Error al guardar bug: ${error.message}`);
+        setSaving(false);
+        return;
+      }
+
+      console.log('[BugReport] Saved successfully');
+      setSaving(false);
+      setSaved(true);
+      setTimeout(reset, 1500);
+    } catch (e) {
+      console.error('[BugReport] Unexpected error:', e);
+      alert('Error inesperado al guardar el bug report');
+      setSaving(false);
+    }
   };
 
   return (
