@@ -309,20 +309,24 @@ export default function App() {
   // Load products: Supabase (live) → products.json (static) → PRODUCTS (hardcoded)
   useEffect(() => {
     const loadProducts = async () => {
+      console.log('[Products] Supabase available:', !!supabase);
       // 1. Try Supabase (source of truth)
       if (supabase) {
         try {
           const { data, error } = await supabase
             .from('Product')
-            .select('id, name, "scientificName", description, price, category, image, stock, size, active')
+            .select('*')
             .order('name');
-          if (!error && data && data.length > 0) {
+          if (error) {
+            console.warn('[Supabase] Query error:', error.message, error.details, error.hint);
+          } else if (data && data.length > 0) {
             console.log(`[Supabase] Loaded ${data.length} products`);
             setProducts(data as Product[]);
             setIsLoading(false);
             return;
+          } else {
+            console.warn('[Supabase] Query returned 0 products');
           }
-          if (error) console.warn('[Supabase] Query error:', error.message);
         } catch (e) {
           console.warn('[Supabase] Connection failed:', e);
         }

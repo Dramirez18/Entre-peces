@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Bug, X, Camera, MousePointer2, Send, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Bug, X, Camera, MousePointer2, Send, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import html2canvas from 'html2canvas';
 import { supabase } from './lib/supabase';
@@ -24,41 +24,42 @@ export default function BugReportWidget({ user, activeTab }: Props) {
   const [state, setState] = useState<WidgetState>('collapsed');
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [elementData, setElementData] = useState<ElementData | null>(null);
-  const [hoveredEl, setHoveredEl] = useState<HTMLElement | null>(null);
+  const [highlightRect, setHighlightRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
   const [form, setForm] = useState({ title: '', description: '', priority: 'medium' });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
 
-  // Only render for admins
+  // ESC to cancel inspector mode
+  useEffect(() => {
+    if (state !== 'inspecting') return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') reset();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [state]);
+
+  // Only render for admins (after all hooks)
   if (!user || user.role !== 'admin') return null;
 
   const reset = () => {
     setState('collapsed');
     setScreenshot(null);
     setElementData(null);
-    setHoveredEl(null);
+    setHighlightRect(null);
     setForm({ title: '', description: '', priority: 'medium' });
     setSaved(false);
   };
 
   const captureScreenshot = async (): Promise<string | null> => {
     try {
-      // Hide the widget itself during capture
-      const widgetEl = document.getElementById('bug-report-widget');
-      if (widgetEl) widgetEl.style.display = 'none';
-
       const canvas = await html2canvas(document.body, {
         useCORS: true,
         allowTaint: true,
-        scale: 0.5, // Lower resolution to keep base64 smaller
+        scale: 0.5,
         logging: false,
         ignoreElements: (el) => el.id === 'bug-report-widget',
       });
-
-      if (widgetEl) widgetEl.style.display = '';
-
       return canvas.toDataURL('image/jpeg', 0.6);
     } catch (err) {
       console.error('Screenshot failed:', err);
@@ -66,78 +67,66 @@ export default function BugReportWidget({ user, activeTab }: Props) {
     }
   };
 
-  const startInspector = () => {
-    setState('inspecting');
+  const handleOverlayMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const overlay = e.currentTarget;
+    // Temporarily disable overlay to find element underneath
+    overlay.style.pointerEvents = 'none';
+    const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+    overlay.style.pointerEvents = 'auto';
+
+    if (el && !el.closest('#bug-report-widget')) {
+      const rect = el.getBoundingClientRect();
+      setHighlightRect({
+        top: rect.top - 2,
+        left: rect.left - 2,
+        width: rect.width + 4,
+        height: rect.height + 4,
+      });
+    } else {
+      setHighlightRect(null);
+    }
   };
 
-  const startQuickScreenshot = async () => {
+  const handleOverlayClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+    const overlay = e.currentTarget;
+    // Find element underneath
+    overlay.style.pointerEvents = 'none';
+    const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+    overlay.style.pointerEvents = 'auto';
+
+    if (!el) return;
+
+    // Capture element data
+    const rect = el.getBoundingClientRect();
+    const data: ElementData = {
+      tag: el.tagName.toLowerCase(),
+      classes: (typeof el.className === 'string' ? el.className : '').slice(0, 300),
+      id: el.id || '',
+      text: (el.innerText || '').slice(0, 200),
+      rect: { x: Math.round(rect.x), y: Math.round(rect.y), width: Math.round(rect.width), height: Math.round(rect.height) },
+    };
+    setElementData(data);
+    setHighlightRect(null);
     setState('form');
+
+    // Capture screenshot after overlay is gone
+    await new Promise(r => setTimeout(r, 150));
     const img = await captureScreenshot();
     setScreenshot(img);
   };
 
-  // Inspector: track mouse movement
-  useEffect(() => {
-    if (state !== 'inspecting') return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      // Ignore the widget itself and the highlight overlay
-      if (target.closest('#bug-report-widget') || target.closest('#bug-highlight')) return;
-      setHoveredEl(target);
-    };
-
-    const handleClick = async (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('#bug-report-widget') || target.closest('#bug-highlight')) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Capture element data
-      const rect = target.getBoundingClientRect();
-      setElementData({
-        tag: target.tagName.toLowerCase(),
-        classes: target.className?.toString().slice(0, 300) || '',
-        id: target.id || '',
-        text: (target.innerText || '').slice(0, 200),
-        rect: { x: Math.round(rect.x), y: Math.round(rect.y), width: Math.round(rect.width), height: Math.round(rect.height) },
-      });
-
-      // Remove highlight before screenshot
-      setHoveredEl(null);
-      setState('form');
-
-      // Small delay to let highlight disappear
-      await new Promise(r => setTimeout(r, 100));
-      const img = await captureScreenshot();
-      setScreenshot(img);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') reset();
-    };
-
-    document.addEventListener('mousemove', handleMouseMove, true);
-    document.addEventListener('click', handleClick, true);
-    document.addEventListener('keydown', handleKeyDown);
-
-    // Change cursor
-    document.body.style.cursor = 'crosshair';
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove, true);
-      document.removeEventListener('click', handleClick, true);
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.cursor = '';
-    };
-  }, [state]);
+  const startQuickScreenshot = async () => {
+    setState('form');
+    await new Promise(r => setTimeout(r, 150));
+    const img = await captureScreenshot();
+    setScreenshot(img);
+  };
 
   const handleSubmit = async () => {
     if (!supabase || !form.title.trim()) return;
     setSaving(true);
 
-    const bugData: Record<string, unknown> = {
+    await supabase.from('BugReport').insert({
       title: form.title.trim(),
       description: form.description.trim(),
       priority: form.priority,
@@ -148,48 +137,53 @@ export default function BugReportWidget({ user, activeTab }: Props) {
       elementInfo: elementData ? JSON.stringify(elementData) : null,
       viewport: JSON.stringify({ width: window.innerWidth, height: window.innerHeight }),
       userAgent: navigator.userAgent,
-    };
+    });
 
-    await supabase.from('BugReport').insert(bugData);
     setSaving(false);
     setSaved(true);
     setTimeout(reset, 1500);
   };
 
-  // Highlight box position
-  const highlightStyle = hoveredEl ? (() => {
-    const rect = hoveredEl.getBoundingClientRect();
-    return {
-      position: 'fixed' as const,
-      top: rect.top - 2,
-      left: rect.left - 2,
-      width: rect.width + 4,
-      height: rect.height + 4,
-      border: '2px dashed #ef4444',
-      backgroundColor: 'rgba(239, 68, 68, 0.08)',
-      borderRadius: 4,
-      pointerEvents: 'none' as const,
-      zIndex: 99998,
-      transition: 'all 0.1s ease-out',
-    };
-  })() : null;
-
   return (
     <div id="bug-report-widget">
-      {/* Inspector mode highlight */}
-      {state === 'inspecting' && highlightStyle && (
-        <div id="bug-highlight" style={highlightStyle} />
-      )}
-
-      {/* Inspector mode overlay info bar */}
+      {/* ══ INSPECTOR MODE: Full-screen overlay ══ */}
       {state === 'inspecting' && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[99999] bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium">
-          <MousePointer2 className="w-4 h-4 animate-pulse" />
-          Click en el elemento con el bug &middot; <span className="opacity-70">ESC para cancelar</span>
-        </div>
+        <>
+          {/* Transparent overlay that captures ALL clicks */}
+          <div
+            className="fixed inset-0 z-[99997] cursor-crosshair"
+            onMouseMove={handleOverlayMouseMove}
+            onClick={handleOverlayClick}
+          />
+
+          {/* Highlight box (pointer-events: none so it doesn't interfere) */}
+          {highlightRect && (
+            <div
+              style={{
+                position: 'fixed',
+                top: highlightRect.top,
+                left: highlightRect.left,
+                width: highlightRect.width,
+                height: highlightRect.height,
+                border: '2px dashed #ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                borderRadius: 4,
+                pointerEvents: 'none',
+                zIndex: 99998,
+                transition: 'all 0.1s ease-out',
+              }}
+            />
+          )}
+
+          {/* Info bar at top */}
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[99999] bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium">
+            <MousePointer2 className="w-4 h-4 animate-pulse" />
+            Click en el elemento con el bug &middot; <span className="opacity-70">ESC para cancelar</span>
+          </div>
+        </>
       )}
 
-      {/* Floating button */}
+      {/* ══ FLOATING BUTTON ══ */}
       <AnimatePresence>
         {state === 'collapsed' && (
           <motion.button
@@ -205,7 +199,7 @@ export default function BugReportWidget({ user, activeTab }: Props) {
         )}
       </AnimatePresence>
 
-      {/* Menu popup */}
+      {/* ══ MENU POPUP ══ */}
       <AnimatePresence>
         {state === 'menu' && (
           <>
@@ -223,7 +217,7 @@ export default function BugReportWidget({ user, activeTab }: Props) {
               className="fixed bottom-24 right-6 z-[85] bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 w-56"
             >
               <button
-                onClick={startInspector}
+                onClick={() => setState('inspecting')}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 transition-colors text-left"
               >
                 <div className="w-9 h-9 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
@@ -259,7 +253,7 @@ export default function BugReportWidget({ user, activeTab }: Props) {
         )}
       </AnimatePresence>
 
-      {/* Report form */}
+      {/* ══ REPORT FORM ══ */}
       <AnimatePresence>
         {state === 'form' && (
           <motion.div
@@ -281,12 +275,11 @@ export default function BugReportWidget({ user, activeTab }: Props) {
 
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               {/* Screenshot preview */}
-              {screenshot && (
+              {screenshot ? (
                 <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
                   <img src={screenshot} alt="Screenshot" className="w-full h-auto" />
                 </div>
-              )}
-              {!screenshot && (
+              ) : (
                 <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
                   <Camera className="w-6 h-6 text-slate-300 mx-auto mb-2" />
                   <p className="text-xs text-slate-400">Capturando screenshot...</p>
@@ -310,39 +303,31 @@ export default function BugReportWidget({ user, activeTab }: Props) {
               )}
 
               {/* Form fields */}
-              <div>
-                <input
-                  type="text"
-                  placeholder="Titulo del bug *"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <textarea
-                  placeholder="Describe el bug..."
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  rows={3}
-                  className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none resize-none"
-                />
-              </div>
-
-              <div>
-                <select
-                  value={form.priority}
-                  onChange={(e) => setForm({ ...form, priority: e.target.value })}
-                  className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 outline-none"
-                >
-                  <option value="low">Prioridad: Baja</option>
-                  <option value="medium">Prioridad: Media</option>
-                  <option value="high">Prioridad: Alta</option>
-                  <option value="critical">Prioridad: Critica</option>
-                </select>
-              </div>
+              <input
+                type="text"
+                placeholder="Titulo del bug *"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
+                autoFocus
+              />
+              <textarea
+                placeholder="Describe el bug..."
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={3}
+                className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none resize-none"
+              />
+              <select
+                value={form.priority}
+                onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 outline-none"
+              >
+                <option value="low">Prioridad: Baja</option>
+                <option value="medium">Prioridad: Media</option>
+                <option value="high">Prioridad: Alta</option>
+                <option value="critical">Prioridad: Critica</option>
+              </select>
 
               {/* Context info */}
               <div className="flex gap-2 text-[10px] text-slate-400">
@@ -351,7 +336,7 @@ export default function BugReportWidget({ user, activeTab }: Props) {
               </div>
             </div>
 
-            {/* Submit button */}
+            {/* Submit */}
             <div className="p-4 border-t border-slate-100 shrink-0">
               {saved ? (
                 <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold text-sm py-3">
@@ -364,13 +349,7 @@ export default function BugReportWidget({ user, activeTab }: Props) {
                   disabled={!form.title.trim() || saving}
                   className="w-full bg-red-500 text-white py-3 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {saving ? (
-                    'Enviando...'
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" /> Enviar Bug Report
-                    </>
-                  )}
+                  {saving ? 'Enviando...' : <><Send className="w-4 h-4" /> Enviar Bug Report</>}
                 </button>
               )}
             </div>
