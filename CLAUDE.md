@@ -18,7 +18,7 @@
 - **Project ID:** `blqvfrqkzaudrdbxjovt`
 - **URL:** `https://blqvfrqkzaudrdbxjovt.supabase.co`
 - **RLS:** Desactivado en todas las tablas (anon key puede leer/escribir)
-- **Tablas:** Product, Client, Order, OrderItem, BugReport
+- **Tablas:** Product, Client, Order, OrderItem, BugReport, AunapNews
 - **Enum:** Category (PostgreSQL USER-DEFINED)
 
 ### Credenciales
@@ -32,14 +32,15 @@ VITE_SUPABASE_ANON_KEY=<anon key>
 
 ```
 src/
-  App.tsx              -- Componente principal (~2300 lineas, monolitico)
-  HeroCarousel.tsx     -- Carrusel hero con 3 slides
+  App.tsx              -- Componente principal (~2400 lineas, monolitico)
+  HeroCarousel.tsx     -- Carrusel hero con 3 slides (mask radial CSS para fundir imagenes)
   CompatibilityTable.tsx -- Matriz de compatibilidad 25x25 especies
   UserProfilePage.tsx  -- Pagina de perfil del usuario
   AdminPanel.tsx       -- Panel de administracion (solo role=admin)
-  types.ts             -- Product, CartItem, Category, User, BugReport
+  BugReportWidget.tsx  -- Widget flotante para reportar bugs (solo admin, estilo BugHerd)
+  types.ts             -- Product, CartItem, Category, User, BugReport, AunapNews
   constants.ts         -- Catalogo hardcoded (fallback)
-  migrations.ts        -- Registro de migraciones SQL
+  migrations.ts        -- Registro de migraciones SQL (001-007)
   lib/supabase.ts      -- Cliente Supabase (lee de env vars)
   index.css            -- Theme: brand-blue, brand-dark, brand-light
 ```
@@ -55,9 +56,19 @@ src/
 ## Bug Reports
 
 Tabla `BugReport` en Supabase para tracking interno de bugs.
-- Solo usuarios admin pueden crear/ver bugs
-- Campos: title, description, status (open/in_progress/resolved/closed), priority (low/medium/high/critical), reportedBy, assignedTo, page, steps, screenshot
+- Solo usuarios admin pueden crear/ver bugs via el widget flotante (BugReportWidget.tsx)
+- Widget estilo BugHerd: inspector de elementos + screenshot + formulario
+- Campos: title, description, status, priority, reportedBy, assignedTo, page, steps, screenshot, elementInfo, viewport, userAgent
+- Al reportar un bug, el widget redirige al AdminPanel > Bug Reports
 - Los agentes IA deben consultar esta tabla para ver bugs pendientes antes de trabajar en el proyecto
+- html2canvas tiene limitacion con colores oklch() de Tailwind CSS 4 — se usa mascara radial como workaround
+
+## Noticias (Seccion Conocimiento)
+
+- **Noticias:** Provienen de la tabla `AunapNews` en Supabase (fuente: https://aunap.gov.co/noticias/)
+- **Datos Curiosos:** Linkea a https://muyinteresante.okdiario.com/temas/peces/
+- Las noticias se actualizan manualmente en la tabla AunapNews (2-3 articulos recientes)
+- Click en "Proximamente" o en el bloque de Noticias redirige al sitio de AUNAP
 
 ## Migraciones SQL
 
@@ -74,7 +85,9 @@ Las migraciones se registran en `src/migrations.ts`. Cada cambio de schema se ag
 - 001: Schema inicial + seed data (ejecutada)
 - 002/003: Frontend-only (sin SQL)
 - 004: Role en Client + tabla BugReport (ejecutada)
-- 005: Columnas extra en BugReport para visual bug reporter
+- 005: Columnas extra en BugReport: elementInfo, viewport, userAgent (ejecutada)
+- 006: Disable RLS en TODAS las tablas (ejecutada)
+- 007: Tabla AunapNews + seed data con 3 noticias (ejecutada)
 
 ## Comandos
 
@@ -110,7 +123,11 @@ npm run lint         # Type check
 1. **Proyecto Supabase equivocado:** En sesiones anteriores se uso accidentalmente el proyecto `dlqkoclmoeubqqptgznd` (SB Portal de Juan) en lugar del correcto (`blqvfrqkzaudrdbxjovt`). Esto causo que Google OAuth redirigiera al proyecto equivocado con error 403 org_internal. SIEMPRE verificar el project ID.
 2. **Google OAuth 403 org_internal:** Si aparece este error, verificar que el Client ID en Supabase corresponde al proyecto GCP correcto y que la pantalla de consentimiento OAuth esta en modo "External" + "Published".
 3. **Migraciones SQL son manuales:** El admin ejecuta las migraciones en el SQL Editor de Supabase. No hay migration runner automatico. Cada migracion debe ser independiente y ejecutable por separado.
-4. **RLS desactivado:** Todas las tablas usan RLS desactivado. El anon key tiene acceso completo de lectura/escritura.
+4. **RLS desactivado:** Todas las tablas usan RLS desactivado. El anon key tiene acceso completo de lectura/escritura. Si productos dejan de cargar, lo primero es verificar que RLS siga desactivado.
+5. **html2canvas no soporta oklch():** Tailwind CSS 4 genera colores oklch() que html2canvas no puede parsear. Se usa try/catch + reemplazo de oklch en el DOM clonado.
+6. **Imagenes del carousel:** Las fotos de peces tienen fondo gris (no transparente). Se usa CSS mask-image con radial-gradient para difuminar los bordes.
+7. **Vercel env vars:** Las variables VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY deben estar configuradas en Vercel Dashboard > Settings > Environment Variables. Sin ellas, produccion no conecta a Supabase.
+8. **localStorage es por navegador:** Los estados de migraciones aplicadas (verde/pendiente) se guardan en localStorage, asi que cada navegador tiene su propio estado.
 
 ### Flujo de trabajo recomendado
 1. Leer este CLAUDE.md al inicio de cada sesion
