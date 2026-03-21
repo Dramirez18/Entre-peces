@@ -998,65 +998,59 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-              {/* Noticias AUNAP */}
-              <motion.div
-                whileHover={{ y: -6 }}
-                className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-shadow group flex flex-col"
-              >
-                <div className="h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-t-3xl" />
-                <div className="p-7 lg:p-8 flex flex-col flex-1">
-                  <div className="text-center mb-6">
-                    <div className="flex items-center justify-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Newspaper className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <h3 className="font-bold text-slate-800 text-xl">Noticias</h3>
-                    </div>
-                    <p className="text-xs text-slate-400">AUNAP Colombia</p>
-                  </div>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
-                    Noticias del sector pesquero y acuícola de Colombia.
-                  </p>
-                  <div className="space-y-3 flex-1">
-                    {aunapNews.length > 0 ? aunapNews.map((item) => (
-                      <a
-                        key={item.id}
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block bg-blue-50 rounded-xl p-4 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-colors"
-                      >
-                        <p className="text-sm font-semibold text-blue-800 line-clamp-2">📰 {item.title}</p>
-                        {item.publishedDate && (
-                          <p className="text-[11px] text-slate-400 mt-1.5">{item.publishedDate}</p>
-                        )}
-                      </a>
-                    )) : (
-                      <>
-                        <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                          <p className="text-sm font-semibold text-blue-800">🐠 Temporada de Discos 2026</p>
-                          <p className="text-xs text-slate-500 mt-1">Nuevas variedades disponibles en Colombia</p>
-                        </div>
-                        <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                          <p className="text-sm font-semibold text-blue-800">🌧️ Cuidado en época de lluvias</p>
-                          <p className="text-xs text-slate-500 mt-1">Cómo proteger tu acuario del clima</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <a
-                    href="https://aunap.gov.co/noticias/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-500 font-bold mt-6 hover:underline flex items-center justify-center gap-1"
-                  >
-                    Ver todas las noticias <span className="text-lg">→</span>
-                  </a>
-                </div>
-              </motion.div>
-
-              {/* Datos Curiosos → Link a AUNAP */}
+              {/* Noticias AUNAP — toda la tarjeta es link a AUNAP */}
               <a href="https://aunap.gov.co/noticias/" target="_blank" rel="noopener noreferrer" className="block">
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-shadow cursor-pointer group flex flex-col h-full"
+                >
+                  <div className="h-1.5 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-t-3xl" />
+                  <div className="p-7 lg:p-8 flex flex-col flex-1">
+                    <div className="text-center mb-6">
+                      <div className="flex items-center justify-center gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                          <Newspaper className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <h3 className="font-bold text-slate-800 text-xl">Noticias</h3>
+                      </div>
+                      <p className="text-xs text-slate-400">AUNAP Colombia</p>
+                    </div>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-6 text-center">
+                      Noticias del sector pesquero y acuícola de Colombia.
+                    </p>
+                    <div className="space-y-3 flex-1">
+                      {aunapNews.length > 0 ? aunapNews.map((item) => (
+                        <div
+                          key={item.id}
+                          className="bg-blue-50 rounded-xl p-4 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-colors"
+                        >
+                          <p className="text-sm font-semibold text-blue-800 line-clamp-2">📰 {item.title}</p>
+                          {item.publishedDate && (
+                            <p className="text-[11px] text-slate-400 mt-1.5">{item.publishedDate}</p>
+                          )}
+                        </div>
+                      )) : (
+                        <>
+                          <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                            <p className="text-sm font-semibold text-blue-800">🐠 Temporada de Discos 2026</p>
+                            <p className="text-xs text-slate-500 mt-1">Nuevas variedades disponibles en Colombia</p>
+                          </div>
+                          <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                            <p className="text-sm font-semibold text-blue-800">🌧️ Cuidado en época de lluvias</p>
+                            <p className="text-xs text-slate-500 mt-1">Cómo proteger tu acuario del clima</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-sm text-blue-500 font-bold mt-6 group-hover:underline flex items-center justify-center gap-1">
+                      Ver todas las noticias <span className="text-lg">→</span>
+                    </p>
+                  </div>
+                </motion.div>
+              </a>
+
+              {/* Datos Curiosos — link a Muy Interesante */}
+              <a href="https://muyinteresante.okdiario.com/temas/peces/" target="_blank" rel="noopener noreferrer" className="block">
                 <motion.div
                   whileHover={{ y: -6 }}
                   className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-xl transition-shadow cursor-pointer group flex flex-col h-full"
@@ -1084,7 +1078,7 @@ export default function App() {
                       </div>
                     </div>
                     <p className="text-sm text-amber-500 font-bold mt-6 group-hover:underline flex items-center justify-center gap-1">
-                      Ver noticias AUNAP <span className="text-lg">→</span>
+                      Ver datos curiosos <span className="text-lg">→</span>
                     </p>
                   </div>
                 </motion.div>
