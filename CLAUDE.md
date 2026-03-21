@@ -62,10 +62,19 @@ Tabla `BugReport` en Supabase para tracking interno de bugs.
 ## Migraciones SQL
 
 Las migraciones se registran en `src/migrations.ts`. Cada cambio de schema se agrega como entrada.
-**Importante:** Las migraciones se ejecutan MANUALMENTE por el admin en el SQL Editor de Supabase.
-- Migration 001: Schema inicial + seed data (ejecutada)
-- Migration 002/003: Frontend-only (sin SQL)
-- Migration 004: Role en Client + tabla BugReport
+
+**Reglas de migraciones:**
+- Se ejecutan MANUALMENTE por el admin en el SQL Editor de Supabase
+- Cada migracion es INDEPENDIENTE — no debe incluir SQL de migraciones anteriores
+- Una vez creada una migracion, se asume que YA FUE ejecutada manualmente
+- NUNCA combinar o agrupar migraciones al presentarlas al usuario — cada una va por separado
+- Usar `IF NOT EXISTS` / `IF EXISTS` para hacer las migraciones idempotentes
+
+**Historial:**
+- 001: Schema inicial + seed data (ejecutada)
+- 002/003: Frontend-only (sin SQL)
+- 004: Role en Client + tabla BugReport (ejecutada)
+- 005: Columnas extra en BugReport para visual bug reporter
 
 ## Comandos
 

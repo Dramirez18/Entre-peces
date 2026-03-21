@@ -247,4 +247,18 @@ CREATE INDEX IF NOT EXISTS "BugReport_reportedBy_idx" ON "BugReport"("reportedBy
 -- 5. Disable RLS for BugReport (matches other tables)
 ALTER TABLE "BugReport" DISABLE ROW LEVEL SECURITY;`,
   },
+
+  {
+    id: '005_bugreport_extra_columns',
+    title: 'BugReport: Add elementInfo, viewport, userAgent columns',
+    description: 'Adds extra columns to BugReport for the BugHerd-style visual bug reporter widget. Stores DOM element metadata, viewport dimensions, and browser user agent.',
+    createdAt: '2026-03-20',
+    sql: `-- ============================================================
+-- Migration 005: Extra columns for visual bug reporter
+-- ============================================================
+
+ALTER TABLE "BugReport" ADD COLUMN IF NOT EXISTS "elementInfo" TEXT;
+ALTER TABLE "BugReport" ADD COLUMN IF NOT EXISTS "viewport" TEXT;
+ALTER TABLE "BugReport" ADD COLUMN IF NOT EXISTS "userAgent" TEXT;`,
+  },
 ];

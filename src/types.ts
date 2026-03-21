@@ -36,6 +36,9 @@ export interface BugReport {
   screenshot?: string;
   page?: string;
   steps?: string;
+  elementInfo?: string;   // JSON string with tag, classes, id, text, rect
+  viewport?: string;      // JSON string with width, height
+  userAgent?: string;
   createdAt: string;
   updatedAt: string;
   resolvedAt?: string;

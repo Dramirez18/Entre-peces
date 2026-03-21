@@ -45,6 +45,7 @@ import CompatibilityTable from './CompatibilityTable';
 import HeroCarousel from './HeroCarousel';
 import UserProfilePage from './UserProfilePage';
 import AdminPanel from './AdminPanel';
+import BugReportWidget from './BugReportWidget';
 
 // ── Constants ──────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = '573124380879';
@@ -1880,6 +1881,9 @@ export default function App() {
       >
         <Phone className="w-6 h-6" />
       </a>
+
+      {/* Bug Report Widget (admin only) */}
+      <BugReportWidget user={user} activeTab={activeTab} />
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 md:py-16">
