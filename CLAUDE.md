@@ -1,90 +1,111 @@
 # CLAUDE.md — Entre Peces
 
-## Qué es este proyecto
+## Que es este proyecto
 
-**Entre Peces** es un marketplace web de acuariofilia para Colombia. Aplicación React SPA que permite buscar, filtrar y comprar peces, plantas, camarones y accesorios de acuario. Los productos se sincronizan desde Google Sheets.
+**Entre Peces** es un marketplace web de acuariofilia para Colombia. Aplicacion React SPA para buscar, filtrar y comprar peces, plantas, camarones y accesorios de acuario.
 
 ## Tech Stack
 
 - **Frontend:** React 19 + TypeScript + Vite 6 + Tailwind CSS 4 + Motion (Framer Motion)
-- **Icons:** Lucide React + SVGs custom (Shrimp, Pump, WhatsApp, Facebook, Instagram)
-- **Backend:** Python HTTP server (`server/register.py`, puerto 3001) — registro, login y pedidos via Google Sheets API
-- **Base de datos:** Google Sheets (Spreadsheet ID: `1VJQQYndKRoIC4Y9itm57hqGN2yspitCuBMdDHFxbn9M`)
-- **Hojas:** ENTREPECES (productos), Clientes Registrados (usuarios), Pedidos del dia (órdenes)
+- **Icons:** Lucide React + SVGs custom
+- **Base de datos:** Supabase PostgreSQL (proyecto `blqvfrqkzaudrdbxjovt`)
+- **Auth:** Login por email (tabla Client) + Google OAuth (Supabase Auth)
+- **Deploy:** Vercel (https://entre-peces.vercel.app)
+- **Repo:** GitHub
 
-## Comandos
+## Supabase
 
-```bash
-# Desarrollo (frontend + API)
-npm run dev                          # Vite en puerto 3000
-python server/register.py            # API en puerto 3001
+- **Project ID:** `blqvfrqkzaudrdbxjovt`
+- **URL:** `https://blqvfrqkzaudrdbxjovt.supabase.co`
+- **RLS:** Desactivado en todas las tablas (anon key puede leer/escribir)
+- **Tablas:** Product, Client, Order, OrderItem, BugReport
+- **Enum:** Category (PostgreSQL USER-DEFINED)
 
-# Build
-npm run build                        # Producción → /dist
-npm run preview                      # Preview del build
-
-# Sync de productos desde Google Sheets
-python scripts/sync_products.py      # Manual
-scripts/sync_weekly.bat              # Automático (Windows Task Scheduler, lunes 10am)
-
-# Type check
-npm run lint
+### Credenciales
+Las keys publicas estan en `.env.local`:
+```
+VITE_SUPABASE_URL=https://blqvfrqkzaudrdbxjovt.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon key>
 ```
 
 ## Arquitectura
 
 ```
 src/
-  App.tsx              — Componente principal (~2200 líneas, monolítico)
-  HeroCarousel.tsx     — Carrusel hero con 3 slides de Discos
-  CompatibilityTable.tsx — Matriz de compatibilidad 25×25 especies
-  types.ts             — Product, CartItem, Category, User
-  constants.ts         — Catálogo hardcoded (fallback si products.json falla)
-  index.css            — Theme: brand-blue, brand-dark, brand-light
-
-server/
-  register.py          — API endpoints: /api/register, /api/login, /api/order
-
-scripts/
-  sync_products.py     — Lee Sheet ENTREPECES → genera public/products.json
-  sync_weekly.bat      — Sync semanal + git push
+  App.tsx              -- Componente principal (~2300 lineas, monolitico)
+  HeroCarousel.tsx     -- Carrusel hero con 3 slides
+  CompatibilityTable.tsx -- Matriz de compatibilidad 25x25 especies
+  UserProfilePage.tsx  -- Pagina de perfil del usuario
+  AdminPanel.tsx       -- Panel de administracion (solo role=admin)
+  types.ts             -- Product, CartItem, Category, User, BugReport
+  constants.ts         -- Catalogo hardcoded (fallback)
+  migrations.ts        -- Registro de migraciones SQL
+  lib/supabase.ts      -- Cliente Supabase (lee de env vars)
+  index.css            -- Theme: brand-blue, brand-dark, brand-light
 ```
 
-## Flujo de datos
+## Auth y Roles
 
-1. **Productos:** Google Sheet (ENTREPECES) → `sync_products.py` → `public/products.json` → App
-2. **Usuarios:** Formulario → `/api/register` o `/api/login` → Google Sheet (Clientes Registrados)
-3. **Pedidos:** Carrito → formulario entrega → `/api/order` → Google Sheet (Pedidos del dia)
-4. **Persistencia local:** Cart, user, favorites en `localStorage`
+- **Login por email:** Query a tabla `Client` por email
+- **Google OAuth:** `supabase.auth.signInWithOAuth({ provider: 'google' })`
+- **Roles:** Columna `role` en tabla Client (`'user'` | `'admin'`)
+- **Admin access:** Solo `user.role === 'admin'` ve el boton Administrador y accede al panel
+- **Admin actual:** `dramirez180929@gmail.com`
 
-## Columnas del Sheet ENTREPECES
+## Bug Reports
 
-- A=Científico, C=Nombre Común, F=Tamaño, G=Precio, J=LINK DE IMAGEN
+Tabla `BugReport` en Supabase para tracking interno de bugs.
+- Solo usuarios admin pueden crear/ver bugs
+- Campos: title, description, status (open/in_progress/resolved/closed), priority (low/medium/high/critical), reportedBy, assignedTo, page, steps, screenshot
+- Los agentes IA deben consultar esta tabla para ver bugs pendientes antes de trabajar en el proyecto
 
-## Categorías (11)
+## Migraciones SQL
 
-Peces, Plantas, Camarones, Plantados, Termostatos, Filtros, Alimentos, Acondicionadores, Gravilla, Medidores, Lamparas
+Las migraciones se registran en `src/migrations.ts`. Cada cambio de schema se agrega como entrada.
+**Importante:** Las migraciones se ejecutan MANUALMENTE por el admin en el SQL Editor de Supabase.
+- Migration 001: Schema inicial + seed data (ejecutada)
+- Migration 002/003: Frontend-only (sin SQL)
+- Migration 004: Role en Client + tabla BugReport
 
-## Pagos
+## Comandos
 
-- **Nequi** (activo) — QR en `/payment/nequi-qr.jpg`
-- **Bold** (activo) — Link de pago por WhatsApp
-- **Daviplata** / **Bitcoin** — Próximamente
+```bash
+npm run dev          # Vite dev server
+npm run build        # Build produccion -> /dist
+npm run preview      # Preview del build
+npm run lint         # Type check
+```
 
 ## Convenciones
 
 - WhatsApp de contacto: `+57 312 438 0879`
-- Envío gratis desde COP $200,000
+- Envio gratis desde COP $200,000
 - Moneda: COP (pesos colombianos)
-- Idioma de la app: Español
-- API_URL en dev: `http://localhost:3001`
-- Google helper: `~/.openclaw/workspace/skills/google-auth/scripts/google_helper.py`
-- Imágenes de productos en postimg.cc
-- `referrerPolicy="no-referrer"` en todas las imágenes externas
+- Idioma de la app: Espanol
+- Imagenes de productos en postimg.cc
+- `referrerPolicy="no-referrer"` en todas las imagenes externas
+- App.tsx es monolitico -- toda la UI esta en un solo archivo
+- Layout: `max-w-[1400px]` con padding responsivo
 
-## Notas importantes
+## Reglas Operacionales para Agentes IA
 
-- App.tsx es monolítico — toda la UI está en un solo archivo
-- El server Python requiere credenciales de Google en `~/.openclaw/`
-- No modificar `public/products.json` manualmente — se regenera con sync
-- `constants.ts` es fallback y no se sincroniza
+### CRITICO — Aislamiento de proyectos
+- **NUNCA** usar herramientas MCP/nativas conectadas a otros proyectos sin confirmacion explicita del usuario
+- **NUNCA** asumir que un MCP Supabase conectado pertenece a este proyecto
+- **SIEMPRE** verificar el project ID de Supabase antes de ejecutar queries
+- El proyecto de Entre Peces es `blqvfrqkzaudrdbxjovt` -- cualquier otro ID es de OTRO proyecto
+- Pedir credenciales/IDs explicitamente al usuario antes de operar
+- Cada proyecto del usuario es completamente aislado a menos que el diga lo contrario
+
+### Lecciones aprendidas
+1. **Proyecto Supabase equivocado:** En sesiones anteriores se uso accidentalmente el proyecto `dlqkoclmoeubqqptgznd` (SB Portal de Juan) en lugar del correcto (`blqvfrqkzaudrdbxjovt`). Esto causo que Google OAuth redirigiera al proyecto equivocado con error 403 org_internal. SIEMPRE verificar el project ID.
+2. **Google OAuth 403 org_internal:** Si aparece este error, verificar que el Client ID en Supabase corresponde al proyecto GCP correcto y que la pantalla de consentimiento OAuth esta en modo "External" + "Published".
+3. **Migraciones SQL son manuales:** El admin ejecuta las migraciones en el SQL Editor de Supabase. No hay migration runner automatico. Cada migracion debe ser independiente y ejecutable por separado.
+4. **RLS desactivado:** Todas las tablas usan RLS desactivado. El anon key tiene acceso completo de lectura/escritura.
+
+### Flujo de trabajo recomendado
+1. Leer este CLAUDE.md al inicio de cada sesion
+2. Consultar tabla `BugReport` para ver bugs pendientes
+3. Verificar project ID antes de cualquier operacion Supabase
+4. Registrar cambios de schema como nuevas migraciones en `src/migrations.ts`
+5. El usuario ejecuta las migraciones manualmente

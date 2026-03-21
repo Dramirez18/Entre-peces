@@ -17,6 +17,7 @@ export default function UserProfilePage({ user, onSave, onLogout, onBack, onLogi
     email: user?.email || '',
     phone: user?.phone || '',
     address: user?.address || '',
+    role: user?.role || 'user',
   });
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -28,6 +29,7 @@ export default function UserProfilePage({ user, onSave, onLogout, onBack, onLogi
         email: user.email,
         phone: user.phone,
         address: user.address,
+        role: user.role || 'user',
       });
     }
   }, [user]);

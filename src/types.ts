@@ -22,4 +22,21 @@ export interface User {
   email: string;
   phone: string;
   address: string;
+  role: string;  // 'user' | 'admin'
+}
+
+export interface BugReport {
+  id: number;
+  title: string;
+  description: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  reportedBy: string;
+  assignedTo?: string;
+  screenshot?: string;
+  page?: string;
+  steps?: string;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt?: string;
 }

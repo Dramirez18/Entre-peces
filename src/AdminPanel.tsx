@@ -1,17 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search, Edit3, Save, X, Eye, EyeOff, ArrowLeft, Package, Users, ShoppingBag,
   BarChart3, TrendingUp, DollarSign, AlertTriangle, ChevronDown, ChevronUp,
-  Plus, Trash2, Filter, RefreshCw, Shield, Lock, Database, Copy, Check,
-  CheckCircle2, Clock, ChevronRight
+  Plus, Trash2, Filter, RefreshCw, Shield, Database, Copy, Check,
+  CheckCircle2, Clock, ChevronRight, Bug
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Product, User } from './types';
+import { Product, User, BugReport } from './types';
+import { supabase } from './lib/supabase';
 import { MIGRATIONS, getAppliedMigrations, markMigrationApplied, unmarkMigrationApplied, type Migration } from './migrations';
-
-// ── Admin credentials (simple check — in production use proper auth) ──
-const ADMIN_EMAILS = ['drami@admin.com', 'david@entrepeces.com', 'admin@entrepeces.com'];
-const ADMIN_PIN = '2835'; // 4-digit PIN
 
 interface AdminPanelProps {
   user: User | null;
@@ -24,7 +21,7 @@ interface AdminPanelProps {
   setIsAdmin: (val: boolean) => void;
 }
 
-type AdminTab = 'dashboard' | 'products' | 'clients' | 'orders' | 'sqlhistory';
+type AdminTab = 'dashboard' | 'products' | 'clients' | 'orders' | 'sqlhistory' | 'bugs';
 
 export default function AdminPanel({
   user, products, onUpdateProduct, onToggleActive, onBack, onLogin, isAdmin, setIsAdmin,
@@ -33,9 +30,6 @@ export default function AdminPanel({
   const [searchQuery, setSearchQuery] = useState('');
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState('');
-  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterActive, setFilterActive] = useState<string>('all');
   const [sortField, setSortField] = useState<'name' | 'price' | 'stock' | 'category'>('name');
@@ -44,8 +38,53 @@ export default function AdminPanel({
   const [expandedMigration, setExpandedMigration] = useState<string | null>(null);
   const [appliedMap, setAppliedMap] = useState<Record<string, string>>(getAppliedMigrations);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  // Bug Reports state
+  const [bugs, setBugs] = useState<BugReport[]>([]);
+  const [bugsLoading, setBugsLoading] = useState(false);
+  const [bugFilter, setBugFilter] = useState<string>('all');
+  const [showBugForm, setShowBugForm] = useState(false);
+  const [bugForm, setBugForm] = useState({ title: '', description: '', priority: 'medium', page: '', steps: '' });
+  const [savingBug, setSavingBug] = useState(false);
 
-  // ── Auth gate ──
+  // Load bugs from Supabase
+  useEffect(() => {
+    if (adminTab === 'bugs') loadBugs();
+  }, [adminTab]);
+
+  const loadBugs = async () => {
+    if (!supabase) return;
+    setBugsLoading(true);
+    const { data } = await supabase.from('BugReport').select('*').order('createdAt', { ascending: false });
+    if (data) setBugs(data as BugReport[]);
+    setBugsLoading(false);
+  };
+
+  const createBug = async () => {
+    if (!supabase || !user || !bugForm.title.trim()) return;
+    setSavingBug(true);
+    await supabase.from('BugReport').insert({
+      title: bugForm.title.trim(),
+      description: bugForm.description.trim(),
+      priority: bugForm.priority,
+      page: bugForm.page.trim() || null,
+      steps: bugForm.steps.trim() || null,
+      reportedBy: user.email,
+    });
+    setBugForm({ title: '', description: '', priority: 'medium', page: '', steps: '' });
+    setShowBugForm(false);
+    setSavingBug(false);
+    loadBugs();
+  };
+
+  const updateBugStatus = async (id: number, status: string) => {
+    if (!supabase) return;
+    const updates: Record<string, unknown> = { status, updatedAt: new Date().toISOString() };
+    if (status === 'resolved' || status === 'closed') updates.resolvedAt = new Date().toISOString();
+    await supabase.from('BugReport').update(updates).eq('id', id);
+    loadBugs();
+  };
+
+  // ── Auth gate (role-based, no PIN) ──
   if (!user) {
     return (
       <div className="max-w-lg mx-auto py-16 text-center">
@@ -66,74 +105,6 @@ export default function AdminPanel({
             className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-3.5 rounded-2xl font-bold hover:shadow-lg transition-all"
           >
             Iniciar sesión
-          </button>
-          <button onClick={onBack} className="block mx-auto mt-4 text-sm text-slate-400 hover:text-slate-600 transition-colors">
-            ← Volver al inicio
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  // PIN verification gate
-  if (!adminAuthenticated) {
-    return (
-      <div className="max-w-lg mx-auto py-16 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl border border-slate-200 shadow-sm p-10"
-        >
-          <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-6">
-            <Lock className="w-10 h-10 text-amber-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-3">PIN de Administrador</h2>
-          <p className="text-slate-500 text-sm mb-6">
-            Ingresa el PIN de 4 dígitos para continuar.
-          </p>
-
-          <div className="max-w-[200px] mx-auto mb-4">
-            <input
-              type="password"
-              maxLength={4}
-              value={pinInput}
-              onChange={(e) => { setPinInput(e.target.value.replace(/\D/g, '')); setPinError(''); }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  if (pinInput === ADMIN_PIN) {
-                    setAdminAuthenticated(true);
-                    setIsAdmin(true);
-                  } else {
-                    setPinError('PIN incorrecto');
-                    setPinInput('');
-                  }
-                }
-              }}
-              className="w-full text-center text-2xl tracking-[0.5em] bg-slate-50 px-4 py-4 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all"
-              placeholder="••••"
-              autoFocus
-            />
-          </div>
-
-          {pinError && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-sm font-medium mb-4">
-              {pinError}
-            </motion.p>
-          )}
-
-          <button
-            onClick={() => {
-              if (pinInput === ADMIN_PIN) {
-                setAdminAuthenticated(true);
-                setIsAdmin(true);
-              } else {
-                setPinError('PIN incorrecto');
-                setPinInput('');
-              }
-            }}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-3.5 rounded-2xl font-bold hover:shadow-lg transition-all"
-          >
-            Verificar
           </button>
           <button onClick={onBack} className="block mx-auto mt-4 text-sm text-slate-400 hover:text-slate-600 transition-colors">
             ← Volver al inicio
@@ -218,6 +189,7 @@ export default function AdminPanel({
     { key: 'clients', label: 'Clientes', icon: Users },
     { key: 'orders', label: 'Pedidos', icon: ShoppingBag },
     { key: 'sqlhistory', label: 'SQL History', icon: Database, count: MIGRATIONS.length },
+    { key: 'bugs', label: 'Bug Reports', icon: Bug, count: bugs.filter(b => b.status === 'open' || b.status === 'in_progress').length },
   ];
 
   return (
@@ -238,7 +210,7 @@ export default function AdminPanel({
             </div>
           </div>
           <button
-            onClick={() => { setAdminAuthenticated(false); setIsAdmin(false); onBack(); }}
+            onClick={() => { setIsAdmin(false); onBack(); }}
             className="text-sm text-red-500 hover:text-red-600 font-medium hover:bg-red-50 px-4 py-2 rounded-xl transition-colors"
           >
             Salir del panel
@@ -708,6 +680,187 @@ export default function AdminPanel({
                 Cada cambio de schema o datos se agrega como una nueva entrada en el array MIGRATIONS.
               </p>
             </div>
+          </div>
+        )}
+
+        {/* ══════ BUG REPORTS ══════ */}
+        {adminTab === 'bugs' && (
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                  <Bug className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800">Bug Reports</h3>
+                  <p className="text-xs text-slate-400">
+                    {bugs.length} reportes &middot; {bugs.filter(b => b.status === 'open').length} abiertos
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <select
+                  value={bugFilter}
+                  onChange={(e) => setBugFilter(e.target.value)}
+                  className="bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs focus:border-red-500 outline-none"
+                >
+                  <option value="all">Todos</option>
+                  <option value="open">Abiertos</option>
+                  <option value="in_progress">En progreso</option>
+                  <option value="resolved">Resueltos</option>
+                  <option value="closed">Cerrados</option>
+                </select>
+                <button
+                  onClick={() => setShowBugForm(true)}
+                  className="inline-flex items-center gap-1.5 bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-600 transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Nuevo Bug
+                </button>
+              </div>
+            </div>
+
+            {/* New Bug Form */}
+            <AnimatePresence>
+              {showBugForm && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="bg-white rounded-2xl border border-red-200 p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-slate-800">Reportar Bug</h4>
+                      <button onClick={() => setShowBugForm(false)} className="p-1 hover:bg-slate-100 rounded-lg">
+                        <X className="w-4 h-4 text-slate-400" />
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Titulo del bug *"
+                      value={bugForm.title}
+                      onChange={(e) => setBugForm({ ...bugForm, title: e.target.value })}
+                      className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
+                    />
+                    <textarea
+                      placeholder="Descripcion detallada..."
+                      value={bugForm.description}
+                      onChange={(e) => setBugForm({ ...bugForm, description: e.target.value })}
+                      rows={3}
+                      className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none resize-none"
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <select
+                        value={bugForm.priority}
+                        onChange={(e) => setBugForm({ ...bugForm, priority: e.target.value })}
+                        className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 outline-none"
+                      >
+                        <option value="low">Prioridad: Baja</option>
+                        <option value="medium">Prioridad: Media</option>
+                        <option value="high">Prioridad: Alta</option>
+                        <option value="critical">Prioridad: Critica</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Pagina/Seccion"
+                        value={bugForm.page}
+                        onChange={(e) => setBugForm({ ...bugForm, page: e.target.value })}
+                        className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Pasos para reproducir"
+                        value={bugForm.steps}
+                        onChange={(e) => setBugForm({ ...bugForm, steps: e.target.value })}
+                        className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 outline-none"
+                      />
+                    </div>
+                    <button
+                      onClick={createBug}
+                      disabled={!bugForm.title.trim() || savingBug}
+                      className="bg-red-500 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors disabled:opacity-50"
+                    >
+                      {savingBug ? 'Guardando...' : 'Crear Bug Report'}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Bug List */}
+            {bugsLoading ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <RefreshCw className="w-8 h-8 text-slate-300 animate-spin mx-auto mb-3" />
+                <p className="text-sm text-slate-400">Cargando bugs...</p>
+              </div>
+            ) : bugs.filter(b => bugFilter === 'all' || b.status === bugFilter).length === 0 ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <Bug className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+                <p className="text-sm text-slate-400">No hay bugs {bugFilter !== 'all' ? `con estado "${bugFilter}"` : 'reportados'}.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {bugs.filter(b => bugFilter === 'all' || b.status === bugFilter).map((bug) => {
+                  const priorityColors: Record<string, string> = {
+                    low: 'bg-blue-100 text-blue-700',
+                    medium: 'bg-amber-100 text-amber-700',
+                    high: 'bg-orange-100 text-orange-700',
+                    critical: 'bg-red-100 text-red-700',
+                  };
+                  const statusColors: Record<string, string> = {
+                    open: 'bg-red-100 text-red-700',
+                    in_progress: 'bg-amber-100 text-amber-700',
+                    resolved: 'bg-emerald-100 text-emerald-700',
+                    closed: 'bg-slate-100 text-slate-500',
+                  };
+                  const statusLabels: Record<string, string> = {
+                    open: 'Abierto',
+                    in_progress: 'En progreso',
+                    resolved: 'Resuelto',
+                    closed: 'Cerrado',
+                  };
+                  const nextStatus: Record<string, string> = {
+                    open: 'in_progress',
+                    in_progress: 'resolved',
+                    resolved: 'closed',
+                  };
+
+                  return (
+                    <div key={bug.id} className="bg-white rounded-2xl border border-slate-200 p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${priorityColors[bug.priority] || ''}`}>
+                              {bug.priority}
+                            </span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColors[bug.status] || ''}`}>
+                              {statusLabels[bug.status] || bug.status}
+                            </span>
+                            <span className="text-[10px] text-slate-400">#{bug.id}</span>
+                          </div>
+                          <h4 className="text-sm font-bold text-slate-800 mb-1">{bug.title}</h4>
+                          {bug.description && <p className="text-xs text-slate-500 mb-2">{bug.description}</p>}
+                          <div className="flex gap-4 text-[10px] text-slate-400">
+                            <span>Por: {bug.reportedBy}</span>
+                            {bug.page && <span>Pagina: {bug.page}</span>}
+                            <span>{new Date(bug.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        {nextStatus[bug.status] && (
+                          <button
+                            onClick={() => updateBugStatus(bug.id, nextStatus[bug.status])}
+                            className="shrink-0 text-xs font-bold px-4 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-700 transition-colors"
+                          >
+                            → {statusLabels[nextStatus[bug.status]]}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </motion.div>

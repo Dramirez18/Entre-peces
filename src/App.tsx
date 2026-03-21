@@ -247,7 +247,8 @@ export default function App() {
     name: '',
     email: '',
     phone: '',
-    address: ''
+    address: '',
+    role: 'user',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -445,7 +446,7 @@ export default function App() {
       if (!supabase) throw new Error('Supabase no disponible');
       const { data, error } = await supabase
         .from('Client')
-        .select('name, email, phone, address')
+        .select('name, email, phone, address, role')
         .eq('email', loginEmail.trim().toLowerCase())
         .limit(1)
         .single();
@@ -489,7 +490,14 @@ export default function App() {
           address: '',
           updatedAt: new Date().toISOString(),
         }, { onConflict: 'email' });
-        setUser({ name, email, phone: gUser.phone || '', address: '' });
+        // Fetch role from DB (upsert doesn't return it reliably)
+        const { data: clientData } = await supabase
+          .from('Client')
+          .select('role')
+          .eq('email', email)
+          .single();
+        const role = clientData?.role || 'user';
+        setUser({ name, email, phone: gUser.phone || '', address: '', role });
         setIsUserModalOpen(false);
         setShowWelcomePopup(true);
         setTimeout(() => setShowWelcomePopup(false), 4000);
@@ -695,20 +703,22 @@ export default function App() {
                   <span>Mi Perfil</span>
                 </button>
 
-                {/* Administrador */}
-                <button
-                  onClick={() => { setActiveTab('Admin'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); }}
-                  className={`w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold transition-all ${
-                    activeTab === 'Admin'
-                      ? 'bg-amber-500/10 text-amber-600 border-r-4 border-amber-500'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <span>Administrador</span>
-                </button>
+                {/* Administrador — solo visible para admins */}
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={() => { setActiveTab('Admin'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); }}
+                    className={`w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold transition-all ${
+                      activeTab === 'Admin'
+                        ? 'bg-amber-500/10 text-amber-600 border-r-4 border-amber-500'
+                        : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <span>Administrador</span>
+                  </button>
+                )}
 
                 <div className="h-px bg-slate-100 mx-6 my-3" />
 
@@ -874,8 +884,8 @@ export default function App() {
           />
         )}
 
-        {/* ===== ADMIN PANEL ===== */}
-        {activeTab === 'Admin' && (
+        {/* ===== ADMIN PANEL (role-based) ===== */}
+        {activeTab === 'Admin' && user?.role === 'admin' && (
           <AdminPanel
             user={user}
             products={products}
@@ -886,6 +896,20 @@ export default function App() {
             isAdmin={isAdmin}
             setIsAdmin={setIsAdmin}
           />
+        )}
+        {activeTab === 'Admin' && (!user || user.role !== 'admin') && (
+          <div className="max-w-lg mx-auto py-16 text-center">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-10">
+              <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
+                <Shield className="w-10 h-10 text-red-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 mb-3">Acceso Restringido</h2>
+              <p className="text-slate-500 text-sm mb-6">Solo los administradores pueden acceder a este panel.</p>
+              <button onClick={() => setActiveTab('Inicio')} className="bg-brand-blue text-white px-8 py-3 rounded-2xl font-bold hover:shadow-lg transition-all">
+                Volver al inicio
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Hero Section for Home — Carousel */}

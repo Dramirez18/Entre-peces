@@ -206,4 +206,45 @@ FROM "Client" c WHERE c."phone" = '3209876543' LIMIT 1;`,
 --   Set Google Client ID + Secret from Google Cloud Console
 --   Add redirect URL: https://entre-peces.vercel.app`,
   },
+
+  {
+    id: '004_role_and_bugreports',
+    title: 'Add Role to Client + BugReport Table',
+    description: 'Adds "role" column to Client table (default "user") and creates BugReport table for internal bug tracking. Sets dramirez180929@gmail.com as admin. Only admin users can access the admin panel (replaces PIN-based auth).',
+    createdAt: '2026-03-20',
+    sql: `-- ============================================================
+-- Migration 004: Role column + BugReport table
+-- ============================================================
+
+-- 1. Add role column to Client (default 'user')
+ALTER TABLE "Client" ADD COLUMN IF NOT EXISTS "role" TEXT NOT NULL DEFAULT 'user';
+
+-- 2. Set admin role for David
+UPDATE "Client" SET "role" = 'admin' WHERE "email" = 'dramirez180929@gmail.com';
+
+-- 3. Create BugReport table
+CREATE TABLE IF NOT EXISTS "BugReport" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'open',
+    "priority" TEXT NOT NULL DEFAULT 'medium',
+    "reportedBy" TEXT NOT NULL,
+    "assignedTo" TEXT,
+    "screenshot" TEXT,
+    "page" TEXT,
+    "steps" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "resolvedAt" TIMESTAMP(3),
+    CONSTRAINT "BugReport_pkey" PRIMARY KEY ("id")
+);
+
+-- 4. Indexes
+CREATE INDEX IF NOT EXISTS "BugReport_status_idx" ON "BugReport"("status");
+CREATE INDEX IF NOT EXISTS "BugReport_reportedBy_idx" ON "BugReport"("reportedBy");
+
+-- 5. Disable RLS for BugReport (matches other tables)
+ALTER TABLE "BugReport" DISABLE ROW LEVEL SECURITY;`,
+  },
 ];
