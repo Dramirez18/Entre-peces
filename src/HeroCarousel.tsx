@@ -49,7 +49,7 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-[#0a2540] to-cyan-900" />
 
-        {/* Fish images — crossfade, positioned right */}
+        {/* Fish images — crossfade, positioned right, with CSS mask for soft edges */}
         {SLIDES.map((s, i) => (
           <img
             key={i}
@@ -59,6 +59,10 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
               i === current ? 'opacity-80 scale-100' : 'opacity-0 scale-90'
             }`}
             referrerPolicy="no-referrer"
+            style={{
+              WebkitMaskImage: 'radial-gradient(ellipse 70% 70% at center, black 40%, transparent 72%)',
+              maskImage: 'radial-gradient(ellipse 70% 70% at center, black 40%, transparent 72%)',
+            }}
           />
         ))}
 

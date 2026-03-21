@@ -1998,8 +1998,7 @@ export default function App() {
               </h2>
             </div>
             <p className="max-w-sm mb-6">
-              El primer marketplace especializado en acuariofilia de agua dulce en Colombia.
-              Calidad, variedad y pasión por el acuarismo.
+              Somos una empresa dedicada a la comercialización de peces ornamentales en Colombia. ¡Aquí encontrarás variedad y calidad! Escríbenos para cualquier duda.
             </p>
             <div className="flex gap-3">
               <a
