@@ -404,20 +404,17 @@ export default function App() {
   // Reset page when filters change
   useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortBy]);
 
-  // Paginated products - Home shows only 8 featured, categories paginate normally
+  // Display products - Home shows only 8 featured, categories show all with scroll
   const isHomeFeatured = activeTab === 'Inicio' && !searchQuery;
-  const totalPages = isHomeFeatured ? 1 : Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const paginatedProducts = useMemo(() => {
+  const displayProducts = useMemo(() => {
     if (isHomeFeatured) {
-      // Show top 8 products from Peces category (most popular) sorted by price desc
       return [...filteredProducts]
         .filter(p => p.category === 'Peces')
         .sort((a, b) => b.price - a.price)
         .slice(0, 8);
     }
-    const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
-    return filteredProducts.slice(start, start + PRODUCTS_PER_PAGE);
-  }, [filteredProducts, currentPage, isHomeFeatured]);
+    return filteredProducts;
+  }, [filteredProducts, isHomeFeatured]);
 
   const productCountByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1248,7 +1245,7 @@ export default function App() {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6 lg:gap-8">
-          {paginatedProducts.map((product) => (
+          {displayProducts.map((product) => (
             <motion.div
               layout
               key={product.id}
@@ -1365,54 +1362,8 @@ export default function App() {
           </div>
         )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-10">
-            <button
-              onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              disabled={currentPage === 1}
-              className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-brand-blue hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              ← Anterior
-            </button>
-
-            {/* Page numbers */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
-              .reduce<(number | string)[]>((acc, p, i, arr) => {
-                if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push('...');
-                acc.push(p);
-                return acc;
-              }, [])
-              .map((p, i) =>
-                typeof p === 'string' ? (
-                  <span key={`dots-${i}`} className="px-2 text-slate-400">...</span>
-                ) : (
-                  <button
-                    key={p}
-                    onClick={() => { setCurrentPage(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    className={`w-10 h-10 rounded-xl text-sm font-bold transition-colors ${
-                      currentPage === p
-                        ? 'bg-brand-blue text-white shadow-lg'
-                        : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                )
-              )}
-
-            <button
-              onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-brand-blue hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              Siguiente →
-            </button>
-          </div>
-        )}
-        <p className="text-center text-xs text-slate-400 mt-3">
-          Mostrando {((currentPage - 1) * PRODUCTS_PER_PAGE) + 1}-{Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)} de {filteredProducts.length}
+        <p className="text-center text-xs text-slate-400 mt-6">
+          Mostrando {displayProducts.length} de {filteredProducts.length} productos
         </p>
       </main>
 
