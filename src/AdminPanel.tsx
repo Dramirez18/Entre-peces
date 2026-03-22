@@ -6,7 +6,7 @@ import {
   CheckCircle2, Clock, ChevronRight, Bug
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Product, User, BugReport } from './types';
+import { Product, User, BugReport, ClientRow, OrderRow, OrderItemRow } from './types';
 import { supabase } from './lib/supabase';
 import { MIGRATIONS, getAppliedMigrations, markMigrationApplied, unmarkMigrationApplied, type Migration } from './migrations';
 
@@ -47,6 +47,19 @@ export default function AdminPanel({
   const [showBugForm, setShowBugForm] = useState(false);
   const [bugForm, setBugForm] = useState({ title: '', description: '', priority: 'medium', page: '', steps: '' });
   const [savingBug, setSavingBug] = useState(false);
+  // Clients state
+  const [clients, setClients] = useState<ClientRow[]>([]);
+  const [clientsLoading, setClientsLoading] = useState(false);
+  const [clientSearch, setClientSearch] = useState('');
+  const [editingClient, setEditingClient] = useState<number | null>(null);
+  const [clientEditForm, setClientEditForm] = useState({ name: '', phone: '', address: '' });
+  const [clientOrderCounts, setClientOrderCounts] = useState<Record<number, number>>({});
+  // Orders state
+  const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [orderSearch, setOrderSearch] = useState('');
+  const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
+  const [orderItems, setOrderItems] = useState<Record<number, OrderItemRow[]>>({});
 
   // Switch to initialTab when it changes (e.g. from BugReportWidget)
   useEffect(() => {
@@ -55,9 +68,11 @@ export default function AdminPanel({
     }
   }, [initialTab]);
 
-  // Load bugs from Supabase
+  // Load data on tab switch
   useEffect(() => {
     if (adminTab === 'bugs') loadBugs();
+    if (adminTab === 'clients') loadClients();
+    if (adminTab === 'orders') loadOrders();
   }, [adminTab]);
 
   const loadBugs = async () => {
@@ -105,6 +120,106 @@ export default function AdminPanel({
     await supabase.from('BugReport').update(updates).eq('id', id);
     loadBugs();
   };
+
+  // ── Clients CRUD ──
+  const loadClients = async () => {
+    if (!supabase) return;
+    setClientsLoading(true);
+    try {
+      const { data, error } = await supabase.from('Client').select('*').order('createdAt', { ascending: false });
+      if (error) { console.error('[Clients] Load error:', error.message); }
+      else if (data) { setClients(data as ClientRow[]); }
+      // Count orders per client
+      const { data: orderData } = await supabase.from('Order').select('clientId');
+      if (orderData) {
+        const counts: Record<number, number> = {};
+        orderData.forEach((o: { clientId: number }) => { counts[o.clientId] = (counts[o.clientId] || 0) + 1; });
+        setClientOrderCounts(counts);
+      }
+    } catch (e) { console.error('[Clients] Unexpected error:', e); }
+    setClientsLoading(false);
+  };
+
+  const updateClient = async (id: number) => {
+    if (!supabase) return;
+    const { error } = await supabase.from('Client').update({
+      name: clientEditForm.name, phone: clientEditForm.phone, address: clientEditForm.address,
+      updatedAt: new Date().toISOString(),
+    }).eq('id', id);
+    if (error) { alert(`Error: ${error.message}`); return; }
+    setEditingClient(null);
+    loadClients();
+  };
+
+  const deleteClient = async (id: number) => {
+    if (!supabase) return;
+    if (!window.confirm('¿Eliminar este cliente? Si tiene pedidos, no se podrá eliminar.')) return;
+    const { error } = await supabase.from('Client').delete().eq('id', id);
+    if (error) {
+      if (error.message.includes('violates foreign key') || error.code === '23503') {
+        alert('No se puede eliminar: este cliente tiene pedidos asociados.');
+      } else { alert(`Error: ${error.message}`); }
+      return;
+    }
+    loadClients();
+  };
+
+  // ── Orders CRUD ──
+  const loadOrders = async () => {
+    if (!supabase) return;
+    setOrdersLoading(true);
+    try {
+      const { data, error } = await supabase.from('Order').select('*').order('createdAt', { ascending: false });
+      if (error) { console.error('[Orders] Load error:', error.message); }
+      else if (data) {
+        // Get client names
+        const clientIds = [...new Set(data.map((o: OrderRow) => o.clientId))];
+        const { data: clientData } = await supabase.from('Client').select('id, name').in('id', clientIds);
+        const clientMap: Record<number, string> = {};
+        clientData?.forEach((c: { id: number; name: string }) => { clientMap[c.id] = c.name; });
+        // Get item counts
+        const { data: itemData } = await supabase.from('OrderItem').select('orderId');
+        const itemCounts: Record<number, number> = {};
+        itemData?.forEach((i: { orderId: number }) => { itemCounts[i.orderId] = (itemCounts[i.orderId] || 0) + 1; });
+        // Enrich orders
+        const enriched = data.map((o: OrderRow) => ({
+          ...o,
+          clientName: clientMap[o.clientId] || 'Cliente desconocido',
+          itemCount: itemCounts[o.id] || 0,
+        }));
+        setOrders(enriched);
+      }
+    } catch (e) { console.error('[Orders] Unexpected error:', e); }
+    setOrdersLoading(false);
+  };
+
+  const loadOrderItemsForOrder = async (orderId: number) => {
+    if (!supabase || orderItems[orderId]) return;
+    const { data } = await supabase.from('OrderItem').select('*').eq('orderId', orderId).order('id');
+    if (data) setOrderItems(prev => ({ ...prev, [orderId]: data as OrderItemRow[] }));
+  };
+
+  const deleteOrder = async (id: number) => {
+    if (!supabase) return;
+    if (!window.confirm('¿Eliminar este pedido y todos sus items?')) return;
+    await supabase.from('OrderItem').delete().eq('orderId', id);
+    const { error } = await supabase.from('Order').delete().eq('id', id);
+    if (error) { alert(`Error: ${error.message}`); return; }
+    setOrderItems(prev => { const next = { ...prev }; delete next[id]; return next; });
+    loadOrders();
+  };
+
+  const filteredClients = useMemo(() => {
+    if (!clientSearch) return clients;
+    const q = clientSearch.toLowerCase();
+    return clients.filter(c => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q));
+  }, [clients, clientSearch]);
+
+  const filteredOrders = useMemo(() => {
+    if (!orderSearch) return orders;
+    const q = orderSearch.toLowerCase();
+    return orders.filter(o => (o.clientName || '').toLowerCase().includes(q) || o.date.includes(q));
+  }, [orders, orderSearch]);
 
   // ── Auth gate (role-based, no PIN) ──
   if (!user) {
@@ -208,8 +323,8 @@ export default function AdminPanel({
   const tabs: { key: AdminTab; label: string; icon: React.ElementType; count?: number }[] = [
     { key: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { key: 'products', label: 'Productos', icon: Package, count: totalProducts },
-    { key: 'clients', label: 'Clientes', icon: Users },
-    { key: 'orders', label: 'Pedidos', icon: ShoppingBag },
+    { key: 'clients', label: 'Clientes', icon: Users, count: clients.length || undefined },
+    { key: 'orders', label: 'Pedidos', icon: ShoppingBag, count: orders.length || undefined },
     { key: 'sqlhistory', label: 'SQL History', icon: Database, count: MIGRATIONS.length },
     { key: 'bugs', label: 'Bug Reports', icon: Bug, count: bugs.filter(b => b.status === 'open' || b.status === 'in_progress').length },
   ];
@@ -540,41 +655,254 @@ export default function AdminPanel({
 
         {/* ══════ CLIENTS ══════ */}
         {adminTab === 'clients' && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-blue-400" />
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800">Gestión de Clientes</h3>
+                  <p className="text-xs text-slate-400">{clients.length} clientes registrados</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text" placeholder="Buscar por nombre o email..." value={clientSearch}
+                    onChange={e => setClientSearch(e.target.value)}
+                    className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:border-blue-500 outline-none w-64"
+                  />
+                </div>
+                <button onClick={loadClients} className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" title="Recargar">
+                  <RefreshCw className="w-4 h-4 text-slate-500" />
+                </button>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-slate-800 mb-2">Gestión de Clientes</h3>
-            <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
-              Los clientes están almacenados en Supabase. Aquí podrás ver, buscar y gestionar tus clientes registrados.
-            </p>
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-sm font-medium">
-              <RefreshCw className="w-4 h-4" />
-              Conectar con Supabase para ver clientes
-            </div>
-            <p className="text-xs text-slate-400 mt-4">
-              Próximamente: integración directa con la base de datos para gestión completa de clientes.
-            </p>
+
+            {clientsLoading ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <RefreshCw className="w-8 h-8 text-blue-400 animate-spin mx-auto mb-3" />
+                <p className="text-sm text-slate-500">Cargando clientes...</p>
+              </div>
+            ) : filteredClients.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <Users className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">{clientSearch ? 'Sin resultados' : 'No hay clientes registrados'}</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200">
+                        <th className="text-left px-4 py-3 font-semibold text-slate-600">Nombre</th>
+                        <th className="text-left px-4 py-3 font-semibold text-slate-600">Email</th>
+                        <th className="text-left px-4 py-3 font-semibold text-slate-600">Teléfono</th>
+                        <th className="text-left px-4 py-3 font-semibold text-slate-600">Dirección</th>
+                        <th className="text-center px-4 py-3 font-semibold text-slate-600">Rol</th>
+                        <th className="text-center px-4 py-3 font-semibold text-slate-600">Pedidos</th>
+                        <th className="text-center px-4 py-3 font-semibold text-slate-600">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredClients.map(client => (
+                        <tr key={client.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                          <td className="px-4 py-3">
+                            {editingClient === client.id ? (
+                              <input value={clientEditForm.name} onChange={e => setClientEditForm({ ...clientEditForm, name: e.target.value })}
+                                className="w-full px-2 py-1 border border-amber-300 rounded-lg bg-amber-50 text-sm focus:outline-none" />
+                            ) : (
+                              <span className="font-medium text-slate-800">{client.name}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-slate-500">{client.email}</td>
+                          <td className="px-4 py-3">
+                            {editingClient === client.id ? (
+                              <input value={clientEditForm.phone} onChange={e => setClientEditForm({ ...clientEditForm, phone: e.target.value })}
+                                className="w-full px-2 py-1 border border-amber-300 rounded-lg bg-amber-50 text-sm focus:outline-none" />
+                            ) : (
+                              <span className="text-slate-600">{client.phone}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            {editingClient === client.id ? (
+                              <input value={clientEditForm.address} onChange={e => setClientEditForm({ ...clientEditForm, address: e.target.value })}
+                                className="w-full px-2 py-1 border border-amber-300 rounded-lg bg-amber-50 text-sm focus:outline-none" />
+                            ) : (
+                              <span className="text-slate-500 text-xs">{client.address || '—'}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${client.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
+                              {client.role}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-xs font-bold">
+                              {clientOrderCounts[client.id] || 0}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {editingClient === client.id ? (
+                              <div className="flex items-center justify-center gap-1">
+                                <button onClick={() => updateClient(client.id)} className="p-1.5 rounded-lg bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition-colors" title="Guardar">
+                                  <Save className="w-3.5 h-3.5" />
+                                </button>
+                                <button onClick={() => setEditingClient(null)} className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors" title="Cancelar">
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center gap-1">
+                                <button onClick={() => { setEditingClient(client.id); setClientEditForm({ name: client.name, phone: client.phone, address: client.address }); }}
+                                  className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors" title="Editar">
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button onClick={() => deleteClient(client.id)}
+                                  className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors" title="Eliminar">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-400">
+                  Mostrando {filteredClients.length} de {clients.length} clientes
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {/* ══════ ORDERS ══════ */}
         {adminTab === 'orders' && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-4">
-              <ShoppingBag className="w-8 h-8 text-purple-400" />
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                  <ShoppingBag className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800">Gestión de Pedidos</h3>
+                  <p className="text-xs text-slate-400">{orders.length} pedidos &middot; {formatCOP(orders.reduce((s, o) => s + o.total, 0))} total</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text" placeholder="Buscar por cliente o fecha..." value={orderSearch}
+                    onChange={e => setOrderSearch(e.target.value)}
+                    className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:border-purple-500 outline-none w-64"
+                  />
+                </div>
+                <button onClick={loadOrders} className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" title="Recargar">
+                  <RefreshCw className="w-4 h-4 text-slate-500" />
+                </button>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-slate-800 mb-2">Gestión de Pedidos</h3>
-            <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
-              Los pedidos están almacenados en Supabase. Aquí podrás ver el historial, cambiar estados y gestionar entregas.
-            </p>
-            <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-xl text-sm font-medium">
-              <RefreshCw className="w-4 h-4" />
-              Conectar con Supabase para ver pedidos
-            </div>
-            <p className="text-xs text-slate-400 mt-4">
-              Próximamente: vista de pedidos en tiempo real con estados y notificaciones.
-            </p>
+
+            {ordersLoading ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <RefreshCw className="w-8 h-8 text-purple-400 animate-spin mx-auto mb-3" />
+                <p className="text-sm text-slate-500">Cargando pedidos...</p>
+              </div>
+            ) : filteredOrders.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+                <ShoppingBag className="w-8 h-8 text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">{orderSearch ? 'Sin resultados' : 'No hay pedidos'}</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredOrders.map(order => (
+                  <div key={order.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                    {/* Order header */}
+                    <div
+                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/50 transition-colors"
+                      onClick={() => {
+                        const next = expandedOrder === order.id ? null : order.id;
+                        setExpandedOrder(next);
+                        if (next) loadOrderItemsForOrder(order.id);
+                      }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold">#{order.id}</span>
+                        <div>
+                          <p className="font-semibold text-slate-800 text-sm">{order.clientName}</p>
+                          <p className="text-xs text-slate-400">{order.date} · {order.time} · {order.address}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="font-bold text-slate-800">{formatCOP(order.total)}</p>
+                          <p className="text-[10px] text-slate-400">{order.itemCount || 0} items</p>
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); deleteOrder(order.id); }}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors" title="Eliminar pedido">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        {expandedOrder === order.id ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                      </div>
+                    </div>
+
+                    {/* Order items (expanded) */}
+                    <AnimatePresence>
+                      {expandedOrder === order.id && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="border-t border-slate-100 overflow-hidden"
+                        >
+                          <div className="p-4 bg-slate-50/50">
+                            {!orderItems[order.id] ? (
+                              <p className="text-xs text-slate-400 text-center py-2">Cargando items...</p>
+                            ) : orderItems[order.id].length === 0 ? (
+                              <p className="text-xs text-slate-400 text-center py-2">Sin items</p>
+                            ) : (
+                              <table className="w-full text-xs">
+                                <thead>
+                                  <tr className="text-slate-500">
+                                    <th className="text-left py-1 font-semibold">Producto</th>
+                                    <th className="text-center py-1 font-semibold">Cant.</th>
+                                    <th className="text-right py-1 font-semibold">Precio</th>
+                                    <th className="text-right py-1 font-semibold">Subtotal</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {orderItems[order.id].map(item => (
+                                    <tr key={item.id} className="border-t border-slate-200/50">
+                                      <td className="py-2 text-slate-700 font-medium">{item.name}</td>
+                                      <td className="py-2 text-center text-slate-600">{item.quantity}</td>
+                                      <td className="py-2 text-right text-slate-500">{formatCOP(item.price)}</td>
+                                      <td className="py-2 text-right font-semibold text-slate-700">{formatCOP(item.price * item.quantity)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                                <tfoot>
+                                  <tr className="border-t border-slate-300">
+                                    <td colSpan={3} className="py-2 text-right font-bold text-slate-600">Total:</td>
+                                    <td className="py-2 text-right font-bold text-purple-700">{formatCOP(order.total)}</td>
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

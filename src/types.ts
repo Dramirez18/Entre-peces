@@ -44,6 +44,38 @@ export interface BugReport {
   resolvedAt?: string;
 }
 
+export interface ClientRow {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderRow {
+  id: number;
+  clientId: number;
+  address: string;
+  date: string;
+  time: string;
+  total: number;
+  createdAt: string;
+  clientName?: string;
+  itemCount?: number;
+}
+
+export interface OrderItemRow {
+  id: number;
+  orderId: number;
+  productId: string | null;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 export interface AunapNews {
   id: number;
   title: string;
