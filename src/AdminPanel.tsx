@@ -532,7 +532,7 @@ export default function AdminPanel({
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredProducts.slice(0, 50).map((product) => {
+                    {filteredProducts.map((product) => {
                       const isEd = editingProduct === product.id;
                       return (
                         <tr
@@ -644,11 +644,6 @@ export default function AdminPanel({
                   </tbody>
                 </table>
               </div>
-              {filteredProducts.length > 50 && (
-                <div className="px-4 py-3 bg-slate-50 text-center text-xs text-slate-400">
-                  Mostrando 50 de {filteredProducts.length} productos. Usa los filtros para encontrar lo que buscas.
-                </div>
-              )}
             </div>
           </div>
         )}

@@ -35,7 +35,9 @@ import {
   Newspaper,
   Lightbulb as LightbulbIcon,
   Table2,
-  Shield
+  Shield,
+  Users,
+  FileCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from './constants';
@@ -262,6 +264,9 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [acceptedPolicy, setAcceptedPolicy] = useState(false);
+  const [showPolicyModal, setShowPolicyModal] = useState(false);
+  const [visitCount, setVisitCount] = useState(0);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isCompatOpen, setIsCompatOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
@@ -368,6 +373,20 @@ export default function App() {
           setAunapNews(data as AunapNews[]);
         }
       });
+  }, []);
+
+  // ── Visit Counter ──
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.rpc('increment_visits').then(({ data, error }) => {
+      if (!error && typeof data === 'number') {
+        setVisitCount(data);
+      } else {
+        // Fallback: just read the count
+        supabase.from('SiteStats').select('visitCount').eq('id', 'main').single()
+          .then(({ data: row }) => { if (row) setVisitCount(row.visitCount); });
+      }
+    });
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -544,6 +563,8 @@ export default function App() {
           email: formData.email,
           phone: formData.phone,
           address: formData.address,
+          acceptedDataPolicy: acceptedPolicy,
+          policyAcceptedAt: acceptedPolicy ? new Date().toISOString() : null,
           updatedAt: new Date().toISOString(),
         }, { onConflict: 'email' });
       } catch {
@@ -552,6 +573,7 @@ export default function App() {
     }
 
     setIsRegistering(false);
+    setAcceptedPolicy(false);
     setIsUserModalOpen(false);
     setModalStep('welcome');
     setShowWelcomePopup(true);
@@ -1162,8 +1184,35 @@ export default function App() {
           </section>
         )}
 
+        {/* Visit Counter */}
+        {activeTab === 'Inicio' && !searchQuery && visitCount > 0 && (
+          <div className="flex justify-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="flex items-center gap-4 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl px-8 py-4 shadow-sm"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-brand-blue flex items-center justify-center text-white shadow-lg">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <motion.p
+                  className="text-2xl md:text-3xl font-bold text-slate-800 tabular-nums"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  {visitCount.toLocaleString('es-CO')}
+                </motion.p>
+                <p className="text-xs text-slate-400 font-medium tracking-wide">visitas al sitio</p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
         {/* Free shipping banner */}
-        {activeTab !== 'Inicio' && (
+        {activeTab !== 'Inicio' && activeTab !== 'Admin' && activeTab !== 'MiPerfil' && (
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3 mb-6 flex items-center gap-3">
             <span className="text-green-600 text-lg">🚚</span>
             <p className="text-sm text-green-800">
@@ -1174,6 +1223,7 @@ export default function App() {
         )}
 
         {/* Product Grid Header with Sort */}
+        {activeTab !== 'Admin' && activeTab !== 'MiPerfil' && (<>
         <div className="mt-14 md:mt-20 lg:mt-24 mb-10">
           {activeTab === 'Inicio' && !searchQuery ? (
             <div className="text-center mb-10">
@@ -1365,6 +1415,7 @@ export default function App() {
         <p className="text-center text-xs text-slate-400 mt-6">
           Mostrando {displayProducts.length} de {filteredProducts.length} productos
         </p>
+        </>)}
       </main>
 
       {/* ===== PRODUCT DETAIL MODAL ===== */}
@@ -2388,10 +2439,31 @@ export default function App() {
                         </div>
                       ))}
 
+                      {/* Data Policy Checkbox */}
+                      <label className="flex items-start gap-3 cursor-pointer group mt-1">
+                        <input
+                          type="checkbox"
+                          checked={acceptedPolicy}
+                          onChange={e => setAcceptedPolicy(e.target.checked)}
+                          className="mt-0.5 w-4 h-4 rounded border-slate-300 text-brand-blue focus:ring-brand-blue/30 cursor-pointer"
+                        />
+                        <span className="text-xs text-slate-500 leading-relaxed">
+                          Acepto la{' '}
+                          <button
+                            type="button"
+                            onClick={() => setShowPolicyModal(true)}
+                            className="text-brand-blue font-semibold hover:underline"
+                          >
+                            Politica de Tratamiento de Datos Personales
+                          </button>
+                          {' '}de acuerdo con la Ley 1581 de 2012.
+                        </span>
+                      </label>
+
                       <div className="pt-2 space-y-3">
                         <button
                           type="submit"
-                          disabled={isRegistering}
+                          disabled={isRegistering || !acceptedPolicy}
                           className="w-full bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-blue/25 transition-all active:scale-[0.98] disabled:opacity-60"
                         >
                           {isRegistering ? 'Registrando...' : 'Registrarme'}
@@ -2454,6 +2526,69 @@ export default function App() {
                   className="w-full mt-3 text-slate-300 text-xs hover:text-slate-500 transition-colors"
                 >
                   Cerrar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* Data Policy Modal */}
+      <AnimatePresence>
+        {showPolicyModal && (
+          <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowPolicyModal(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden"
+            >
+              <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center">
+                  <FileCheck className="w-5 h-5 text-brand-blue" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800">Politica de Tratamiento de Datos</h3>
+                  <p className="text-[11px] text-slate-400">Ley 1581 de 2012 — Colombia</p>
+                </div>
+                <button onClick={() => setShowPolicyModal(false)} className="ml-auto p-2 hover:bg-slate-100 rounded-full transition-colors">
+                  <X className="w-5 h-5 text-slate-400" />
+                </button>
+              </div>
+              <div className="overflow-y-auto px-6 py-5 text-sm text-slate-600 leading-relaxed space-y-4">
+                <p><strong className="text-slate-800">1. Responsable del tratamiento</strong><br />
+                Entre Peces, marketplace de acuariofilia con domicilio en Colombia. Correo de contacto: <span className="text-brand-blue">dramirez180929@gmail.com</span></p>
+
+                <p><strong className="text-slate-800">2. Datos personales recopilados</strong><br />
+                Nombre completo, correo electronico, numero de celular y direccion de envio.</p>
+
+                <p><strong className="text-slate-800">3. Finalidad del tratamiento</strong><br />
+                Los datos personales seran utilizados para: (a) gestionar pedidos y envios; (b) comunicarnos contigo sobre el estado de tus compras; (c) enviarte informacion sobre productos y promociones, siempre que lo autorices; (d) mejorar nuestros servicios y experiencia de usuario.</p>
+
+                <p><strong className="text-slate-800">4. Derechos del titular</strong><br />
+                De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013, como titular de los datos tienes derecho a: (a) conocer, actualizar y rectificar tus datos; (b) solicitar prueba de la autorizacion otorgada; (c) ser informado sobre el uso que se le ha dado a tus datos; (d) revocar la autorizacion y/o solicitar la supresion de tus datos cuando lo consideres; (e) presentar quejas ante la Superintendencia de Industria y Comercio (SIC) por infracciones a la ley.</p>
+
+                <p><strong className="text-slate-800">5. Como ejercer tus derechos</strong><br />
+                Puedes ejercer tus derechos enviando un correo a <span className="text-brand-blue">dramirez180929@gmail.com</span> indicando tu nombre completo, numero de identificacion y la solicitud especifica. Responderemos en un plazo maximo de quince (15) dias habiles.</p>
+
+                <p><strong className="text-slate-800">6. Seguridad</strong><br />
+                Implementamos medidas tecnicas y organizativas para proteger tus datos personales contra acceso no autorizado, perdida o alteracion.</p>
+
+                <p><strong className="text-slate-800">7. Vigencia</strong><br />
+                Esta politica entra en vigencia a partir del 23 de marzo de 2026. Los datos personales seran conservados mientras exista la relacion comercial o hasta que el titular solicite su supresion.</p>
+              </div>
+              <div className="px-6 py-4 border-t border-slate-100 shrink-0">
+                <button
+                  onClick={() => { setShowPolicyModal(false); setAcceptedPolicy(true); }}
+                  className="w-full bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-3 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-[0.98]"
+                >
+                  Acepto la politica
                 </button>
               </div>
             </motion.div>

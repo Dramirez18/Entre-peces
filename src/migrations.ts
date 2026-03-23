@@ -305,4 +305,38 @@ INSERT INTO "AunapNews" ("title", "url", "publishedDate") VALUES
   ('Asociaciones pesqueras reciben embarcaciones y motores en cuatro municipios', 'https://aunap.gov.co/asociaciones-pesqueras-reciben-embarcaciones-y-motores-en-cuatro-municipios/', '3 marzo, 2026')
 ON CONFLICT ("url") DO NOTHING;`,
   },
+
+  {
+    id: '008_site_stats_and_data_policy',
+    title: 'SiteStats table + increment_visits() + data policy columns in Client',
+    description: 'Creates SiteStats table for visit counter, a PostgreSQL function to atomically increment visits, and adds acceptedDataPolicy/policyAcceptedAt columns to Client for Ley 1581 compliance.',
+    createdAt: '2026-03-23',
+    sql: `-- ============================================================
+-- Migration 008: Visit counter + Data policy consent
+-- ============================================================
+
+-- 1) Visit counter table
+CREATE TABLE IF NOT EXISTS "SiteStats" (
+    "id" TEXT PRIMARY KEY DEFAULT 'main',
+    "visitCount" INTEGER NOT NULL DEFAULT 0,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE "SiteStats" DISABLE ROW LEVEL SECURITY;
+INSERT INTO "SiteStats" ("id", "visitCount") VALUES ('main', 0) ON CONFLICT ("id") DO NOTHING;
+
+-- 2) Atomic increment function
+CREATE OR REPLACE FUNCTION increment_visits()
+RETURNS INTEGER AS $$
+DECLARE new_count INTEGER;
+BEGIN
+  UPDATE "SiteStats" SET "visitCount" = "visitCount" + 1, "updatedAt" = NOW() WHERE "id" = 'main';
+  SELECT "visitCount" INTO new_count FROM "SiteStats" WHERE "id" = 'main';
+  RETURN new_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3) Data policy consent columns on Client
+ALTER TABLE "Client" ADD COLUMN IF NOT EXISTS "acceptedDataPolicy" BOOLEAN DEFAULT FALSE;
+ALTER TABLE "Client" ADD COLUMN IF NOT EXISTS "policyAcceptedAt" TIMESTAMP;`,
+  },
 ];

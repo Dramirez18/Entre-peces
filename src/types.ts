@@ -53,6 +53,8 @@ export interface ClientRow {
   role: string;
   createdAt: string;
   updatedAt: string;
+  acceptedDataPolicy?: boolean;
+  policyAcceptedAt?: string;
 }
 
 export interface OrderRow {
