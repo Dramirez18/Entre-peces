@@ -387,7 +387,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez ángel clásico de rayas negras.",
     "price": 8000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/T1tbwNgw/Escalar.png",
     "stock": 30
   },
   {
@@ -397,7 +397,7 @@ export const PRODUCTS: Product[] = [
     "description": "Escalar de color dorado brillante.",
     "price": 12000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/T1tbwNgw/Escalar.png",
     "stock": 15
   },
   {
@@ -407,7 +407,7 @@ export const PRODUCTS: Product[] = [
     "description": "Escalar con manchas naranjas, blancas y negras.",
     "price": 15000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/T1tbwNgw/Escalar.png",
     "stock": 10
   },
   {
@@ -417,7 +417,7 @@ export const PRODUCTS: Product[] = [
     "description": "Escalar con patrón de manchas blancas y negras.",
     "price": 10000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/T1tbwNgw/Escalar.png",
     "stock": 20
   },
   {
@@ -427,7 +427,7 @@ export const PRODUCTS: Product[] = [
     "description": "Escalar de color negro sólido muy elegante.",
     "price": 12000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/T1tbwNgw/Escalar.png",
     "stock": 15
   },
   {
@@ -437,7 +437,7 @@ export const PRODUCTS: Product[] = [
     "description": "Escalar de color plateado con reflejos metálicos.",
     "price": 8000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/T1tbwNgw/Escalar.png",
     "stock": 25
   },
   {
@@ -475,7 +475,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez de nado rápido y reflejos azulados.",
     "price": 12000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/yxLRdp9f/Gancho-azul.png",
     "stock": 20
   },
   {
@@ -485,7 +485,7 @@ export const PRODUCTS: Product[] = [
     "description": "Goldfish de forma redondeada y sin aleta dorsal.",
     "price": 25000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/SNJTGSH3/carassius-Ranchun.png",
     "stock": 15
   },
   {
@@ -495,7 +495,7 @@ export const PRODUCTS: Product[] = [
     "description": "Gourami de tres puntos de color azul.",
     "price": 10000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/63LnspQR/Gurami-azul.png",
     "stock": 25
   },
   {
@@ -505,7 +505,7 @@ export const PRODUCTS: Product[] = [
     "description": "Gourami con patrón de puntos perlados.",
     "price": 15000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/mDNCxgr9/Gurami-perla.png",
     "stock": 15
   },
   {
@@ -525,7 +525,7 @@ export const PRODUCTS: Product[] = [
     "description": "Hembras de guppy resistentes.",
     "price": 2000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/WzNrscD6/Guppy-hembra-comercial.png",
     "stock": 100
   },
   {
@@ -535,7 +535,7 @@ export const PRODUCTS: Product[] = [
     "description": "Macho con cola de patrón mosaico.",
     "price": 5000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/QC85jZBJ/Guppy-mosaico.png",
     "stock": 40
   },
   {
@@ -555,7 +555,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez gato acorazado muy pacífico.",
     "price": 6000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/mgS83ZNx/Hopplo_Photoroom.jpg",
     "stock": 30
   },
   {
@@ -574,7 +574,7 @@ export const PRODUCTS: Product[] = [
     "description": "Cíclido comedor de tierra con hermosos reflejos.",
     "price": 35000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/fLjm4RbS/Juan-viejo-surinamensis.png",
     "stock": 10
   },
   {
@@ -642,7 +642,7 @@ export const PRODUCTS: Product[] = [
     "description": "Variedad albina de la monjita común.",
     "price": 3000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/1tcwx3zm/monja-blanca.png",
     "stock": 50
   },
   {
@@ -681,7 +681,7 @@ export const PRODUCTS: Product[] = [
     "description": "Cíclido grande y muy inteligente.",
     "price": 10000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/Qtk1LdMG/OSCAR-TIGRE.png",
     "stock": 20
   },
   {
@@ -710,7 +710,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pareja de cíclidos loro azul de tamaño pequeño.",
     "price": 40000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/bJjkFtqw/Parrot-blue.png",
     "stock": 8
   },
   {
@@ -750,7 +750,7 @@ export const PRODUCTS: Product[] = [
     "description": "Platy con la parte superior roja.",
     "price": 4000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/nr3mzS75/Platy-red-top-mickey.png",
     "stock": 40
   },
   {
@@ -760,7 +760,7 @@ export const PRODUCTS: Product[] = [
     "description": "Platy de coloración verde brillante.",
     "price": 4000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/bJjkFtp4/Platy-verde-esmeralda.png",
     "stock": 40
   },
   {
@@ -770,7 +770,7 @@ export const PRODUCTS: Product[] = [
     "description": "Cíclido enano de coloración amarilla intensa.",
     "price": 12000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/TwXgHDfz/Ramirezi.png",
     "stock": 20
   },
   {
@@ -780,7 +780,7 @@ export const PRODUCTS: Product[] = [
     "description": "Ejemplares con coloración máxima.",
     "price": 18000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/gjghJt8W/Ramirezi-full-color.png",
     "stock": 15
   },
   {
@@ -800,7 +800,7 @@ export const PRODUCTS: Product[] = [
     "description": "Goldfish con ojos protuberantes.",
     "price": 8000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/mDGC6HB8/Telescopio.png",
     "stock": 30
   },
   {
@@ -810,7 +810,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez telescopio de tamaño medio.",
     "price": 10000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/mDGC6HB8/Telescopio.png",
     "stock": 20
   },
   {
@@ -820,7 +820,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez telescopio de tamaño medio-grande.",
     "price": 12000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/mDGC6HB8/Telescopio.png",
     "stock": 15
   },
   {
@@ -830,7 +830,7 @@ export const PRODUCTS: Product[] = [
     "description": "Ejemplar grande de pez telescopio.",
     "price": 15000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/mDGC6HB8/Telescopio.png",
     "stock": 15
   },
   {
@@ -1074,7 +1074,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez gato que asemeja a un tiburón.",
     "price": 15000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/FRQ3nLNZ/Tiburon-colombiano.png",
     "stock": 10
   },
   {
@@ -1083,7 +1083,7 @@ export const PRODUCTS: Product[] = [
     "description": "Pez activo con patrón de líneas longitudinales.",
     "price": 12000,
     "category": "Peces",
-    "image": "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=400",
+    "image": "https://i.postimg.cc/TwXgHDfc/Tiburon-cuatro-lineas.png",
     "stock": 10
   },
   {

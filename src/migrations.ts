@@ -339,4 +339,152 @@ $$ LANGUAGE plpgsql;
 ALTER TABLE "Client" ADD COLUMN IF NOT EXISTS "acceptedDataPolicy" BOOLEAN DEFAULT FALSE;
 ALTER TABLE "Client" ADD COLUMN IF NOT EXISTS "policyAcceptedAt" TIMESTAMP;`,
   },
+  {
+    id: '009',
+    title: 'Actualizar imagen Corydora Wotroi',
+    description: 'Corrige la imagen de la Corydora Wotroi que tenía un goldfish genérico de Unsplash.',
+    createdAt: '2026-03-23',
+    sql: `-- 009: Actualizar imagen Corydora Wotroi
+UPDATE "Product"
+SET image = 'https://i.postimg.cc/5ysz0KLt/corydora-wotroi.png'
+WHERE name ILIKE '%wotroi%';`,
+  },
+  {
+    id: '010',
+    title: 'Actualización masiva de imágenes de productos (peces)',
+    description: 'Reemplaza todas las imágenes genéricas de Unsplash por fotos reales de postimg.cc para ~50 productos de peces.',
+    createdAt: '2026-03-23',
+    sql: `-- 010: Actualización masiva de imágenes de productos
+-- Escalar (todas las tallas)
+UPDATE "Product" SET image = 'https://i.postimg.cc/T1tbwNgw/Escalar.png' WHERE name ILIKE 'escalar%' AND image LIKE '%unsplash%';
+
+-- Espada koi
+UPDATE "Product" SET image = 'https://i.postimg.cc/mkm9DpMn/Espada-koi.png' WHERE name ILIKE 'espada koi%' AND image LIKE '%unsplash%';
+
+-- Estrigata marmol
+UPDATE "Product" SET image = 'https://i.postimg.cc/zvxhB2Wt/Estigata-marmol.png' WHERE name ILIKE 'estrigata marmol%' AND image LIKE '%unsplash%';
+
+-- Falso disco salvaje
+UPDATE "Product" SET image = 'https://i.postimg.cc/x86mCpH6/Falso-disco-salvaje.png' WHERE name ILIKE 'falso disco salvaje%' AND image LIKE '%unsplash%';
+
+-- Gancho Rojo
+UPDATE "Product" SET image = 'https://i.postimg.cc/0jkm91Mg/Gancho-rojo.png' WHERE name ILIKE 'gancho rojo%' AND image LIKE '%unsplash%';
+
+-- Gancho azul
+UPDATE "Product" SET image = 'https://i.postimg.cc/yxLRdp9f/Gancho-azul.png' WHERE name ILIKE 'gancho azul%' AND image LIKE '%unsplash%';
+
+-- Globo o tamborero
+UPDATE "Product" SET image = 'https://i.postimg.cc/5y4vfWHn/Tamborero.png' WHERE name ILIKE '%tamborero%' AND image LIKE '%unsplash%';
+
+-- Goldfish (todas las tallas)
+UPDATE "Product" SET image = 'https://i.postimg.cc/brybqfG5/Goldfish.png' WHERE name ILIKE 'golfish%' AND name NOT ILIKE '%ranchun%' AND image LIKE '%unsplash%';
+
+-- Golfish Ranchun
+UPDATE "Product" SET image = 'https://i.postimg.cc/SNJTGSH3/carassius-Ranchun.png' WHERE name ILIKE '%ranchun%' AND image LIKE '%unsplash%';
+
+-- Guppy Hembra Comercial
+UPDATE "Product" SET image = 'https://i.postimg.cc/WzNrscD6/Guppy-hembra-comercial.png' WHERE name ILIKE 'guppy hembra comercial%' AND image LIKE '%unsplash%';
+
+-- Guppy Macho Comercial
+UPDATE "Product" SET image = 'https://i.postimg.cc/2ykvCNqn/Guppy-macho-comercial.png' WHERE name ILIKE 'guppy macho comercial%' AND image LIKE '%unsplash%';
+
+-- Guppy santa claus pareja
+UPDATE "Product" SET image = 'https://i.postimg.cc/Twqg83PV/Guppy-santa-claus-pareja.png' WHERE name ILIKE 'guppy santa claus%' AND image LIKE '%unsplash%';
+
+-- Guppy mosaico (pareja y macho)
+UPDATE "Product" SET image = 'https://i.postimg.cc/QC85jZBJ/Guppy-mosaico.png' WHERE name ILIKE '%mosaico%' AND image LIKE '%unsplash%';
+
+-- Gurami azul
+UPDATE "Product" SET image = 'https://i.postimg.cc/63LnspQR/Gurami-azul.png' WHERE name ILIKE 'gurami azul%' AND image LIKE '%unsplash%';
+
+-- Gurami perla
+UPDATE "Product" SET image = 'https://i.postimg.cc/mDNCxgr9/Gurami-perla.png' WHERE name ILIKE 'gurami perla%' AND image LIKE '%unsplash%';
+
+-- Juan viejo surinamensis
+UPDATE "Product" SET image = 'https://i.postimg.cc/fLjm4RbS/Juan-viejo-surinamensis.png' WHERE name ILIKE 'juan viejo surinamensis%' AND image LIKE '%unsplash%';
+
+-- Mojarra lora
+UPDATE "Product" SET image = 'https://i.postimg.cc/9MtZ3QfR/Mojarra-lora.png' WHERE name ILIKE 'mojarra lora%' AND image LIKE '%unsplash%';
+
+-- Monja de color
+UPDATE "Product" SET image = 'https://i.postimg.cc/k4FKrg57/monja-color.png' WHERE name ILIKE 'monja de color%' AND image LIKE '%unsplash%';
+
+-- Monja blanca
+UPDATE "Product" SET image = 'https://i.postimg.cc/1tcwx3zm/monja-blanca.png' WHERE name ILIKE 'monja blanca%' AND image LIKE '%unsplash%';
+
+-- Oscar tigre
+UPDATE "Product" SET image = 'https://i.postimg.cc/Qtk1LdMG/OSCAR-TIGRE.png' WHERE name ILIKE 'oscar tigre%' AND image LIKE '%unsplash%';
+
+-- Otocinclo
+UPDATE "Product" SET image = 'https://i.postimg.cc/tTtW04gb/Otocinclos.png' WHERE name ILIKE 'otocinclo%' AND image LIKE '%unsplash%';
+
+-- Parrot Polar Blue Pareja
+UPDATE "Product" SET image = 'https://i.postimg.cc/bJjkFtqw/Parrot-blue.png' WHERE name ILIKE 'parrot%' AND image LIKE '%unsplash%';
+
+-- Platy verde esmeralda
+UPDATE "Product" SET image = 'https://i.postimg.cc/bJjkFtp4/Platy-verde-esmeralda.png' WHERE name ILIKE 'platy verde esmeralda%' AND image LIKE '%unsplash%';
+
+-- Platy Red Top
+UPDATE "Product" SET image = 'https://i.postimg.cc/nr3mzS75/Platy-red-top-mickey.png' WHERE name ILIKE 'platy red top%' AND image LIKE '%unsplash%';
+
+-- Platy Rojo
+UPDATE "Product" SET image = 'https://i.postimg.cc/76y0Q2qr/Platy-rojo.png' WHERE name ILIKE 'platy rojo%' AND image LIKE '%unsplash%';
+
+-- Platy azul (sin imagen específica, usar verde esmeralda como fallback)
+UPDATE "Product" SET image = 'https://i.postimg.cc/9MjZN7CK/Platy-verde-esmeralda-(1).png' WHERE name ILIKE 'platy azul%' AND image LIKE '%unsplash%';
+
+-- Ramirezi
+UPDATE "Product" SET image = 'https://i.postimg.cc/TwXgHDfz/Ramirezi.png' WHERE name ILIKE 'ramirezi' AND image LIKE '%unsplash%';
+
+-- Ramirezi full color
+UPDATE "Product" SET image = 'https://i.postimg.cc/gjghJt8W/Ramirezi-full-color.png' WHERE name ILIKE 'ramirezi full color%' AND image LIKE '%unsplash%';
+
+-- Raya guacamaya
+UPDATE "Product" SET image = 'https://i.postimg.cc/j5rPk7t9/Raya-guacamaya.png' WHERE name ILIKE 'raya guacamaya%' AND image LIKE '%unsplash%';
+
+-- Telescopio (todas las tallas)
+UPDATE "Product" SET image = 'https://i.postimg.cc/mDGC6HB8/Telescopio.png' WHERE name ILIKE 'telescopio%' AND image LIKE '%unsplash%';
+
+-- Tetra neon negro
+UPDATE "Product" SET image = 'https://i.postimg.cc/q7K2LLVF/Tetra-neon-negro.png' WHERE name ILIKE 'tetra neon negro%' AND image LIKE '%unsplash%';
+
+-- Tetra velo llama
+UPDATE "Product" SET image = 'https://i.postimg.cc/QxDwQmRm/Llama.jpg' WHERE name ILIKE '%llama%' AND image LIKE '%unsplash%';
+
+-- Tiburon colombiano
+UPDATE "Product" SET image = 'https://i.postimg.cc/FRQ3nLNZ/Tiburon-colombiano.png' WHERE name ILIKE 'tiburon colombiano%' AND image LIKE '%unsplash%';
+
+-- Tiburon Cuatro lineas
+UPDATE "Product" SET image = 'https://i.postimg.cc/TwXgHDfc/Tiburon-cuatro-lineas.png' WHERE name ILIKE 'tiburon cuatro%' AND image LIKE '%unsplash%';
+
+-- Cucha Real de raya
+UPDATE "Product" SET image = 'https://i.postimg.cc/MpPL8Svz/Real_de_rayas.jpg' WHERE name ILIKE 'cucha real de raya%' AND image LIKE '%unsplash%';
+
+-- Cucha Roja
+UPDATE "Product" SET image = 'https://i.postimg.cc/VsgnDvTn/Cucha_roja.png' WHERE name ILIKE 'cucha roja%' AND image LIKE '%unsplash%';
+
+-- Corydora Wotroi
+UPDATE "Product" SET image = 'https://i.postimg.cc/5ysz0KLt/corydora-wotroi.png' WHERE name ILIKE '%wotroi%' AND image LIKE '%unsplash%';
+
+-- Hopplo comun
+UPDATE "Product" SET image = 'https://i.postimg.cc/mgS83ZNx/Hopplo_Photoroom.jpg' WHERE name ILIKE 'hopplo%' AND image LIKE '%unsplash%';
+
+-- Corydora puntatus
+UPDATE "Product" SET image = 'https://i.postimg.cc/h4CZxzZ8/Corydora_puctatus.png' WHERE name ILIKE '%puntatus%' AND image LIKE '%unsplash%';
+
+-- Cucha Hypostomus (todas las tallas)
+UPDATE "Product" SET image = 'https://i.postimg.cc/bwN5MJYC/Hypostomuns.jpg' WHERE name ILIKE '%hypostomus%' AND image LIKE '%unsplash%';
+
+-- Cebra OB
+UPDATE "Product" SET image = 'https://i.postimg.cc/h4CZxzZC/zebra_victoria.png' WHERE name ILIKE 'cebra ob%' AND image LIKE '%unsplash%';
+
+-- Cuchillo negro
+UPDATE "Product" SET image = 'https://i.postimg.cc/tJmrHwVH/Apteronotus_galvisi.png' WHERE name ILIKE 'cuchillo negro%' AND image LIKE '%unsplash%';
+
+-- Cuchillo rojo
+UPDATE "Product" SET image = 'https://i.postimg.cc/4yF8TqhG/Adontosternarchus_devenanzii.png' WHERE name ILIKE 'cuchillo rojo%' AND image LIKE '%unsplash%';
+
+-- Guppy black metal pareja
+UPDATE "Product" SET image = 'https://i.postimg.cc/2ykvCNqn/Guppy-macho-comercial.png' WHERE name ILIKE 'guppy black metal%' AND image LIKE '%unsplash%';`,
+  },
 ];

@@ -37,7 +37,8 @@ import {
   Table2,
   Shield,
   Users,
-  FileCheck
+  FileCheck,
+  ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from './constants';
@@ -231,6 +232,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<Category | 'Inicio' | 'MiPerfil' | 'Admin'>('Inicio');
+  const [tabHistory, setTabHistory] = useState<Array<Category | 'Inicio' | 'MiPerfil' | 'Admin'>>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
@@ -423,6 +425,26 @@ export default function App() {
   // Reset page when filters change
   useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortBy]);
 
+  // Navigate to a tab, saving current tab in history
+  const navigateTo = useCallback((tab: Category | 'Inicio' | 'MiPerfil' | 'Admin') => {
+    if (tab !== activeTab) {
+      setTabHistory(prev => [...prev, activeTab]);
+      setActiveTab(tab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab]);
+
+  // Go back to previous tab
+  const goBack = useCallback(() => {
+    if (tabHistory.length > 0) {
+      const prev = tabHistory[tabHistory.length - 1];
+      setTabHistory(h => h.slice(0, -1));
+      setActiveTab(prev);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [tabHistory]);
+
+
   // Display products - Home shows only 8 featured, categories show all with scroll
   const isHomeFeatured = activeTab === 'Inicio' && !searchQuery;
   const displayProducts = useMemo(() => {
@@ -594,8 +616,18 @@ export default function App() {
       {/* Header */}
       <header className="bg-brand-blue text-white sticky top-0 z-40 shadow-lg">
         <div className="w-full px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 h-16 md:h-[68px] flex items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
-          {/* Left: Hamburger + Logo */}
-          <div className="flex items-center gap-4 md:gap-5 shrink-0">
+          {/* Left: Back + Hamburger + Logo */}
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+            {tabHistory.length > 0 && activeTab !== 'Inicio' && (
+              <button
+                onClick={goBack}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                aria-label="Volver"
+                title="Volver"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="p-2.5 hover:bg-white/10 rounded-lg transition-colors"
@@ -707,7 +739,7 @@ export default function App() {
               <div className="flex-1 overflow-y-auto py-3">
                 {/* Inicio */}
                 <button
-                  onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); }}
+                  onClick={() => { navigateTo('Inicio'); setSearchQuery(''); setIsSidebarOpen(false); }}
                   className={`w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold transition-all ${
                     activeTab === 'Inicio'
                       ? 'bg-brand-blue/10 text-brand-blue border-r-4 border-brand-blue'
@@ -722,7 +754,7 @@ export default function App() {
 
                 {/* Conocimiento */}
                 <button
-                  onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); setTimeout(() => document.getElementById('conocimiento')?.scrollIntoView({ behavior: 'smooth' }), 300); }}
+                  onClick={() => { navigateTo('Inicio'); setSearchQuery(''); setIsSidebarOpen(false); setTimeout(() => document.getElementById('conocimiento')?.scrollIntoView({ behavior: 'smooth' }), 300); }}
                   className="w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all"
                 >
                   <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
@@ -733,7 +765,7 @@ export default function App() {
 
                 {/* Mi Perfil */}
                 <button
-                  onClick={() => { setActiveTab('MiPerfil'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); }}
+                  onClick={() => { navigateTo('MiPerfil'); setSearchQuery(''); setIsSidebarOpen(false); }}
                   className={`w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold transition-all ${
                     activeTab === 'MiPerfil'
                       ? 'bg-brand-blue/10 text-brand-blue border-r-4 border-brand-blue'
@@ -749,7 +781,7 @@ export default function App() {
                 {/* Administrador — solo visible para admins */}
                 {user?.role === 'admin' && (
                   <button
-                    onClick={() => { setActiveTab('Admin'); setSearchQuery(''); setIsSidebarOpen(false); window.scrollTo({ top: 0 }); }}
+                    onClick={() => { navigateTo('Admin'); setSearchQuery(''); setIsSidebarOpen(false); }}
                     className={`w-full flex items-center gap-4 px-6 py-4 text-sm font-semibold transition-all ${
                       activeTab === 'Admin'
                         ? 'bg-amber-500/10 text-amber-600 border-r-4 border-amber-500'
@@ -784,7 +816,7 @@ export default function App() {
                           isActive ? 'bg-brand-blue/8' : 'hover:bg-slate-50'
                         }`}>
                           <button
-                            onClick={() => { setActiveTab(name as Category); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            onClick={() => { navigateTo(name as Category); setIsSidebarOpen(false); }}
                             className={`flex-1 flex items-center gap-3.5 px-3 py-3.5 text-sm font-medium transition-colors ${
                               isActive ? 'text-brand-blue' : 'text-slate-700'
                             }`}
@@ -823,7 +855,7 @@ export default function App() {
                                 {cat.subcategories.map((sub) => (
                                   <button
                                     key={sub}
-                                    onClick={() => { setActiveTab(name as Category); setIsSidebarOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    onClick={() => { navigateTo(name as Category); setIsSidebarOpen(false); }}
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-600 hover:text-brand-blue hover:bg-white rounded-lg transition-colors"
                                   >
                                     <CircleDot className="w-2 h-2 text-slate-300" />
@@ -1001,7 +1033,7 @@ export default function App() {
 
         {/* Hero Section for Home — Carousel */}
         {activeTab === 'Inicio' && !searchQuery && (
-          <HeroCarousel onViewCatalog={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+          <HeroCarousel onViewCatalog={() => navigateTo('Peces')} />
         )}
 
         {/* Categories Grid with hover previews */}
@@ -1017,7 +1049,7 @@ export default function App() {
                   <motion.button
                     key={name}
                     whileHover={{ y: -6, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
-                    onClick={() => { setActiveTab(name as Category); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    onClick={() => { navigateTo(name as Category); }}
                     className="group p-6 md:p-7 lg:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-transparent transition-all text-center relative overflow-hidden"
                   >
                     {/* Gradient overlay on hover */}
@@ -1402,7 +1434,7 @@ export default function App() {
         {isHomeFeatured && filteredProducts.length > 8 && (
           <div className="flex flex-col items-center mt-12 md:mt-16 mb-14 md:mb-20">
             <button
-              onClick={() => { setActiveTab('Peces'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              onClick={() => navigateTo('Peces')}
               className="bg-brand-blue text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-brand-dark transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
             >
               Ver Catálogo Completo
