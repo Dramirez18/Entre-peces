@@ -908,7 +908,9 @@ export default function AdminPanel({
                               {product.scientificName && (
                                 <p className="text-[11px] text-slate-400 italic">{product.scientificName}</p>
                               )}
-                              <p className="text-[10px] text-slate-300 font-mono">{product.id}</p>
+                              {product.description && (
+                                <p className="text-[10px] text-slate-400 truncate max-w-[200px]">{product.description}</p>
+                              )}
                             </div>
                           </td>
                           <td className="px-4 py-3">

@@ -975,14 +975,16 @@ export default function App() {
             user={user}
             products={products}
             onUpdateProduct={async (id, updates): Promise<boolean> => {
+              console.log('[Product] Saving updates for', id, JSON.stringify(updates));
               // 1. Persist to Supabase FIRST
               if (supabase) {
-                const { error } = await supabase.from('Product').update({ ...updates, updatedAt: new Date().toISOString() }).eq('id', id);
+                const payload = { ...updates, updatedAt: new Date().toISOString() };
+                const { data, error } = await supabase.from('Product').update(payload).eq('id', id).select();
                 if (error) {
                   console.error('[Product] Update error:', error.message);
                   return false;
                 }
-                console.log(`[Product] Updated ${id} in Supabase`);
+                console.log(`[Product] Updated ${id} in Supabase, response:`, data);
               }
               // 2. Update local state only after successful save
               setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
