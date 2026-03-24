@@ -15,7 +15,7 @@ const SLIDES = [
     subtitle: 'Discos, Bettas, Tetras, Cuchas y más de 90 especies disponibles.',
   },
   {
-    image: 'https://i.postimg.cc/sxTWXH7z/Procambarus.png',
+    image: 'https://i.postimg.cc/7hGQ4R5S/Procambarus-blanca.png',
     title: 'Acuarios plantados',
     highlight: 'llenos de vida.',
     subtitle: 'Todo lo que necesitas: CO2, sustratos, fertilizantes, herramientas y lámparas.',
