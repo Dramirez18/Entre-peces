@@ -13,7 +13,7 @@ import { MIGRATIONS, getAppliedMigrations, markMigrationApplied, unmarkMigration
 interface AdminPanelProps {
   user: User | null;
   products: Product[];
-  onUpdateProduct: (id: string, updates: Partial<Product>) => void;
+  onUpdateProduct: (id: string, updates: Partial<Product>) => Promise<boolean>;
   onToggleActive: (id: string) => void;
   onDeleteProduct: (id: string) => void;
   onCreateProduct: (product: Omit<Product, 'active'>) => Promise<boolean>;
@@ -33,6 +33,8 @@ export default function AdminPanel({
   const [searchQuery, setSearchQuery] = useState('');
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterActive, setFilterActive] = useState<string>('all');
   const [sortField, setSortField] = useState<'name' | 'price' | 'stock' | 'category'>('name');
@@ -312,10 +314,19 @@ export default function AdminPanel({
     });
   };
 
-  const saveEdit = (id: string) => {
-    onUpdateProduct(id, editForm);
-    setEditingProduct(null);
-    setEditForm({});
+  const saveEdit = async (id: string) => {
+    setSaving(true);
+    setSaveMsg(null);
+    const ok = await onUpdateProduct(id, editForm);
+    setSaving(false);
+    if (ok) {
+      setSaveMsg({ type: 'ok', text: 'Producto guardado correctamente' });
+      setEditingProduct(null);
+      setEditForm({});
+      setTimeout(() => setSaveMsg(null), 3000);
+    } else {
+      setSaveMsg({ type: 'err', text: 'Error al guardar. Intenta de nuevo.' });
+    }
   };
 
   const formatCOP = (n: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(n);
@@ -811,19 +822,28 @@ export default function AdminPanel({
                       </div>
                     </div>
                     {/* Footer */}
-                    <div className="p-6 border-t border-slate-200 flex gap-3 justify-end">
-                      <button
-                        onClick={() => setEditingProduct(null)}
-                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold"
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        onClick={() => saveEdit(editingProduct)}
-                        className="px-5 py-2.5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 text-sm font-bold shadow-md flex items-center gap-2"
-                      >
-                        <Save className="w-4 h-4" /> Guardar cambios
-                      </button>
+                    <div className="p-6 border-t border-slate-200 flex flex-col gap-2">
+                      {saveMsg && (
+                        <div className={`text-sm font-medium px-3 py-2 rounded-lg ${saveMsg.type === 'ok' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                          {saveMsg.text}
+                        </div>
+                      )}
+                      <div className="flex gap-3 justify-end">
+                        <button
+                          onClick={() => setEditingProduct(null)}
+                          disabled={saving}
+                          className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold disabled:opacity-50"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={() => saveEdit(editingProduct)}
+                          disabled={saving}
+                          className="px-5 py-2.5 rounded-xl bg-amber-500 text-white hover:bg-amber-600 text-sm font-bold shadow-md flex items-center gap-2 disabled:opacity-50"
+                        >
+                          <Save className="w-4 h-4" /> {saving ? 'Guardando...' : 'Guardar cambios'}
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 </motion.div>

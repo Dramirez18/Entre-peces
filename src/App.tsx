@@ -974,19 +974,19 @@ export default function App() {
           <AdminPanel
             user={user}
             products={products}
-            onUpdateProduct={async (id, updates) => {
-              // 1. Update local state immediately
-              setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
-              // 2. Persist to Supabase
+            onUpdateProduct={async (id, updates): Promise<boolean> => {
+              // 1. Persist to Supabase FIRST
               if (supabase) {
                 const { error } = await supabase.from('Product').update({ ...updates, updatedAt: new Date().toISOString() }).eq('id', id);
                 if (error) {
                   console.error('[Product] Update error:', error.message);
-                  alert(`Error al actualizar producto: ${error.message}`);
-                } else {
-                  console.log(`[Product] Updated ${id} in Supabase`);
+                  return false;
                 }
+                console.log(`[Product] Updated ${id} in Supabase`);
               }
+              // 2. Update local state only after successful save
+              setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+              return true;
             }}
             onToggleActive={async (id) => {
               const product = products.find(p => p.id === id);
