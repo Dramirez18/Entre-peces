@@ -463,17 +463,17 @@ export default function App() {
         setActiveTab(e.state.tab);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        // No state = user went all the way back to initial load → go to Inicio
+        // User would exit the app — prevent it by re-pushing Inicio
+        window.history.pushState({ tab: 'Inicio' }, '', window.location.pathname);
         setTabHistory([]);
         setActiveTab('Inicio');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
     window.addEventListener('popstate', handlePopState);
-    // Set initial state so first back doesn't exit
-    if (!window.history.state) {
-      window.history.replaceState({ tab: 'Inicio' }, '', window.location.href);
-    }
+    // Replace initial entry + push a guard entry so first back stays in app
+    window.history.replaceState({ tab: '_guard' }, '', window.location.pathname);
+    window.history.pushState({ tab: 'Inicio' }, '', window.location.pathname);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
