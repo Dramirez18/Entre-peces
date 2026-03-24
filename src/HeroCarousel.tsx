@@ -3,19 +3,19 @@ import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 const SLIDES = [
   {
-    image: 'https://i.postimg.cc/cJ4tpdqZ/Disco-snake-skin-Photoroom.jpg',
+    image: 'https://i.postimg.cc/nLCcKrb9/Betta_dumbo_Photoroom.jpg',
     title: 'Tu pasión por el agua,',
     highlight: 'en un solo lugar.',
     subtitle: 'Descubre la mejor selección de peces, plantas y accesorios para tu acuario en Colombia.',
   },
   {
-    image: 'https://i.postimg.cc/Cx0q4jmM/Disco-salvaje-Photoroom.jpg',
+    image: 'https://i.postimg.cc/brmnJVkq/Pareja_Discos.png',
     title: 'Peces tropicales',
     highlight: 'de todo el mundo.',
     subtitle: 'Discos, Bettas, Tetras, Cuchas y más de 90 especies disponibles.',
   },
   {
-    image: 'https://i.postimg.cc/m2HDJttQ/Disco-red-valantine-2-Photoroom.jpg',
+    image: 'https://i.postimg.cc/sxTWXH7z/Procambarus.png',
     title: 'Acuarios plantados',
     highlight: 'llenos de vida.',
     subtitle: 'Todo lo que necesitas: CO2, sustratos, fertilizantes, herramientas y lámparas.',

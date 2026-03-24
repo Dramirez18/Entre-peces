@@ -227,6 +227,14 @@ const CATEGORY_DATA: Record<string, {
   },
 };
 
+// Category hero banner images (categories without image use gradient fallback)
+const CATEGORY_IMAGES: Record<string, string> = {
+  Peces: 'https://i.postimg.cc/prsjTczM/Disco_Heckel.png',
+  Plantas: 'https://i.postimg.cc/bJBbzm1P/10869651_10152455437980163_7733584400832052768_o.jpg',
+  Camarones: 'https://i.postimg.cc/HktB0W4s/Langosta_roja_Photoroom.jpg',
+  Gravilla: 'https://i.postimg.cc/CMvPXxWY/Gravilla_peque%C3%B1a_blanca_Photoroom.jpg',
+};
+
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -1009,6 +1017,32 @@ export default function App() {
                 }
               }
             }}
+            onCreateProduct={async (product) => {
+              if (!supabase) { alert('No hay conexión con Supabase'); return false; }
+              const { error } = await supabase.from('Product').insert({
+                id: product.id,
+                name: product.name,
+                scientificName: product.scientificName || null,
+                description: product.description,
+                price: product.price,
+                category: product.category,
+                image: product.image,
+                stock: product.stock,
+                size: product.size || null,
+                active: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              });
+              if (error) {
+                console.error('[Product] Create error:', error.message);
+                alert(`Error al crear producto: ${error.message}`);
+                return false;
+              }
+              // Add to local state
+              setProducts(prev => [...prev, { ...product, active: true }]);
+              console.log(`[Product] Created ${product.id} in Supabase`);
+              return true;
+            }}
             onBack={() => setActiveTab('Inicio')}
             onLogin={() => { setIsUserModalOpen(true); setModalStep('welcome'); }}
             isAdmin={isAdmin}
@@ -1036,45 +1070,70 @@ export default function App() {
           <HeroCarousel onViewCatalog={() => navigateTo('Peces')} />
         )}
 
-        {/* Categories Grid with hover previews */}
+        {/* Categories — Two-tier layout: Featured (with images) + Secondary (icons) */}
         {activeTab === 'Inicio' && !searchQuery && (
           <div className="mb-12 mt-8 md:mt-10 lg:mt-12">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6 lg:gap-8">
+            {/* Tier A: Featured categories with full-bleed images */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6">
               {Object.entries(CATEGORY_DATA)
-                .filter(([name]) => (productCountByCategory[name] || 0) > 0)
+                .filter(([name]) => CATEGORY_IMAGES[name] && (productCountByCategory[name] || 0) > 0)
                 .map(([name, cat]) => {
-                const CatIcon = cat.icon;
-                const count = productCountByCategory[name] || 0;
-                return (
-                  <motion.button
-                    key={name}
-                    whileHover={{ y: -6, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
-                    onClick={() => { navigateTo(name as Category); }}
-                    className="group p-6 md:p-7 lg:p-8 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-transparent transition-all text-center relative overflow-hidden"
-                  >
-                    {/* Gradient overlay on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
-
-                    <div className="relative z-10 flex flex-col items-center">
-                      <div className={`${cat.color} w-14 h-14 rounded-2xl flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg mb-4`}>
-                        <CatIcon className="w-6 h-6" />
+                  const CatIcon = cat.icon;
+                  const count = productCountByCategory[name] || 0;
+                  return (
+                    <motion.button
+                      key={name}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => navigateTo(name as Category)}
+                      className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-shadow bg-slate-900"
+                    >
+                      <div className="aspect-[3/4] md:aspect-[4/5]">
+                        <img
+                          src={CATEGORY_IMAGES[name]}
+                          alt={name}
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
                       </div>
-                      <h3 className="font-bold text-sm md:text-base text-slate-800 group-hover:text-brand-blue transition-colors mb-2">{name}</h3>
-                      <span className="text-[11px] font-medium text-slate-400 mb-2">
-                        Disponibles: {count}
-                      </span>
-
-                      {/* Preview text - visible on hover */}
-                      <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
-                        <p className="text-xs text-slate-500 leading-relaxed mt-1">
-                          {cat.preview.join(' · ')}
-                        </p>
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                      {/* Icon badge top-right */}
+                      <div className={`absolute top-3 right-3 ${cat.color} w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg opacity-90`}>
+                        <CatIcon className="w-5 h-5" />
                       </div>
-                      <p className="text-brand-blue text-xs font-semibold mt-1 group-hover:underline">Explorar catálogo →</p>
-                    </div>
-                  </motion.button>
-                );
-              })}
+                      {/* Text bottom-left */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                        <h3 className="text-lg md:text-2xl font-bold text-white drop-shadow-lg">{name}</h3>
+                        <p className="text-white/70 text-xs md:text-sm font-medium">{count} productos</p>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+            </div>
+
+            {/* Tier B: Secondary categories (icon-based, compact) */}
+            <div className="flex overflow-x-auto gap-3 pb-2 md:grid md:grid-cols-4 lg:grid-cols-7 md:overflow-visible md:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {Object.entries(CATEGORY_DATA)
+                .filter(([name]) => !CATEGORY_IMAGES[name] && (productCountByCategory[name] || 0) > 0)
+                .map(([name, cat]) => {
+                  const CatIcon = cat.icon;
+                  const count = productCountByCategory[name] || 0;
+                  return (
+                    <motion.button
+                      key={name}
+                      whileHover={{ y: -4 }}
+                      onClick={() => navigateTo(name as Category)}
+                      className="group flex-shrink-0 snap-start p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-lg hover:border-transparent transition-all text-center min-w-[110px]"
+                    >
+                      <div className={`${cat.color} w-11 h-11 rounded-xl flex items-center justify-center text-white mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md`}>
+                        <CatIcon className="w-5 h-5" />
+                      </div>
+                      <h3 className="font-semibold text-sm text-slate-800 group-hover:text-brand-blue transition-colors">{name}</h3>
+                      <span className="text-[11px] text-slate-400">{count} disponibles</span>
+                    </motion.button>
+                  );
+                })}
             </div>
           </div>
         )}
@@ -1243,57 +1302,93 @@ export default function App() {
           </div>
         )}
 
-        {/* Free shipping banner */}
-        {activeTab !== 'Inicio' && activeTab !== 'Admin' && activeTab !== 'MiPerfil' && (
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3 mb-6 flex items-center gap-3">
-            <span className="text-green-600 text-lg">🚚</span>
-            <p className="text-sm text-green-800">
-              <span className="font-bold">¡Envío gratis</span> en compras superiores a ${FREE_SHIPPING_THRESHOLD.toLocaleString('es-CO')}!
-              <span className="text-green-600 ml-1">Envíos a toda Colombia.</span>
-            </p>
-          </div>
-        )}
+        {/* Category Hero Banner */}
+        {activeTab !== 'Inicio' && activeTab !== 'Admin' && activeTab !== 'MiPerfil' && (() => {
+          const catData = CATEGORY_DATA[activeTab as keyof typeof CATEGORY_DATA];
+          const catImage = CATEGORY_IMAGES[activeTab];
+          const CatIcon = catData?.icon;
+          return (
+            <div className="rounded-2xl overflow-hidden relative h-36 md:h-48 mb-6 shadow-lg">
+              {/* Background: image or gradient */}
+              {catImage ? (
+                <img
+                  src={catImage}
+                  alt={activeTab}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className={`absolute inset-0 bg-gradient-to-br ${catData?.gradient || 'from-brand-blue to-cyan-700'}`}>
+                  {CatIcon && (
+                    <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-10">
+                      <CatIcon className="w-40 h-40 md:w-56 md:h-56 text-white" />
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/20" />
+              {/* Content */}
+              <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-10">
+                <div className="flex items-center gap-3 mb-2">
+                  {CatIcon && (
+                    <div className={`${catData?.color || 'bg-brand-blue'} w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-white shadow-lg`}>
+                      <CatIcon className="w-5 h-5 md:w-6 md:h-6" />
+                    </div>
+                  )}
+                  <h2 className="text-2xl md:text-4xl font-bold text-white drop-shadow-lg">
+                    {searchQuery ? 'Resultados' : activeTab}
+                  </h2>
+                </div>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="text-white/80 text-sm font-medium">
+                    {filteredProducts.length} productos
+                  </span>
+                  <span className="text-white/40">·</span>
+                  <span className="inline-flex items-center gap-1.5 bg-green-500/20 backdrop-blur-sm text-green-200 text-xs font-semibold px-3 py-1 rounded-full border border-green-400/30">
+                    🚚 Envío gratis +${FREE_SHIPPING_THRESHOLD.toLocaleString('es-CO')}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Product Grid Header with Sort */}
         {activeTab !== 'Admin' && activeTab !== 'MiPerfil' && (<>
-        <div className="mt-14 md:mt-20 lg:mt-24 mb-10">
-          {activeTab === 'Inicio' && !searchQuery ? (
-            <div className="text-center mb-10">
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <Star className="w-7 h-7 text-brand-blue" />
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Productos Destacados</h2>
-              </div>
-              <p className="text-sm md:text-base text-slate-500">Los peces más vendidos esta semana</p>
+
+        {/* Home featured title */}
+        {activeTab === 'Inicio' && !searchQuery && (
+          <div className="mt-14 md:mt-20 lg:mt-24 mb-10 text-center">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Star className="w-7 h-7 text-brand-blue" />
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Productos Destacados</h2>
             </div>
-          ) : (
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-1">
-              {searchQuery ? 'Resultados' : activeTab}
-            </h2>
-          )}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <span className="text-slate-500 text-sm">
-              {activeTab === 'Inicio' && !searchQuery
-                ? `${Math.min(8, filteredProducts.length)} de ${filteredProducts.length} productos`
-                : `${filteredProducts.length} productos`}
+            <p className="text-sm md:text-base text-slate-500">Los peces más vendidos esta semana</p>
+            <span className="text-slate-400 text-sm mt-2 block">
+              {Math.min(8, filteredProducts.length)} de {filteredProducts.length} productos
             </span>
           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-3">
-          <div></div>
-          <div className={`flex items-center gap-2 ${isHomeFeatured ? 'hidden' : ''}`}>
-            <span className="text-xs text-slate-500 font-medium">Ordenar:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="text-sm border border-slate-200 rounded-xl px-4 py-2 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 shadow-sm"
-            >
-              <option value="relevance">Relevancia</option>
-              <option value="price-asc">Menor precio</option>
-              <option value="price-desc">Mayor precio</option>
-              <option value="name">A - Z</option>
-            </select>
+        )}
+
+        {/* Sort bar — only on category pages */}
+        {activeTab !== 'Inicio' && (
+          <div className="flex items-center justify-end mb-6 md:mb-8 mt-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500 font-medium">Ordenar:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="text-sm border border-slate-200 rounded-xl px-4 py-2 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 shadow-sm"
+              >
+                <option value="relevance">Relevancia</option>
+                <option value="price-asc">Menor precio</option>
+                <option value="price-desc">Mayor precio</option>
+                <option value="name">A - Z</option>
+              </select>
+            </div>
           </div>
-        </div>
+        )}
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20">
