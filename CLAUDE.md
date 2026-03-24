@@ -118,10 +118,11 @@ npm run lint         # Type check
 
 Zona de categorias en inicio con **dos niveles**:
 - **Nivel A (con imagen):** Cards grandes con foto a pantalla completa (object-contain + bg-slate-900)
-  - Peces (Disco Heckel), Plantas (acuario plantado), Camarones (Procambarus), Gravilla, Acondicionadores (Seachem), Plantados (Flourite black)
+  - Peces (Disco Heckel), Plantas (acuario plantado), Camarones (Langosta roja), Gravilla (blanca), Seachem (productos Seachem), Plantados (Flourite black)
 - **Nivel B (sin imagen):** Cards compactas con icono + nombre + conteo
   - Termostatos, Filtros, Alimentos, Medidores, Lamparas
 - Constante `CATEGORY_IMAGES` en App.tsx controla cuales tienen foto
+- Nota: "Acondicionadores" fue renombrado a "Seachem" en la UI (la categoria en BD sigue siendo Acondicionadores)
 
 ## HeroCarousel
 
@@ -141,6 +142,8 @@ Zona de categorias en inicio con **dos niveles**:
 - App.tsx es monolitico -- toda la UI esta en un solo archivo
 - Layout: `max-w-[1400px]` con padding responsivo
 - Boton ← "Volver" en header junto a hamburguesa para navegacion entre paginas
+- Navegacion SPA integrada con History API (pushState/popState) para que el boton atras del navegador funcione
+- Barra CTA de Tabla de Compatibilidad removida del home (acceso via seccion Conocimiento)
 - Contador de visitas dinamico al final del inicio
 - Politica de tratamiento de datos en registro de usuarios (Colombia)
 
