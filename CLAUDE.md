@@ -18,7 +18,7 @@
 - **Project ID:** `blqvfrqkzaudrdbxjovt`
 - **URL:** `https://blqvfrqkzaudrdbxjovt.supabase.co`
 - **RLS:** Desactivado en todas las tablas (anon key puede leer/escribir)
-- **Tablas:** Product, Client, Order, OrderItem, BugReport, AunapNews
+- **Tablas:** Product, Client, Order, OrderItem, BugReport, AunapNews, VisitCounter
 - **Enum:** Category (PostgreSQL USER-DEFINED)
 
 ### Credenciales
@@ -32,15 +32,15 @@ VITE_SUPABASE_ANON_KEY=<anon key>
 
 ```
 src/
-  App.tsx              -- Componente principal (~2400 lineas, monolitico)
+  App.tsx              -- Componente principal (~2600 lineas, monolitico)
   HeroCarousel.tsx     -- Carrusel hero con 3 slides (mask radial CSS para fundir imagenes)
   CompatibilityTable.tsx -- Matriz de compatibilidad 25x25 especies
   UserProfilePage.tsx  -- Pagina de perfil del usuario
-  AdminPanel.tsx       -- Panel de administracion (solo role=admin)
+  AdminPanel.tsx       -- Panel de administracion (solo role=admin, CRUD completo de productos)
   BugReportWidget.tsx  -- Widget flotante para reportar bugs (solo admin, estilo BugHerd)
   types.ts             -- Product, CartItem, Category, User, BugReport, AunapNews
   constants.ts         -- Catalogo hardcoded (fallback)
-  migrations.ts        -- Registro de migraciones SQL (001-007)
+  migrations.ts        -- Registro de migraciones SQL (001-010)
   lib/supabase.ts      -- Cliente Supabase (lee de env vars)
   index.css            -- Theme: brand-blue, brand-dark, brand-light
 ```
@@ -88,6 +88,9 @@ Las migraciones se registran en `src/migrations.ts`. Cada cambio de schema se ag
 - 005: Columnas extra en BugReport: elementInfo, viewport, userAgent (ejecutada)
 - 006: Disable RLS en TODAS las tablas (ejecutada)
 - 007: Tabla AunapNews + seed data con 3 noticias (ejecutada)
+- 008: Tabla VisitCounter + columna dataPolicyConsent en Client (ejecutada)
+- 009: Actualizar imagen Corydora Wotroi en Product (ejecutada via REST API)
+- 010: Actualizar imagenes masivas ~60 productos en Product (ejecutada via REST API)
 
 ## Comandos
 
@@ -97,6 +100,35 @@ npm run build        # Build produccion -> /dist
 npm run preview      # Preview del build
 npm run lint         # Type check
 ```
+
+## Admin Panel (AdminPanel.tsx)
+
+- **Dashboard:** Estadisticas generales (productos, clientes, pedidos)
+- **Productos:** Tabla con busqueda, filtro por categoria/estado, ordenamiento
+  - **Agregar producto:** Boton verde → modal completo con todos los campos (nombre, cientifico, descripcion, categoria, talla, precio, stock, imagen URL con preview)
+  - **Editar producto:** Boton amarillo → modal completo (mismos campos que agregar), guarda todos los cambios en Supabase
+  - **Eliminar producto:** Boton rojo con confirmacion
+  - **Toggle activo/inactivo:** Badge clickeable en columna Estado
+- **Clientes:** Lista de clientes registrados con busqueda
+- **Pedidos:** Historial de ordenes con detalle expandible
+- **SQL History:** Registro de migraciones con estado aplicada/pendiente
+- **Bug Reports:** CRUD de bugs con prioridad y asignacion
+
+## Home Page — Categorias
+
+Zona de categorias en inicio con **dos niveles**:
+- **Nivel A (con imagen):** Cards grandes con foto a pantalla completa (object-contain + bg-slate-900)
+  - Peces (Disco Heckel), Plantas (acuario plantado), Camarones (Procambarus), Gravilla, Acondicionadores (Seachem), Plantados (Flourite black)
+- **Nivel B (sin imagen):** Cards compactas con icono + nombre + conteo
+  - Termostatos, Filtros, Alimentos, Medidores, Lamparas
+- Constante `CATEGORY_IMAGES` en App.tsx controla cuales tienen foto
+
+## HeroCarousel
+
+3 slides con imagenes de postimg.cc:
+1. Betta dumbo (Photoroom) — "Tu pasion por el agua"
+2. Pareja Discos — "Peces tropicales de todo el mundo"
+3. Procambarus blanca — "Acuarios plantados llenos de vida"
 
 ## Convenciones
 
@@ -108,6 +140,9 @@ npm run lint         # Type check
 - `referrerPolicy="no-referrer"` en todas las imagenes externas
 - App.tsx es monolitico -- toda la UI esta en un solo archivo
 - Layout: `max-w-[1400px]` con padding responsivo
+- Boton ← "Volver" en header junto a hamburguesa para navegacion entre paginas
+- Contador de visitas dinamico al final del inicio
+- Politica de tratamiento de datos en registro de usuarios (Colombia)
 
 ## Reglas Operacionales para Agentes IA
 
@@ -128,6 +163,10 @@ npm run lint         # Type check
 6. **Imagenes del carousel:** Las fotos de peces tienen fondo gris (no transparente). Se usa CSS mask-image con radial-gradient para difuminar los bordes.
 7. **Vercel env vars:** Las variables VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY deben estar configuradas en Vercel Dashboard > Settings > Environment Variables. Sin ellas, produccion no conecta a Supabase.
 8. **localStorage es por navegador:** Los estados de migraciones aplicadas (verde/pendiente) se guardan en localStorage, asi que cada navegador tiene su propio estado.
+9. **Productos se cargan desde Supabase, no archivos locales:** `products.json` y `constants.ts` son solo fallback. Para actualizar imagenes/datos de productos, hay que hacer UPDATE directo en Supabase (via REST API con anon key o desde el Admin Panel).
+10. **Supabase REST API para bulk updates:** Se puede usar curl con el anon key para actualizar productos masivamente: `curl -X PATCH "$URL/rest/v1/Product?name=ilike.*keyword*" -H "apikey: $KEY" -d '{"image":"url"}'`. RLS desactivado permite esto.
+11. **Campo updatedAt es NOT NULL:** Al crear productos via REST API, incluir siempre `"updatedAt": "ISO_TIMESTAMP"`.
+12. **NO crear archivos en .claude/commands/ ni skills personalizadas:** El usuario lo ha indicado explicitamente.
 
 ### Flujo de trabajo recomendado
 1. Leer este CLAUDE.md al inicio de cada sesion
