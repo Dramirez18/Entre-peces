@@ -435,30 +435,32 @@ export default function App() {
   // Reset page when filters change
   useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortBy]);
 
+  // Helper to get URL for a tab
+  const getTabUrl = useCallback((tab: string) => {
+    return tab === 'Inicio' ? window.location.pathname : `${window.location.pathname}#${tab}`;
+  }, []);
+
   // Navigate to a tab, saving current tab in browser history
   const navigateTo = useCallback((tab: Category | 'Inicio' | 'MiPerfil' | 'Admin') => {
     if (tab !== activeTab) {
       setTabHistory(prev => [...prev, activeTab]);
       setActiveTab(tab);
-      window.history.pushState({ tab }, '', `#${tab}`);
+      window.history.pushState({ tab }, '', getTabUrl(tab));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [activeTab]);
+  }, [activeTab, getTabUrl]);
 
-  // Go back to previous tab
+  // Go back to previous tab (uses browser history.back to keep URL in sync)
   const goBack = useCallback(() => {
     if (tabHistory.length > 0) {
-      const prev = tabHistory[tabHistory.length - 1];
-      setTabHistory(h => h.slice(0, -1));
-      setActiveTab(prev);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.history.back();
     }
   }, [tabHistory]);
 
   // Sync browser back/forward buttons with internal navigation
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
-      if (e.state && e.state.tab) {
+      if (e.state && e.state.tab && e.state.tab !== '_guard') {
         setTabHistory(h => h.slice(0, -1));
         setActiveTab(e.state.tab);
         window.scrollTo({ top: 0, behavior: 'smooth' });
