@@ -435,11 +435,12 @@ export default function App() {
   // Reset page when filters change
   useEffect(() => { setCurrentPage(1); }, [activeTab, searchQuery, sortBy]);
 
-  // Navigate to a tab, saving current tab in history
+  // Navigate to a tab, saving current tab in browser history
   const navigateTo = useCallback((tab: Category | 'Inicio' | 'MiPerfil' | 'Admin') => {
     if (tab !== activeTab) {
       setTabHistory(prev => [...prev, activeTab]);
       setActiveTab(tab);
+      window.history.pushState({ tab }, '', `#${tab}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [activeTab]);
@@ -453,6 +454,28 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [tabHistory]);
+
+  // Sync browser back/forward buttons with internal navigation
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (e.state && e.state.tab) {
+        setTabHistory(h => h.slice(0, -1));
+        setActiveTab(e.state.tab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // No state = user went all the way back to initial load → go to Inicio
+        setTabHistory([]);
+        setActiveTab('Inicio');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    // Set initial state so first back doesn't exit
+    if (!window.history.state) {
+      window.history.replaceState({ tab: 'Inicio' }, '', window.location.href);
+    }
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
 
   // Display products - Home shows only 8 featured, categories show all with scroll
