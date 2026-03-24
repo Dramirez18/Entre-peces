@@ -231,8 +231,10 @@ const CATEGORY_DATA: Record<string, {
 const CATEGORY_IMAGES: Record<string, string> = {
   Peces: 'https://i.postimg.cc/prsjTczM/Disco_Heckel.png',
   Plantas: 'https://i.postimg.cc/bJBbzm1P/10869651_10152455437980163_7733584400832052768_o.jpg',
-  Camarones: 'https://i.postimg.cc/HktB0W4s/Langosta_roja_Photoroom.jpg',
+  Camarones: 'https://i.postimg.cc/sxTWXH7z/Procambarus.png',
   Gravilla: 'https://i.postimg.cc/CMvPXxWY/Gravilla_peque%C3%B1a_blanca_Photoroom.jpg',
+  Acondicionadores: 'https://i.postimg.cc/Lssb857B/Porductos_seachem.png',
+  Plantados: 'https://i.postimg.cc/CMjTtBVL/Flourite-black-7kg.png',
 };
 
 export default function App() {
@@ -1092,7 +1094,7 @@ export default function App() {
                         <img
                           src={CATEGORY_IMAGES[name]}
                           alt={name}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="absolute inset-0 w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500 p-2"
                           referrerPolicy="no-referrer"
                         />
                       </div>
