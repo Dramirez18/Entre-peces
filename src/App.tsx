@@ -1314,7 +1314,7 @@ export default function App() {
                 <img
                   src={catImage}
                   alt={activeTab}
-                  className={`absolute inset-0 w-full h-full object-cover ${activeTab === 'Acondicionadores' ? 'object-top' : ''}`}
+                  className={`absolute inset-0 w-full h-full object-cover ${activeTab === 'Acondicionadores' ? 'object-[center_35%]' : ''}`}
                   referrerPolicy="no-referrer"
                 />
               ) : (
