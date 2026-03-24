@@ -925,36 +925,9 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* CTA Banner — Tabla de Compatibilidad */}
-      {activeTab === 'Inicio' && !searchQuery && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white"
-        >
-          <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-3 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
-                <Table2 className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold truncate">
-                  <span className="hidden md:inline">¿Qué peces pueden convivir juntos? </span>
-                  <span className="md:hidden">Tabla de Compatibilidad</span>
-                </p>
-                <p className="text-xs text-white/70 hidden md:block">
-                  Consulta nuestra tabla interactiva con 25 especies analizadas
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setIsCompatOpen(true)}
-              className="shrink-0 bg-white text-emerald-700 px-4 md:px-6 py-2 rounded-xl text-xs md:text-sm font-bold hover:bg-emerald-50 transition-colors shadow-sm"
-            >
-              Ver tabla →
-            </button>
-          </div>
-        </motion.div>
+      {/* CTA Banner — Tabla de Compatibilidad (movido a sección Conocimiento) */}
+      {false && activeTab === 'Inicio' && (
+        <div />
       )}
 
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-5 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-6 md:py-10">
@@ -1108,7 +1081,7 @@ export default function App() {
                       </div>
                       {/* Text bottom-left */}
                       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-                        <h3 className="text-lg md:text-2xl font-bold text-white drop-shadow-lg">{name}</h3>
+                        <h3 className="text-lg md:text-2xl font-bold text-white drop-shadow-lg">{name === 'Acondicionadores' ? 'Seachem' : name}</h3>
                         <p className="text-white/70 text-xs md:text-sm font-medium">{count} productos</p>
                       </div>
                     </motion.button>
@@ -1318,7 +1291,7 @@ export default function App() {
                 <img
                   src={catImage}
                   alt={activeTab}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className={`absolute inset-0 w-full h-full object-cover ${activeTab === 'Acondicionadores' ? 'object-top' : ''}`}
                   referrerPolicy="no-referrer"
                 />
               ) : (
@@ -1341,7 +1314,7 @@ export default function App() {
                     </div>
                   )}
                   <h2 className="text-2xl md:text-4xl font-bold text-white drop-shadow-lg">
-                    {searchQuery ? 'Resultados' : activeTab}
+                    {searchQuery ? 'Resultados' : activeTab === 'Acondicionadores' ? 'Seachem' : activeTab}
                   </h2>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">

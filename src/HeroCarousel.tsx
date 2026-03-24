@@ -45,7 +45,7 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
   return (
     <section className="mb-10 md:mb-14 relative rounded-2xl md:rounded-3xl overflow-hidden bg-brand-dark shadow-xl">
       {/* Aspect ratio container */}
-      <div className="relative aspect-[16/10] sm:aspect-[21/9] lg:aspect-[24/9] flex items-end md:items-center">
+      <div className="relative aspect-[16/10] sm:aspect-[16/7] lg:aspect-[21/8] flex items-end md:items-center">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-[#0a2540] to-cyan-900" />
 
