@@ -244,6 +244,14 @@ const CATEGORY_IMAGES: Record<string, string> = {
   Plantados: 'https://i.postimg.cc/CMjTtBVL/Flourite-black-7kg.png',
 };
 
+// Tier B category icons (small cards)
+const CATEGORY_ICONS: Record<string, string> = {
+  Termostatos: 'https://i.postimg.cc/tCYgGCKY/Termostatos.png',
+  Filtros: 'https://i.postimg.cc/dQn7KfDR/Filtros.png',
+  Medicamentos: 'https://i.postimg.cc/pXZ3CDGf/Sin-titulo.png',
+  Lamparas: 'https://i.postimg.cc/qvWwxqTz/Disenosintitulo-12-31303198-f339-4f48-bedd-947f630d116a-1024x1024.webp',
+};
+
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -1135,9 +1143,15 @@ export default function App() {
                       onClick={() => navigateTo(name as Category)}
                       className="group flex-shrink-0 snap-start p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-lg hover:border-transparent transition-all text-center min-w-[110px]"
                     >
-                      <div className={`${cat.color} w-11 h-11 rounded-xl flex items-center justify-center text-white mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md`}>
-                        <CatIcon className="w-5 h-5" />
-                      </div>
+                      {CATEGORY_ICONS[name] ? (
+                        <div className="w-11 h-11 rounded-xl mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md overflow-hidden">
+                          <img src={CATEGORY_ICONS[name]} alt={name} className="w-full h-full object-cover object-center" referrerPolicy="no-referrer" />
+                        </div>
+                      ) : (
+                        <div className={`${cat.color} w-11 h-11 rounded-xl flex items-center justify-center text-white mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md`}>
+                          <CatIcon className="w-5 h-5" />
+                        </div>
+                      )}
                       <h3 className="font-semibold text-sm text-slate-800 group-hover:text-brand-blue transition-colors">{getCategoryDisplayName(name)}</h3>
                       <span className="text-[11px] text-slate-400">{count} disponibles</span>
                     </motion.button>
