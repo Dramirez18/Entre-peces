@@ -1413,13 +1413,13 @@ export default function AdminPanel({
                     </div>
                     <input
                       type="text"
-                      placeholder="Titulo del bug *"
+                      placeholder="Título del bug *"
                       value={bugForm.title}
                       onChange={(e) => setBugForm({ ...bugForm, title: e.target.value })}
                       className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
                     />
                     <textarea
-                      placeholder="Descripcion detallada..."
+                      placeholder="Descripción detallada..."
                       value={bugForm.description}
                       onChange={(e) => setBugForm({ ...bugForm, description: e.target.value })}
                       rows={3}
@@ -1434,11 +1434,11 @@ export default function AdminPanel({
                         <option value="low">Prioridad: Baja</option>
                         <option value="medium">Prioridad: Media</option>
                         <option value="high">Prioridad: Alta</option>
-                        <option value="critical">Prioridad: Critica</option>
+                        <option value="critical">Prioridad: Crítica</option>
                       </select>
                       <input
                         type="text"
-                        placeholder="Pagina/Seccion"
+                        placeholder="Página/Sección"
                         value={bugForm.page}
                         onChange={(e) => setBugForm({ ...bugForm, page: e.target.value })}
                         className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 outline-none"
@@ -1518,7 +1518,7 @@ export default function AdminPanel({
                           {bug.description && <p className="text-xs text-slate-500 mb-2">{bug.description}</p>}
                           <div className="flex gap-4 text-[10px] text-slate-400">
                             <span>Por: {bug.reportedBy}</span>
-                            {bug.page && <span>Pagina: {bug.page}</span>}
+                            {bug.page && <span>Página: {bug.page}</span>}
                             <span>{new Date(bug.createdAt).toLocaleDateString()}</span>
                           </div>
                         </div>

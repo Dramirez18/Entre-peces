@@ -307,8 +307,8 @@ export default function BugReportWidget({ user, activeTab, onBugReported }: Prop
                   <Camera className="w-4 h-4 text-amber-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">Screenshot rapido</p>
-                  <p className="text-[10px] text-slate-400">Captura toda la pagina</p>
+                  <p className="text-sm font-semibold text-slate-800">Screenshot rápido</p>
+                  <p className="text-[10px] text-slate-400">Captura toda la página</p>
                 </div>
               </button>
               <div className="h-px bg-slate-100 my-1" />
@@ -376,7 +376,7 @@ export default function BugReportWidget({ user, activeTab, onBugReported }: Prop
               {/* Form fields */}
               <input
                 type="text"
-                placeholder="Titulo del bug *"
+                placeholder="Título del bug *"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 className="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 outline-none"
@@ -397,12 +397,12 @@ export default function BugReportWidget({ user, activeTab, onBugReported }: Prop
                 <option value="low">Prioridad: Baja</option>
                 <option value="medium">Prioridad: Media</option>
                 <option value="high">Prioridad: Alta</option>
-                <option value="critical">Prioridad: Critica</option>
+                <option value="critical">Prioridad: Crítica</option>
               </select>
 
               {/* Context info */}
               <div className="flex gap-2 text-[10px] text-slate-400">
-                <span className="bg-slate-100 px-2 py-1 rounded">Pagina: {activeTab || 'Inicio'}</span>
+                <span className="bg-slate-100 px-2 py-1 rounded">Página: {activeTab || 'Inicio'}</span>
                 <span className="bg-slate-100 px-2 py-1 rounded">{window.innerWidth}x{window.innerHeight}</span>
               </div>
             </div>

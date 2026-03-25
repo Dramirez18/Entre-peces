@@ -77,7 +77,7 @@ CREATE SCHEMA IF NOT EXISTS "public";
 -- Enum
 CREATE TYPE "Category" AS ENUM (
   'Peces', 'Plantas', 'Camarones', 'Plantados', 'Termostatos',
-  'Filtros', 'Alimentos', 'Acondicionadores', 'Gravilla', 'Medidores', 'Lamparas'
+  'Filtros', 'Alimentos', 'Acondicionadores', 'Gravilla', 'Medicamentos', 'Lamparas'
 );
 
 -- Product table
@@ -486,5 +486,24 @@ UPDATE "Product" SET image = 'https://i.postimg.cc/4yF8TqhG/Adontosternarchus_de
 
 -- Guppy black metal pareja
 UPDATE "Product" SET image = 'https://i.postimg.cc/2ykvCNqn/Guppy-macho-comercial.png' WHERE name ILIKE 'guppy black metal%' AND image LIKE '%unsplash%';`,
+  },
+  {
+    id: '011',
+    title: 'Renombrar categoría Medidores → Medicamentos',
+    description: 'Renombra el valor del enum Category de "Medidores" a "Medicamentos" y actualiza todos los productos que tenían esa categoría.',
+    createdAt: '2026-03-24',
+    sql: `-- ============================================================
+-- Migration 011: Renombrar enum Medidores → Medicamentos
+-- ============================================================
+
+-- 1) Agregar nuevo valor al enum
+ALTER TYPE "Category" ADD VALUE IF NOT EXISTS 'Medicamentos';
+
+-- 2) Actualizar productos que tenían Medidores
+UPDATE "Product" SET category = 'Medicamentos' WHERE category = 'Medidores';
+
+-- Nota: PostgreSQL no permite eliminar valores de un enum directamente.
+-- El valor 'Medidores' quedará en el enum pero sin uso.
+-- Para limpieza total se requeriría recrear el enum (opcional).`,
   },
 ];

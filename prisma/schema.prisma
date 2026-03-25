@@ -16,7 +16,7 @@ enum Category {
   Alimentos
   Acondicionadores
   Gravilla
-  Medidores
+  Medicamentos
   Lamparas
 }
 

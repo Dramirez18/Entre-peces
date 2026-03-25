@@ -18,7 +18,7 @@ import {
   Utensils,
   Droplets,
   Mountain,
-  Gauge,
+  Pill,
   Lightbulb,
   CheckCircle2,
   CircleDot,
@@ -211,12 +211,12 @@ const CATEGORY_DATA: Record<string, {
     preview: ['Arena silica', 'Grava natural', 'Piedras decorativas'],
     subcategories: ['Arena', 'Grava', 'Piedras', 'Decoración']
   },
-  'Medidores': {
-    icon: Gauge,
-    color: 'bg-rose-500',
-    gradient: 'from-rose-400 to-rose-600',
-    preview: ['pH', 'Temperatura', 'TDS', 'Dureza', 'Amonio'],
-    subcategories: ['pH', 'Temperatura', 'Químicos', 'Digitales']
+  'Medicamentos': {
+    icon: Pill,
+    color: 'bg-red-500',
+    gradient: 'from-red-400 to-red-600',
+    preview: ['Antihongos', 'Antibacterial', 'Antiparásitos', 'Vitaminas', 'Desparasitantes'],
+    subcategories: ['Antihongos', 'Antibacteriales', 'Antiparásitos', 'Vitaminas']
   },
   'Lamparas': {
     icon: Lightbulb,
@@ -225,6 +225,13 @@ const CATEGORY_DATA: Record<string, {
     preview: ['LED', 'RGB', 'Crecimiento plantas', 'Clip', 'Sumergibles'],
     subcategories: ['LED', 'Fluorescentes', 'Para plantas', 'Decorativas']
   },
+};
+
+// Display name mapping for categories (DB name → UI name)
+const getCategoryDisplayName = (name: string) => {
+  if (name === 'Acondicionadores') return 'Seachem';
+  if (name === 'Lamparas') return 'Lámparas';
+  return name;
 };
 
 // Category hero banner images (categories without image use gradient fallback)
@@ -771,7 +778,7 @@ export default function App() {
               </div>
 
               {/* Sidebar Content */}
-              <div className="flex-1 overflow-y-auto py-3">
+              <div className="flex-1 min-h-0 overflow-y-auto py-3">
                 {/* Inicio */}
                 <button
                   onClick={() => { navigateTo('Inicio'); setSearchQuery(''); setIsSidebarOpen(false); }}
@@ -860,7 +867,7 @@ export default function App() {
                               <CatIcon className="w-5 h-5" />
                             </div>
                             <div className="flex-1 text-left">
-                              <span className="block">{name}</span>
+                              <span className="block">{getCategoryDisplayName(name)}</span>
                               <span className="text-[10px] text-slate-400 font-normal">{count} productos</span>
                             </div>
                           </button>
@@ -1106,7 +1113,7 @@ export default function App() {
                       </div>
                       {/* Text bottom-left */}
                       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-                        <h3 className="text-lg md:text-2xl font-bold text-white drop-shadow-lg">{name === 'Acondicionadores' ? 'Seachem' : name}</h3>
+                        <h3 className="text-lg md:text-2xl font-bold text-white drop-shadow-lg">{getCategoryDisplayName(name)}</h3>
                         <p className="text-white/70 text-xs md:text-sm font-medium">{count} productos</p>
                       </div>
                     </motion.button>
@@ -1131,7 +1138,7 @@ export default function App() {
                       <div className={`${cat.color} w-11 h-11 rounded-xl flex items-center justify-center text-white mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md`}>
                         <CatIcon className="w-5 h-5" />
                       </div>
-                      <h3 className="font-semibold text-sm text-slate-800 group-hover:text-brand-blue transition-colors">{name}</h3>
+                      <h3 className="font-semibold text-sm text-slate-800 group-hover:text-brand-blue transition-colors">{getCategoryDisplayName(name)}</h3>
                       <span className="text-[11px] text-slate-400">{count} disponibles</span>
                     </motion.button>
                   );
@@ -1339,7 +1346,7 @@ export default function App() {
                     </div>
                   )}
                   <h2 className="text-2xl md:text-4xl font-bold text-white drop-shadow-lg">
-                    {searchQuery ? 'Resultados' : activeTab === 'Acondicionadores' ? 'Seachem' : activeTab}
+                    {searchQuery ? 'Resultados' : getCategoryDisplayName(activeTab)}
                   </h2>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">
@@ -2583,7 +2590,7 @@ export default function App() {
                             onClick={() => setShowPolicyModal(true)}
                             className="text-brand-blue font-semibold hover:underline"
                           >
-                            Politica de Tratamiento de Datos Personales
+                            Política de Tratamiento de Datos Personales
                           </button>
                           {' '}de acuerdo con la Ley 1581 de 2012.
                         </span>
@@ -2683,7 +2690,7 @@ export default function App() {
                   <FileCheck className="w-5 h-5 text-brand-blue" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">Politica de Tratamiento de Datos</h3>
+                  <h3 className="font-bold text-slate-800">Política de Tratamiento de Datos</h3>
                   <p className="text-[11px] text-slate-400">Ley 1581 de 2012 — Colombia</p>
                 </div>
                 <button onClick={() => setShowPolicyModal(false)} className="ml-auto p-2 hover:bg-slate-100 rounded-full transition-colors">
@@ -2695,29 +2702,29 @@ export default function App() {
                 Entre Peces, marketplace de acuariofilia con domicilio en Colombia. Correo de contacto: <span className="text-brand-blue">dramirez180929@gmail.com</span></p>
 
                 <p><strong className="text-slate-800">2. Datos personales recopilados</strong><br />
-                Nombre completo, correo electronico, numero de celular y direccion de envio.</p>
+                Nombre completo, correo electrónico, número de celular y dirección de envío.</p>
 
                 <p><strong className="text-slate-800">3. Finalidad del tratamiento</strong><br />
-                Los datos personales seran utilizados para: (a) gestionar pedidos y envios; (b) comunicarnos contigo sobre el estado de tus compras; (c) enviarte informacion sobre productos y promociones, siempre que lo autorices; (d) mejorar nuestros servicios y experiencia de usuario.</p>
+                Los datos personales serán utilizados para: (a) gestionar pedidos y envíos; (b) comunicarnos contigo sobre el estado de tus compras; (c) enviarte información sobre productos y promociones, siempre que lo autorices; (d) mejorar nuestros servicios y experiencia de usuario.</p>
 
                 <p><strong className="text-slate-800">4. Derechos del titular</strong><br />
-                De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013, como titular de los datos tienes derecho a: (a) conocer, actualizar y rectificar tus datos; (b) solicitar prueba de la autorizacion otorgada; (c) ser informado sobre el uso que se le ha dado a tus datos; (d) revocar la autorizacion y/o solicitar la supresion de tus datos cuando lo consideres; (e) presentar quejas ante la Superintendencia de Industria y Comercio (SIC) por infracciones a la ley.</p>
+                De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013, como titular de los datos tienes derecho a: (a) conocer, actualizar y rectificar tus datos; (b) solicitar prueba de la autorización otorgada; (c) ser informado sobre el uso que se le ha dado a tus datos; (d) revocar la autorización y/o solicitar la supresión de tus datos cuando lo consideres; (e) presentar quejas ante la Superintendencia de Industria y Comercio (SIC) por infracciones a la ley.</p>
 
-                <p><strong className="text-slate-800">5. Como ejercer tus derechos</strong><br />
-                Puedes ejercer tus derechos enviando un correo a <span className="text-brand-blue">dramirez180929@gmail.com</span> indicando tu nombre completo, numero de identificacion y la solicitud especifica. Responderemos en un plazo maximo de quince (15) dias habiles.</p>
+                <p><strong className="text-slate-800">5. Cómo ejercer tus derechos</strong><br />
+                Puedes ejercer tus derechos enviando un correo a <span className="text-brand-blue">dramirez180929@gmail.com</span> indicando tu nombre completo, número de identificación y la solicitud específica. Responderemos en un plazo máximo de quince (15) días hábiles.</p>
 
                 <p><strong className="text-slate-800">6. Seguridad</strong><br />
-                Implementamos medidas tecnicas y organizativas para proteger tus datos personales contra acceso no autorizado, perdida o alteracion.</p>
+                Implementamos medidas técnicas y organizativas para proteger tus datos personales contra acceso no autorizado, pérdida o alteración.</p>
 
                 <p><strong className="text-slate-800">7. Vigencia</strong><br />
-                Esta politica entra en vigencia a partir del 23 de marzo de 2026. Los datos personales seran conservados mientras exista la relacion comercial o hasta que el titular solicite su supresion.</p>
+                Esta política entra en vigencia a partir del 23 de marzo de 2026. Los datos personales serán conservados mientras exista la relación comercial o hasta que el titular solicite su supresión.</p>
               </div>
               <div className="px-6 py-4 border-t border-slate-100 shrink-0">
                 <button
                   onClick={() => { setShowPolicyModal(false); setAcceptedPolicy(true); }}
                   className="w-full bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-3 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-[0.98]"
                 >
-                  Acepto la politica
+                  Acepto la política
                 </button>
               </div>
             </motion.div>

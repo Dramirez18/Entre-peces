@@ -120,7 +120,7 @@ Zona de categorias en inicio con **dos niveles**:
 - **Nivel A (con imagen):** Cards grandes con foto a pantalla completa (object-contain + bg-slate-900)
   - Peces (Disco Heckel), Plantas (acuario plantado), Camarones (Langosta roja), Gravilla (blanca), Seachem (productos Seachem), Plantados (Flourite black)
 - **Nivel B (sin imagen):** Cards compactas con icono + nombre + conteo
-  - Termostatos, Filtros, Alimentos, Medidores, Lamparas
+  - Termostatos, Filtros, Alimentos, Medicamentos, Lamparas
 - Constante `CATEGORY_IMAGES` en App.tsx controla cuales tienen foto
 - Nota: "Acondicionadores" fue renombrado a "Seachem" en la UI (la categoria en BD sigue siendo Acondicionadores)
 

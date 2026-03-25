@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('Peces', 'Plantas', 'Camarones', 'Plantados', 'Termostatos', 'Filtros', 'Alimentos', 'Acondicionadores', 'Gravilla', 'Medidores', 'Lamparas');
+CREATE TYPE "Category" AS ENUM ('Peces', 'Plantas', 'Camarones', 'Plantados', 'Termostatos', 'Filtros', 'Alimentos', 'Acondicionadores', 'Gravilla', 'Medicamentos', 'Lamparas');
 
 -- CreateTable
 CREATE TABLE "Product" (

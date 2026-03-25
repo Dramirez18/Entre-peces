@@ -2142,7 +2142,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 115000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 19
   },
@@ -2152,7 +2152,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 120000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 9
   },
@@ -2162,7 +2162,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 100000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 22
   },
@@ -2172,7 +2172,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 240000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 11
   },
@@ -2182,7 +2182,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 105000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 5
   },
@@ -2192,7 +2192,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 60000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 21
   },
@@ -2202,7 +2202,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 85000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 5
   },
@@ -2212,7 +2212,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 55000,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 16
   },
@@ -2222,7 +2222,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 57845,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 23
   },
@@ -2232,7 +2232,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 57845,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 17
   },
@@ -2242,7 +2242,7 @@ export const PRODUCTS: Product[] = [
     "scientificName": "",
     "description": "Kits de prueba precisos para monitorear la calidad del agua de tu acuario.",
     "price": 156759,
-    "category": "Medidores",
+    "category": "Medicamentos",
     "image": "https://images.unsplash.com/photo-1584267385494-9fdd9a71ad75?auto=format&fit=crop&q=80&w=400",
     "stock": 21
   },

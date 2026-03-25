@@ -1,4 +1,4 @@
-export type Category = 'Peces' | 'Plantas' | 'Camarones' | 'Plantados' | 'Termostatos' | 'Filtros' | 'Alimentos' | 'Acondicionadores' | 'Gravilla' | 'Medidores' | 'Lamparas';
+export type Category = 'Peces' | 'Plantas' | 'Camarones' | 'Plantados' | 'Termostatos' | 'Filtros' | 'Alimentos' | 'Acondicionadores' | 'Gravilla' | 'Medicamentos' | 'Lamparas';
 
 export interface Product {
   id: string;

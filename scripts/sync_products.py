@@ -65,7 +65,7 @@ CATEGORY_KEYWORDS = {
     "Gravilla": [
         "grava", "arena", "piedra", "gravilla", "roca", "decoracion",
     ],
-    "Medidores": [
+    "Medicamentos": [
         "medidor", " ph ", "test ", "tds", "reactivo",
     ],
     "Lamparas": [
@@ -101,7 +101,7 @@ CATEGORY_IMAGES = {
     "Alimentos": "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=400",
     "Acondicionadores": "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=400",
     "Gravilla": "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=400",
-    "Medidores": "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=400",
+    "Medicamentos": "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=400",
     "Lamparas": "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=400",
 }
 
@@ -119,7 +119,7 @@ def classify_product(name: str) -> str:
     # Check specific categories first (before Peces catch-all)
     for category in [
         "Camarones", "Plantas", "Filtros", "Termostatos", "Alimentos",
-        "Acondicionadores", "Gravilla", "Medidores", "Lamparas", "Plantados",
+        "Acondicionadores", "Gravilla", "Medicamentos", "Lamparas", "Plantados",
     ]:
         keywords = CATEGORY_KEYWORDS[category]
         for kw in keywords:
@@ -205,8 +205,8 @@ SECTION_TO_CATEGORY = {
     "HERRAMIENTAS Y ACCESORIOS": "Plantados",
     "ROCAS, RAICES, MADERAS, MATERIALES Y HARD SCAPE": "Gravilla",
     "SUSTRATOS": "Plantados",
-    "API": "Medidores",
-    "TEST DE PARAMETROS": "Medidores",
+    "API": "Medicamentos",
+    "TEST DE PARAMETROS": "Medicamentos",
     "ACONDICIONADORES Y REGULADORES DE AGUA": "Acondicionadores",
     "ACLARADORES DE AGUA PARA ACUARIOS Y ESTANQUES": "Acondicionadores",
     "TRATAMIENTO PARA ALGAS EN ACUARIOS Y ESTANQUES": "Acondicionadores",
@@ -231,7 +231,7 @@ SECTION_TO_CATEGORY = {
     "SISTEMAS DE CO2": "Plantados",
     "ACONDICIONADORES DE AGUA Y BACTERIAS LIMPIADORAS": "Acondicionadores",
     "PRODUCTOS PARA GAMBAS": "Camarones",
-    "MEDIDORES DE PARAMETROS": "Medidores",
+    "MEDIDORES DE PARAMETROS": "Medicamentos",
     "BOMBAS SUMERGIBLES DE ALTO CAUDAL AHORRADORAS": "Filtros",
     "PRODUCTOS SEACHEM": "Acondicionadores",
 }
