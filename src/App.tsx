@@ -1422,11 +1422,11 @@ export default function App() {
               onClick={() => setSelectedProduct(product)}
             >
               {/* Image */}
-              <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
+              <div className="aspect-[4/3] relative overflow-hidden bg-white">
                 <img
                   src={product.image}
                   alt={`${product.name}${product.scientificName ? ' - ' + product.scientificName : ''}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                   onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
