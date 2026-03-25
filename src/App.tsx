@@ -242,10 +242,6 @@ const CATEGORY_IMAGES: Record<string, string> = {
   Gravilla: 'https://i.postimg.cc/CMvPXxWY/Gravilla_peque%C3%B1a_blanca_Photoroom.jpg',
   Acondicionadores: 'https://i.postimg.cc/Lssb857B/Porductos_seachem.png',
   Plantados: 'https://i.postimg.cc/CMjTtBVL/Flourite-black-7kg.png',
-};
-
-// Tier B category icons (small cards)
-const CATEGORY_ICONS: Record<string, string> = {
   Termostatos: 'https://i.postimg.cc/tCYgGCKY/Termostatos.png',
   Filtros: 'https://i.postimg.cc/dQn7KfDR/Filtros.png',
   Medicamentos: 'https://i.postimg.cc/pXZ3CDGf/Sin-titulo.png',
@@ -1091,7 +1087,7 @@ export default function App() {
         {activeTab === 'Inicio' && !searchQuery && (
           <div className="mb-12 mt-8 md:mt-10 lg:mt-12">
             {/* Tier A: Featured categories with full-bleed images */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 mb-6">
               {Object.entries(CATEGORY_DATA)
                 .filter(([name]) => CATEGORY_IMAGES[name] && (productCountByCategory[name] || 0) > 0)
                 .map(([name, cat]) => {
@@ -1129,35 +1125,6 @@ export default function App() {
                 })}
             </div>
 
-            {/* Tier B: Secondary categories (icon-based, compact) */}
-            <div className="flex overflow-x-auto gap-3 pb-2 md:grid md:grid-cols-4 lg:grid-cols-7 md:overflow-visible md:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              {Object.entries(CATEGORY_DATA)
-                .filter(([name]) => !CATEGORY_IMAGES[name] && (productCountByCategory[name] || 0) > 0)
-                .map(([name, cat]) => {
-                  const CatIcon = cat.icon;
-                  const count = productCountByCategory[name] || 0;
-                  return (
-                    <motion.button
-                      key={name}
-                      whileHover={{ y: -4 }}
-                      onClick={() => navigateTo(name as Category)}
-                      className="group flex-shrink-0 snap-start p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-lg hover:border-transparent transition-all text-center min-w-[110px]"
-                    >
-                      {CATEGORY_ICONS[name] ? (
-                        <div className="w-11 h-11 rounded-xl mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md overflow-hidden">
-                          <img src={CATEGORY_ICONS[name]} alt={name} className="w-full h-full object-cover object-center" referrerPolicy="no-referrer" />
-                        </div>
-                      ) : (
-                        <div className={`${cat.color} w-11 h-11 rounded-xl flex items-center justify-center text-white mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md`}>
-                          <CatIcon className="w-5 h-5" />
-                        </div>
-                      )}
-                      <h3 className="font-semibold text-sm text-slate-800 group-hover:text-brand-blue transition-colors">{getCategoryDisplayName(name)}</h3>
-                      <span className="text-[11px] text-slate-400">{count} disponibles</span>
-                    </motion.button>
-                  );
-                })}
-            </div>
           </div>
         )}
 
