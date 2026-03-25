@@ -10,6 +10,13 @@ import { Product, User, BugReport, ClientRow, OrderRow, OrderItemRow } from './t
 import { supabase } from './lib/supabase';
 import { MIGRATIONS, getAppliedMigrations, markMigrationApplied, unmarkMigrationApplied, type Migration } from './migrations';
 
+// Display name mapping for categories (DB name → UI name)
+const getCategoryDisplayName = (name: string) => {
+  if (name === 'Acondicionadores') return 'Seachem';
+  if (name === 'Lamparas') return 'Lámparas';
+  return name;
+};
+
 interface AdminPanelProps {
   user: User | null;
   products: Product[];
@@ -441,7 +448,7 @@ export default function AdminPanel({
                     <div key={cat} className="bg-slate-50 rounded-xl p-4 hover:bg-slate-100 transition-colors cursor-pointer"
                       onClick={() => { setAdminTab('products'); setFilterCategory(cat); }}
                     >
-                      <p className="font-semibold text-sm text-slate-800">{cat}</p>
+                      <p className="font-semibold text-sm text-slate-800">{getCategoryDisplayName(cat)}</p>
                       <p className="text-xs text-slate-500 mt-1">{activeCount}/{count} activos</p>
                       <div className="h-1.5 bg-slate-200 rounded-full mt-2 overflow-hidden">
                         <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(activeCount / count) * 100}%` }} />
@@ -466,7 +473,7 @@ export default function AdminPanel({
                         <img src={p.image} alt="" className="w-10 h-10 rounded-lg object-cover bg-slate-100" />
                         <div>
                           <p className="text-sm font-medium text-slate-800">{p.name}</p>
-                          <p className="text-xs text-slate-400">{p.category}</p>
+                          <p className="text-xs text-slate-400">{getCategoryDisplayName(p.category)}</p>
                         </div>
                       </div>
                       <span className="text-sm font-bold text-orange-600">{p.stock} und.</span>
@@ -499,7 +506,7 @@ export default function AdminPanel({
                 className="bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-amber-500 outline-none"
               >
                 <option value="all">Todas las categorías</option>
-                {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                {categories.map(c => <option key={c} value={c}>{getCategoryDisplayName(c)}</option>)}
               </select>
               <select
                 value={filterActive}
@@ -595,7 +602,7 @@ export default function AdminPanel({
                             onChange={(e) => setNewProduct(p => ({ ...p, category: e.target.value as import('./types').Category }))}
                             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none text-sm"
                           >
-                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                            {categories.map(c => <option key={c} value={c}>{getCategoryDisplayName(c)}</option>)}
                           </select>
                         </div>
                         <div>
@@ -767,7 +774,7 @@ export default function AdminPanel({
                             onChange={(e) => setEditForm({ ...editForm, category: e.target.value as import('./types').Category })}
                             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-amber-500 outline-none text-sm"
                           >
-                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                            {categories.map(c => <option key={c} value={c}>{getCategoryDisplayName(c)}</option>)}
                           </select>
                         </div>
                         <div>
@@ -915,7 +922,7 @@ export default function AdminPanel({
                           </td>
                           <td className="px-4 py-3">
                             <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
-                              {product.category}
+                              {getCategoryDisplayName(product.category)}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-right">
