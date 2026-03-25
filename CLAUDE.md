@@ -40,7 +40,7 @@ src/
   BugReportWidget.tsx  -- Widget flotante para reportar bugs (solo admin, estilo BugHerd)
   types.ts             -- Product, CartItem, Category, User, BugReport, AunapNews
   constants.ts         -- Catalogo hardcoded (fallback)
-  migrations.ts        -- Registro de migraciones SQL (001-010)
+  migrations.ts        -- Registro de migraciones SQL (001-011)
   lib/supabase.ts      -- Cliente Supabase (lee de env vars)
   index.css            -- Theme: brand-blue, brand-dark, brand-light
 ```
@@ -91,6 +91,7 @@ Las migraciones se registran en `src/migrations.ts`. Cada cambio de schema se ag
 - 008: Tabla VisitCounter + columna dataPolicyConsent en Client (ejecutada)
 - 009: Actualizar imagen Corydora Wotroi en Product (ejecutada via REST API)
 - 010: Actualizar imagenes masivas ~60 productos en Product (ejecutada via REST API)
+- 011: Renombrar enum Medidores → Medicamentos (ejecutada — ALTER TYPE + UPDATE en 2 pasos separados)
 
 ## Comandos
 
@@ -123,6 +124,8 @@ Zona de categorias en inicio con **dos niveles**:
   - Termostatos, Filtros, Alimentos, Medicamentos, Lamparas
 - Constante `CATEGORY_IMAGES` en App.tsx controla cuales tienen foto
 - Nota: "Acondicionadores" fue renombrado a "Seachem" en la UI (la categoria en BD sigue siendo Acondicionadores)
+- Nota: "Medidores" fue renombrado a "Medicamentos" en BD y UI (enum Category actualizado en Supabase)
+- Helper `getCategoryDisplayName()` centraliza mapeo de nombres: Acondicionadores→Seachem, Lamparas→Lámparas
 
 ## HeroCarousel
 
@@ -170,6 +173,7 @@ Zona de categorias en inicio con **dos niveles**:
 10. **Supabase REST API para bulk updates:** Se puede usar curl con el anon key para actualizar productos masivamente: `curl -X PATCH "$URL/rest/v1/Product?name=ilike.*keyword*" -H "apikey: $KEY" -d '{"image":"url"}'`. RLS desactivado permite esto.
 11. **Campo updatedAt es NOT NULL:** Al crear productos via REST API, incluir siempre `"updatedAt": "ISO_TIMESTAMP"`.
 12. **NO crear archivos en .claude/commands/ ni skills personalizadas:** El usuario lo ha indicado explicitamente.
+13. **PostgreSQL ADD VALUE requiere commit separado:** Al agregar un nuevo valor a un enum con `ALTER TYPE ... ADD VALUE`, no se puede usar el nuevo valor en la misma transaccion. Hay que ejecutar el ALTER TYPE primero, y luego en una segunda ejecucion hacer el UPDATE. El SQL Editor de Supabase hace auto-commit entre ejecuciones.
 
 ### Flujo de trabajo recomendado
 1. Leer este CLAUDE.md al inicio de cada sesion
