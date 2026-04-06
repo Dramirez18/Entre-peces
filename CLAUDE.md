@@ -117,12 +117,11 @@ npm run lint         # Type check
 
 ## Home Page — Categorias
 
-Zona de categorias en inicio con **dos niveles**:
-- **Nivel A (con imagen):** Cards grandes con foto a pantalla completa (object-contain + bg-slate-900)
+Todas las categorias usan **cards grandes con imagen** (estilo unificado):
+- Cards con foto a pantalla completa (object-contain + bg-slate-900), overlay oscuro y texto blanco
   - Peces (Disco Heckel), Plantas (acuario plantado), Camarones (Langosta roja), Gravilla (blanca), Seachem (productos Seachem), Plantados (Flourite black)
-- **Nivel B (sin imagen):** Cards compactas con icono + nombre + conteo
-  - Termostatos, Filtros, Alimentos, Medicamentos, Lamparas
-- Constante `CATEGORY_IMAGES` en App.tsx controla cuales tienen foto
+  - Termostatos, Filtros, Medicamentos, Lámparas, Alimentos
+- Constante `CATEGORY_IMAGES` en App.tsx controla TODAS las categorias (ya no hay Nivel B)
 - Nota: "Acondicionadores" fue renombrado a "Seachem" en la UI (la categoria en BD sigue siendo Acondicionadores)
 - Nota: "Medidores" fue renombrado a "Medicamentos" en BD y UI (enum Category actualizado en Supabase)
 - Helper `getCategoryDisplayName()` centraliza mapeo de nombres: Acondicionadores→Seachem, Lamparas→Lámparas
