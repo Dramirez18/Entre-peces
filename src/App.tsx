@@ -336,18 +336,54 @@ export default function App() {
     else localStorage.removeItem('entrepeces_user');
   }, [user]);
 
+  // ── Scroll-lock del body cuando hay un overlay/modal abierto ──
+  // En móvil, sin esto, el fondo sigue desplazándose detrás del modal y el
+  // contenido aparece "corrido / lejos", obligando a hacer zoom para verlo.
+  const anyOverlayOpen =
+    !!selectedProduct || isCartOpen || isUserModalOpen || isSidebarOpen ||
+    isPaymentOpen || isCompatOpen || isProfileOpen || isCheckoutFormOpen ||
+    showPolicyModal;
+  useEffect(() => {
+    if (!anyOverlayOpen) return;
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    // Fijar el body conservando la posición de scroll (evita salto a top)
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    return () => {
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, [anyOverlayOpen]);
+
   // Load products: Supabase (live) → products.json (static) → PRODUCTS (hardcoded)
   useEffect(() => {
     const loadProducts = async () => {
       console.log('[Products] Supabase available:', !!supabase);
       console.log('[Products] URL:', import.meta.env.VITE_SUPABASE_URL || 'NOT SET');
-      // 1. Try Supabase (source of truth)
+      // 1. Try Supabase (source of truth) — con timeout para no quedar colgado
+      //    en conexiones móviles lentas. Si tarda demasiado, cae al fallback.
       if (supabase) {
         try {
-          const { data, error } = await supabase
+          const queryPromise = supabase
             .from('Product')
             .select('*')
             .order('name');
+          const timeout = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Supabase timeout (8s)')), 8000)
+          );
+          const { data, error } = await Promise.race([queryPromise, timeout]) as Awaited<typeof queryPromise>;
           if (error) {
             console.warn('[Supabase] Query error:', error.message, error.details, error.hint, error.code);
           } else if (data) {
@@ -357,7 +393,7 @@ export default function App() {
             return;
           }
         } catch (e) {
-          console.warn('[Supabase] Connection failed:', e);
+          console.warn('[Supabase] Connection failed or timed out:', e);
         }
       }
 
@@ -1424,7 +1460,7 @@ export default function App() {
               {/* Image */}
               <div className="aspect-[4/3] relative overflow-hidden bg-white">
                 <img
-                  src={product.image}
+                  src={product.image || PLACEHOLDER_IMG}
                   alt={`${product.name}${product.scientificName ? ' - ' + product.scientificName : ''}`}
                   className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -1551,7 +1587,7 @@ export default function App() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90dvh] flex flex-col"
             >
               {/* Close button */}
               <button
@@ -1564,10 +1600,11 @@ export default function App() {
               {/* Product Image */}
               <div className="aspect-[4/3] relative bg-slate-100 shrink-0">
                 <img
-                  src={selectedProduct.image}
+                  src={selectedProduct.image || PLACEHOLDER_IMG}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                 />
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/50 to-transparent h-20" />
                 <span className="absolute bottom-3 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold uppercase text-slate-600">
@@ -1657,7 +1694,7 @@ export default function App() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90dvh] flex flex-col"
             >
               {/* Header */}
               <div className="bg-gradient-to-r from-brand-blue to-brand-dark p-5 text-white">
@@ -2337,7 +2374,7 @@ export default function App() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.85, opacity: 0, y: 30 }}
               transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl max-h-[90dvh] overflow-y-auto"
             >
               {/* Header with gradient, logo and animated bubbles */}
               <div className="relative bg-gradient-to-br from-brand-blue via-brand-dark to-cyan-700 p-8 text-white text-center overflow-hidden">
@@ -2664,7 +2701,7 @@ export default function App() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden"
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl max-h-[85dvh] flex flex-col overflow-hidden"
             >
               <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100 shrink-0">
                 <div className="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center">

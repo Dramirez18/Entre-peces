@@ -18,6 +18,9 @@
     background-color: #f8fafc;
     color: #0f172a;
     @apply bg-slate-50 text-slate-900;
+    /* Evita el scroll horizontal accidental en móvil sin romper el header
+       sticky (no se aplica overflow-x:hidden en html/body por esa razón). */
+    overflow-wrap: break-word;
   }
 
   /* Cross-browser box-sizing reset */
