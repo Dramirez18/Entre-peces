@@ -372,28 +372,32 @@ export default function App() {
     const loadProducts = async () => {
       console.log('[Products] Supabase available:', !!supabase);
       console.log('[Products] URL:', import.meta.env.VITE_SUPABASE_URL || 'NOT SET');
-      // 1. Try Supabase (source of truth) — con timeout para no quedar colgado
-      //    en conexiones móviles lentas. Si tarda demasiado, cae al fallback.
+      // 1. Try Supabase (source of truth). Con timeout + reintento para
+      //    conexiones móviles lentas: damos margen antes de caer al fallback.
       if (supabase) {
-        try {
-          const queryPromise = supabase
-            .from('Product')
-            .select('*')
-            .order('name');
-          const timeout = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('Supabase timeout (8s)')), 8000)
-          );
-          const { data, error } = await Promise.race([queryPromise, timeout]) as Awaited<typeof queryPromise>;
-          if (error) {
-            console.warn('[Supabase] Query error:', error.message, error.details, error.hint, error.code);
-          } else if (data) {
-            console.log(`[Supabase] Loaded ${data.length} products`);
-            setProducts(data as Product[]);
-            setIsLoading(false);
-            return;
+        const MAX_INTENTOS = 2;
+        const TIMEOUT_MS = 12000;
+        for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+          try {
+            const queryPromise = supabase
+              .from('Product')
+              .select('*')
+              .order('name');
+            const timeout = new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error(`Supabase timeout (${TIMEOUT_MS}ms)`)), TIMEOUT_MS)
+            );
+            const { data, error } = await Promise.race([queryPromise, timeout]) as Awaited<typeof queryPromise>;
+            if (error) {
+              console.warn(`[Supabase] Query error (intento ${intento}):`, error.message, error.details, error.hint, error.code);
+            } else if (data) {
+              console.log(`[Supabase] Loaded ${data.length} products (intento ${intento})`);
+              setProducts(data as Product[]);
+              setIsLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.warn(`[Supabase] Connection failed or timed out (intento ${intento}):`, e);
           }
-        } catch (e) {
-          console.warn('[Supabase] Connection failed or timed out:', e);
         }
       }
 
