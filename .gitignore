@@ -32,3 +32,8 @@ coverage/
 *.bak
 
 /src/generated/prisma
+
+# Config local de agente (contiene anon key en comandos, no commitear)
+.claude/settings.local.json
+# Notas internas privadas (Supabase, guardrails) — solo local
+.claude/CLAUDE.private.md

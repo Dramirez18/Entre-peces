@@ -506,4 +506,44 @@ UPDATE "Product" SET category = 'Medicamentos' WHERE category = 'Medidores';
 -- El valor 'Medidores' quedará en el enum pero sin uso.
 -- Para limpieza total se requeriría recrear el enum (opcional).`,
   },
+  {
+    id: '013_disable_rls_again',
+    title: 'Desactivar RLS en todas las tablas (re-fix)',
+    description: 'RLS fue reactivado en algún momento — el anon key dejó de poder leer las tablas (todas retornaban 0 filas vía REST API a pesar de tener datos). Esta migración desactiva RLS nuevamente en todas las tablas existentes de forma idempotente. Si una tabla no existe (ej. VisitCounter vs SiteStats), simplemente se omite.',
+    createdAt: '2026-05-27',
+    sql: `-- ============================================================
+-- Migration 013: Desactivar RLS en todas las tablas (re-fix)
+-- ============================================================
+-- Síntoma: GET /rest/v1/Product retornaba [] con HTTP 200
+-- Causa probable: RLS activado sin políticas para anon
+-- Fix: DISABLE ROW LEVEL SECURITY en cada tabla existente
+-- ============================================================
+
+DO $$
+DECLARE
+  t TEXT;
+  tables TEXT[] := ARRAY[
+    'Product', 'Client', 'Order', 'OrderItem',
+    'BugReport', 'AunapNews', 'SiteStats', 'VisitCounter'
+  ];
+BEGIN
+  FOREACH t IN ARRAY tables LOOP
+    IF EXISTS (
+      SELECT 1 FROM pg_tables
+      WHERE schemaname = 'public' AND tablename = t
+    ) THEN
+      EXECUTE format('ALTER TABLE %I DISABLE ROW LEVEL SECURITY', t);
+      RAISE NOTICE 'RLS disabled on %', t;
+    ELSE
+      RAISE NOTICE 'Skipped % (table does not exist)', t;
+    END IF;
+  END LOOP;
+END $$;
+
+-- Verificación: estas filas deben aparecer con rowsecurity = false
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
+WHERE schemaname = 'public'
+ORDER BY tablename;`,
+  },
 ];
