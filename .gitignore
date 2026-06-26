@@ -35,5 +35,5 @@ coverage/
 
 # Config local de agente (contiene anon key en comandos, no commitear)
 .claude/settings.local.json
-# Notas internas privadas (Supabase, guardrails) — solo local
-.claude/CLAUDE.private.md
+# CLAUDE.md interno (Supabase + guardrails) — SOLO local, NO en GitHub
+CLAUDE.md
