@@ -586,33 +586,7 @@ export default function App() {
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoggingIn(true);
-    setLoginError('');
-    try {
-      if (!supabase) throw new Error('Supabase no disponible');
-      const { data, error } = await supabase
-        .from('Client')
-        .select('name, email, phone, address, role')
-        .eq('email', loginEmail.trim().toLowerCase())
-        .limit(1)
-        .single();
-      if (error || !data) {
-        setLoginError('Correo no registrado. ¿Quieres crear una cuenta?');
-      } else {
-        setUser(data as User);
-        setIsUserModalOpen(false);
-        setModalStep('welcome');
-        setLoginEmail('');
-        setShowWelcomePopup(true);
-        setTimeout(() => setShowWelcomePopup(false), 4000);
-      }
-    } catch {
-      setLoginError('Error de conexión. Intenta de nuevo.');
-    }
-    setIsLoggingIn(false);
-  };
+  // Login por correo (sin contraseña) retirado por seguridad — Google OAuth es el único acceso.
 
   const handleGoogleLogin = async () => {
     if (!supabase) return;
@@ -628,64 +602,85 @@ export default function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         const gUser = session.user;
-        const name = gUser.user_metadata?.full_name || gUser.email?.split('@')[0] || '';
-        const email = gUser.email || '';
-        // Upsert into Client table
-        await supabase.from('Client').upsert({
-          name,
-          email,
-          phone: gUser.phone || '',
-          address: '',
-          updatedAt: new Date().toISOString(),
-        }, { onConflict: 'email' });
-        // Fetch role from DB (upsert doesn't return it reliably)
-        const { data: clientData } = await supabase
+        const email = (gUser.email || '').toLowerCase();
+        const googleName = gUser.user_metadata?.full_name || gUser.email?.split('@')[0] || '';
+        // Lee la fila propia; crea solo si NO existe (no sobrescribe phone/address ya guardados)
+        const { data: rows } = await supabase
           .from('Client')
-          .select('role')
+          .select('name, phone, address, role')
           .eq('email', email)
-          .single();
-        const role = clientData?.role || 'user';
-        setUser({ name, email, phone: gUser.phone || '', address: '', role });
-        setIsUserModalOpen(false);
+          .limit(1);
+        const existing = rows && rows[0];
+        if (!existing) {
+          await supabase.from('Client').insert({
+            name: googleName,
+            email,
+            phone: '',
+            address: '',
+            updatedAt: new Date().toISOString(),
+          });
+        }
+        const fullUser: User = {
+          name: existing?.name || googleName,
+          email,
+          phone: existing?.phone || '',
+          address: existing?.address || '',
+          role: existing?.role || 'user',
+        };
+        setUser(fullUser);
+        setRegistrationForm(fullUser);
         setShowWelcomePopup(true);
         setTimeout(() => setShowWelcomePopup(false), 4000);
+        // Si faltan datos de envío, abre el formulario para completarlos; si no, cierra el modal
+        if (!fullUser.phone || !fullUser.address) {
+          setModalStep('register');
+          setIsUserModalOpen(true);
+        } else {
+          setIsUserModalOpen(false);
+        }
       }
     });
     return () => subscription.unsubscribe();
   }, []);
 
+  // Completa el perfil del usuario autenticado por Google (actualiza SU propia fila; email = sesión)
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsRegistering(true);
-    const formData = {
-      ...registrationForm,
-      email: registrationForm.email.trim().toLowerCase(),
-    };
-    setUser(formData);
-
-    // Save to Supabase Client table
-    if (supabase) {
-      try {
-        await supabase.from('Client').upsert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          acceptedDataPolicy: acceptedPolicy,
-          policyAcceptedAt: acceptedPolicy ? new Date().toISOString() : null,
-          updatedAt: new Date().toISOString(),
-        }, { onConflict: 'email' });
-      } catch {
-        // Saved locally regardless
-      }
+    if (!supabase) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    const email = session?.user?.email?.toLowerCase();
+    if (!email) {
+      // Sin sesión real: el acceso es solo con Google
+      await handleGoogleLogin();
+      return;
     }
-
+    setIsRegistering(true);
+    const updated: User = {
+      name: registrationForm.name || user?.name || '',
+      email,
+      phone: registrationForm.phone,
+      address: registrationForm.address,
+      role: user?.role || 'user',
+    };
+    try {
+      await supabase.from('Client').update({
+        name: updated.name,
+        phone: updated.phone,
+        address: updated.address,
+        acceptedDataPolicy: acceptedPolicy,
+        policyAcceptedAt: acceptedPolicy ? new Date().toISOString() : null,
+        updatedAt: new Date().toISOString(),
+      }).eq('email', email);
+    } catch {
+      // Conserva en memoria si falla la red
+    }
+    setUser(updated);
     setIsRegistering(false);
     setAcceptedPolicy(false);
     setIsUserModalOpen(false);
-    setModalStep('welcome');
+    setModalStep('profile');
     setShowWelcomePopup(true);
-    setTimeout(() => setShowWelcomePopup(false), 5000);
+    setTimeout(() => setShowWelcomePopup(false), 4000);
   };
 
   const openUserModal = () => {
@@ -2460,27 +2455,10 @@ export default function App() {
                       </div>
 
                       <button
-                        onClick={() => { setModalStep('login'); setLoginError(''); setLoginEmail(''); }}
-                        className="w-full bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-blue/25 transition-all active:scale-[0.98]"
-                      >
-                        Iniciar sesión
-                      </button>
-                      <button
-                        onClick={() => setModalStep('register')}
-                        className="w-full border-2 border-brand-blue text-brand-blue py-3.5 rounded-2xl font-bold hover:bg-brand-blue/5 transition-all active:scale-[0.98]"
-                      >
-                        Crear cuenta gratis
-                      </button>
-                      <div className="flex items-center gap-3 pt-1">
-                        <div className="flex-1 h-px bg-slate-200" />
-                        <span className="text-xs text-slate-400">o</span>
-                        <div className="flex-1 h-px bg-slate-200" />
-                      </div>
-                      <button
                         onClick={handleGoogleLogin}
-                        className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 py-3.5 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                        className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-blue/25 transition-all active:scale-[0.98]"
                       >
-                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 bg-white rounded-full p-0.5" viewBox="0 0 24 24">
                           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
                           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -2488,96 +2466,19 @@ export default function App() {
                         </svg>
                         Continuar con Google
                       </button>
+                      <p className="text-center text-xs text-slate-400 pt-1">
+                        Acceso seguro con tu cuenta de Google. No usamos contraseñas.
+                      </p>
                     </div>
                   )}
 
-                  {/* ── LOGIN STEP ── */}
-                  {modalStep === 'login' && (
-                    <form onSubmit={handleLogin} className="space-y-4">
-                      <p className="text-sm text-slate-500 text-center">
-                        Ingresa el correo con el que te registraste
-                      </p>
+                  {/* ── LOGIN STEP retirado: el acceso es solo con Google ── */}
 
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Correo electrónico</label>
-                        <div className="relative">
-                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
-                          <input
-                            required
-                            type="email"
-                            autoFocus
-                            className="w-full bg-slate-50 px-4 py-3.5 pl-11 rounded-xl border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all text-sm"
-                            placeholder="tu@correo.com"
-                            value={loginEmail}
-                            onChange={e => { setLoginEmail(e.target.value); setLoginError(''); }}
-                          />
-                        </div>
-                      </div>
-
-                      {loginError && (
-                        <div
-                          className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl"
-                        >
-                          <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-                          <p className="text-xs text-red-600 font-medium">{loginError}</p>
-                        </div>
-                      )}
-
-                      <div className="pt-1 space-y-3">
-                        <button
-                          type="submit"
-                          disabled={isLoggingIn}
-                          className="w-full bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-blue/25 transition-all active:scale-[0.98] disabled:opacity-60"
-                        >
-                          {isLoggingIn ? (
-                            <span className="flex items-center justify-center gap-2">
-                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              Verificando...
-                            </span>
-                          ) : 'Ingresar'}
-                        </button>
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 h-px bg-slate-200" />
-                          <span className="text-xs text-slate-400">o</span>
-                          <div className="flex-1 h-px bg-slate-200" />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleGoogleLogin}
-                          className="w-full flex items-center justify-center gap-3 border-2 border-slate-200 py-3 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all"
-                        >
-                          <svg className="w-5 h-5" viewBox="0 0 24 24">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                          </svg>
-                          Continuar con Google
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setModalStep('register'); setLoginError(''); }}
-                          className="w-full border-2 border-slate-200 text-slate-600 py-3 rounded-2xl text-sm font-semibold hover:border-brand-blue hover:text-brand-blue transition-all"
-                        >
-                          No tengo cuenta — Registrarme
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setModalStep('welcome'); setLoginError(''); }}
-                          className="w-full text-slate-400 text-sm hover:text-slate-600 transition-colors"
-                        >
-                          Volver
-                        </button>
-                      </div>
-                    </form>
-                  )}
-
-                  {/* ── REGISTER STEP ── */}
+                  {/* ── COMPLETAR PERFIL (tras entrar con Google) ── */}
                   {modalStep === 'register' && (
                     <form onSubmit={handleRegister} className="space-y-3">
                       {[
                         { label: 'Nombre completo', type: 'text', placeholder: 'Ej. Juan Pérez', field: 'name' as const, icon: UserIcon },
-                        { label: 'Correo electrónico', type: 'email', placeholder: 'juan@ejemplo.com', field: 'email' as const, icon: Mail },
                         { label: 'Celular', type: 'tel', placeholder: '300 123 4567', field: 'phone' as const, icon: Phone },
                         { label: 'Dirección de envío', type: 'text', placeholder: 'Calle 123 #45-67, Ciudad', field: 'address' as const, icon: MapPin },
                       ].map((input, i) => (
@@ -2624,25 +2525,11 @@ export default function App() {
                           disabled={isRegistering || !acceptedPolicy}
                           className="w-full bg-gradient-to-r from-brand-blue to-cyan-600 text-white py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-blue/25 transition-all active:scale-[0.98] disabled:opacity-60"
                         >
-                          {isRegistering ? 'Registrando...' : 'Registrarme'}
+                          {isRegistering ? 'Guardando...' : 'Guardar y continuar'}
                         </button>
                         <p className="text-center text-xs text-slate-400">
-                          Ya tengo cuenta?{' '}
-                          <button
-                            type="button"
-                            onClick={() => { setModalStep('login'); setLoginError(''); setLoginEmail(''); }}
-                            className="text-brand-blue font-bold hover:underline"
-                          >
-                            Iniciar sesión
-                          </button>
+                          Conectado con Google. Solo completa tus datos de envío.
                         </p>
-                        <button
-                          type="button"
-                          onClick={() => setModalStep('welcome')}
-                          className="w-full text-slate-400 text-sm hover:text-slate-600 transition-colors"
-                        >
-                          Volver
-                        </button>
                       </div>
                     </form>
                   )}
@@ -2670,7 +2557,7 @@ export default function App() {
 
                       <div className="pt-3">
                         <button
-                          onClick={() => { setUser(null); setModalStep('welcome'); }}
+                          onClick={async () => { await supabase?.auth.signOut(); setUser(null); setModalStep('welcome'); }}
                           className="w-full py-3 text-red-500 text-sm font-medium hover:bg-red-50 rounded-xl transition-colors"
                         >
                           Cerrar sesión
