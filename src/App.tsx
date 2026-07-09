@@ -524,9 +524,42 @@ export default function App() {
       }
     };
     window.addEventListener('popstate', handlePopState);
+
+    // Arma el guard reescribiendo la URL a solo pathname (quita query/hash).
+    const armGuard = () => {
+      window.history.replaceState({ tab: '_guard' }, '', window.location.pathname);
+      window.history.pushState({ tab: 'Inicio' }, '', window.location.pathname);
+    };
+
+    // Al volver de Google OAuth, la URL trae ?code=... (PKCE) o #access_token=...
+    // (implicit). Supabase (detectSessionInUrl) los canjea por sesión de forma
+    // asíncrona y luego limpia la URL. Si armamos el guard ahora, borraríamos
+    // esos parámetros antes del canje y el login nunca se completa (expulsa al
+    // inicio). Esperamos a que la URL quede limpia y recién ahí armamos el guard.
+    const hasAuthParams = () =>
+      /[?&]code=/.test(window.location.search) ||
+      /[#&](access_token|error|error_description)=/.test(window.location.hash);
+
+    if (hasAuthParams()) {
+      // Deadline por reloj (no por conteo de ticks): los navegadores throttlean
+      // setInterval en pestañas en segundo plano, así que contar ticks no es
+      // fiable. Si Supabase no canjea el código en 10s (code inválido/expirado),
+      // limpiamos igual para no dejar la URL colgada.
+      const deadline = Date.now() + 10000;
+      const id = window.setInterval(() => {
+        if (!hasAuthParams() || Date.now() > deadline) {
+          window.clearInterval(id);
+          armGuard();
+        }
+      }, 250);
+      return () => {
+        window.clearInterval(id);
+        window.removeEventListener('popstate', handlePopState);
+      };
+    }
+
     // Replace initial entry + push a guard entry so first back stays in app
-    window.history.replaceState({ tab: '_guard' }, '', window.location.pathname);
-    window.history.pushState({ tab: 'Inicio' }, '', window.location.pathname);
+    armGuard();
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
