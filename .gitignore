@@ -37,3 +37,9 @@ coverage/
 .claude/settings.local.json
 # CLAUDE.md interno (Supabase + guardrails) — SOLO local, NO en GitHub
 CLAUDE.md
+# AGENTS.md espeja CLAUDE.md (mismos guardrails) — SOLO local, NO en GitHub
+AGENTS.md
+
+# Python bytecode (scripts auxiliares)
+__pycache__/
+*.pyc
