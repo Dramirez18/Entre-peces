@@ -632,45 +632,54 @@ export default function App() {
   // Listen for Supabase Auth state (Google OAuth callback)
   useEffect(() => {
     if (!supabase) return;
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const sb = supabase; // narrowing estable para el closure diferido
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         const gUser = session.user;
         const email = (gUser.email || '').toLowerCase();
         const googleName = gUser.user_metadata?.full_name || gUser.email?.split('@')[0] || '';
-        // Lee la fila propia; crea solo si NO existe (no sobrescribe phone/address ya guardados)
-        const { data: rows } = await supabase
-          .from('Client')
-          .select('name, phone, address, role')
-          .eq('email', email)
-          .limit(1);
-        const existing = rows && rows[0];
-        if (!existing) {
-          await supabase.from('Client').insert({
-            name: googleName,
+        // CRÍTICO: el callback de onAuthStateChange corre mientras supabase-js
+        // retiene su lock de auth. Hacer `await sb.from(...)` aquí adentro produce
+        // un deadlock (la consulta espera el mismo lock que nunca se libera), y
+        // deja colgadas TODAS las llamadas posteriores (guardar producto/imagen,
+        // cargar clientes/pedidos). Por eso diferimos el trabajo con setTimeout(0)
+        // para ejecutarlo FUERA del lock. Ver docs de Supabase Auth.
+        setTimeout(async () => {
+          // Lee la fila propia; crea solo si NO existe (no sobrescribe phone/address ya guardados)
+          const { data: rows } = await sb
+            .from('Client')
+            .select('name, phone, address, role')
+            .eq('email', email)
+            .limit(1);
+          const existing = rows && rows[0];
+          if (!existing) {
+            await sb.from('Client').insert({
+              name: googleName,
+              email,
+              phone: '',
+              address: '',
+              updatedAt: new Date().toISOString(),
+            });
+          }
+          const fullUser: User = {
+            name: existing?.name || googleName,
             email,
-            phone: '',
-            address: '',
-            updatedAt: new Date().toISOString(),
-          });
-        }
-        const fullUser: User = {
-          name: existing?.name || googleName,
-          email,
-          phone: existing?.phone || '',
-          address: existing?.address || '',
-          role: existing?.role || 'user',
-        };
-        setUser(fullUser);
-        setRegistrationForm(fullUser);
-        setShowWelcomePopup(true);
-        setTimeout(() => setShowWelcomePopup(false), 4000);
-        // Si faltan datos de envío, abre el formulario para completarlos; si no, cierra el modal
-        if (!fullUser.phone || !fullUser.address) {
-          setModalStep('register');
-          setIsUserModalOpen(true);
-        } else {
-          setIsUserModalOpen(false);
-        }
+            phone: existing?.phone || '',
+            address: existing?.address || '',
+            role: existing?.role || 'user',
+          };
+          setUser(fullUser);
+          setRegistrationForm(fullUser);
+          setShowWelcomePopup(true);
+          setTimeout(() => setShowWelcomePopup(false), 4000);
+          // Si faltan datos de envío, abre el formulario para completarlos; si no, cierra el modal
+          if (!fullUser.phone || !fullUser.address) {
+            setModalStep('register');
+            setIsUserModalOpen(true);
+          } else {
+            setIsUserModalOpen(false);
+          }
+        }, 0);
       }
     });
     return () => subscription.unsubscribe();
