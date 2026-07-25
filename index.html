@@ -3,17 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Entre Peces — Peces ornamentales, plantas, camarones y accesorios de acuario en Colombia" />
+
+    <!-- SEO básico -->
+    <title>Entre Peces — Acuario y peces ornamentales en Bogotá, Colombia</title>
+    <meta name="description" content="Tienda de acuariofilia en Colombia: peces ornamentales, plantas de acuario, camarones, discos, escalares, gravilla y accesorios. Envío a todo el país, gratis desde $200.000. Escríbenos por WhatsApp." />
+    <meta name="keywords" content="peces ornamentales, acuario, acuariofilia, Bogotá, Colombia, peces de acuario, plantas acuáticas, camarones, discos, escalares, tienda de peces" />
+    <meta name="author" content="Entre Peces" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://entre-peces.vercel.app/" />
+
+    <!-- Open Graph (WhatsApp, Facebook, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Entre Peces" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content="Entre Peces — Acuario y peces ornamentales en Colombia" />
+    <meta property="og:description" content="Peces ornamentales, plantas, camarones y accesorios de acuario. Envío a todo Colombia, gratis desde $200.000." />
+    <meta property="og:url" content="https://entre-peces.vercel.app/" />
+    <meta property="og:image" content="https://entre-peces.vercel.app/icon-512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Entre Peces — Acuario y peces ornamentales en Colombia" />
+    <meta name="twitter:description" content="Peces ornamentales, plantas, camarones y accesorios de acuario. Envío a todo Colombia, gratis desde $200.000." />
+    <meta name="twitter:image" content="https://entre-peces.vercel.app/icon-512.png" />
+
+    <meta name="theme-color" content="#0c2540" />
+
+    <!-- Iconos -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=2" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2" />
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=2" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
-    <title>Entre Peces</title>
+
+    <!-- Datos estructurados: negocio / tienda de mascotas acuáticas -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "PetStore",
+      "name": "Entre Peces",
+      "description": "Tienda de acuariofilia en Colombia: peces ornamentales, plantas de acuario, camarones y accesorios.",
+      "url": "https://entre-peces.vercel.app/",
+      "image": "https://entre-peces.vercel.app/icon-512.png",
+      "logo": "https://entre-peces.vercel.app/icon-512.png",
+      "telephone": "+57 312 438 0879",
+      "priceRange": "$$",
+      "areaServed": { "@type": "Country", "name": "Colombia" },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bogotá",
+        "addressCountry": "CO"
+      },
+      "sameAs": []
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

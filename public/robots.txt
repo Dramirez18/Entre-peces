@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://entre-peces.vercel.app/sitemap.xml
