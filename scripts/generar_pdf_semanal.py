@@ -5,7 +5,9 @@ usando precios retail de Entre Peces.
 
 Input:
   - PDF semanal de Pedraza (disponibilidad + precios mayoristas)
-  - Listado 2025.xlsx (para nombres científicos/comunes canónicos desde hoja Mayoristas)
+  - OPCIONAL: un xlsx con hoja "Mayoristas" para nombres científicos/comunes
+    canónicos. Si no se pasa, se busca el más reciente automáticamente; si no
+    hay ninguno, el PDF se genera igual con los nombres crudos del PDF.
 
 Output:
   - PDF con logo Entre Peces, 4 columnas (sci, común, talla, precio retail),
@@ -14,7 +16,7 @@ Output:
 No produce Excel ni toca la BD.
 
 Uso:
-  python scripts/generar_pdf_semanal.py <pdf_pedraza> <xlsx_listado_2025>
+  python scripts/generar_pdf_semanal.py <pdf_pedraza> [xlsx_nombres_canonicos]
 """
 import re
 import sys
@@ -41,6 +43,7 @@ from reportlab.platypus import (
 
 # ---------- Configuración ----------
 OUTPUT_DIR = Path(r"C:\Users\drami\Downloads\Entre-peces-listados")
+DOWNLOADS_DIR = Path(r"C:\Users\drami\Downloads")
 ENTRE_PECES_LOGO = Path(r"C:\Users\drami\projects\Entre-peces\public\logo entre peces.png")
 
 # Paleta sobria corporativa
@@ -165,10 +168,25 @@ def parse_pdf(pdf_path):
 
 
 # ---------- Enriquecer con Listado 2025 ----------
+def find_canon_xlsx():
+    """Busca el xlsx de nombres canónicos más reciente (hoja Mayoristas).
+    Devuelve None si no encuentra ninguno — el PDF se genera igual."""
+    candidates = []
+    for folder in (OUTPUT_DIR, DOWNLOADS_DIR):
+        if folder.exists():
+            candidates.extend(folder.glob("Listado*.xlsx"))
+    candidates = [c for c in candidates if not c.name.startswith("~$")]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda p: p.stat().st_mtime)
+
+
 def build_canon_index(xlsx_path):
-    """Indexa nombres canónicos desde hoja Mayoristas de Listado 2025.xlsx.
+    """Indexa nombres canónicos desde la hoja Mayoristas de un Listado *.xlsx.
     Key = normalize(name común). Value = {sci, name}."""
     wb = load_workbook(xlsx_path, read_only=True, data_only=True)
+    if "Mayoristas" not in wb.sheetnames:
+        return {}
     ws = wb["Mayoristas"]
     out = {}
     for i, row in enumerate(ws.iter_rows(values_only=True)):
@@ -395,18 +413,23 @@ def main():
     except Exception:
         pass
 
-    if len(sys.argv) < 3:
-        print("Uso: python generar_pdf_semanal.py <pdf_pedraza> <xlsx_listado_2025>")
+    if len(sys.argv) < 2:
+        print("Uso: python generar_pdf_semanal.py <pdf_pedraza> [xlsx_nombres_canonicos]")
         sys.exit(1)
 
     pdf_path = Path(sys.argv[1])
-    xlsx_path = Path(sys.argv[2])
     if not pdf_path.exists():
         print(f"No existe: {pdf_path}")
         sys.exit(1)
-    if not xlsx_path.exists():
-        print(f"No existe: {xlsx_path}")
-        sys.exit(1)
+
+    # El xlsx es solo fuente de nombres canónicos: opcional y auto-detectable.
+    if len(sys.argv) >= 3 and sys.argv[2].strip():
+        xlsx_path = Path(sys.argv[2])
+        if not xlsx_path.exists():
+            print(f"Aviso: no existe {xlsx_path} — busco otro automaticamente.")
+            xlsx_path = find_canon_xlsx()
+    else:
+        xlsx_path = find_canon_xlsx()
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -414,10 +437,13 @@ def main():
     items = parse_pdf(pdf_path)
     print(f"  {len(items)} peces disponibles")
 
-    print(f"Enriqueciendo con: {xlsx_path.name}")
-    canon = build_canon_index(xlsx_path)
-    n = enrich(items, canon)
-    print(f"  {n}/{len(items)} enriquecidos con nombres canónicos")
+    if xlsx_path:
+        print(f"Enriqueciendo con: {xlsx_path.name}")
+        canon = build_canon_index(xlsx_path)
+        n = enrich(items, canon)
+        print(f"  {n}/{len(items)} enriquecidos con nombres canónicos")
+    else:
+        print("Sin xlsx de nombres canonicos — uso los nombres del PDF tal cual.")
 
     # Ordenar alfabéticamente por nombre común
     items.sort(key=lambda x: (normalize(x["name"]), x["size"]))
