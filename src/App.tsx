@@ -2241,7 +2241,7 @@ export default function App() {
               <li className="hover:text-white cursor-pointer transition-colors">Sobre Nosotros</li>
               <li className="hover:text-white cursor-pointer transition-colors">Envíos Nacionales</li>
               <li className="hover:text-white cursor-pointer transition-colors">Términos y Condiciones</li>
-              <li className="hover:text-white cursor-pointer transition-colors">Privacidad</li>
+              <li><a href="/privacidad" className="hover:text-white cursor-pointer transition-colors">Privacidad</a></li>
             </ul>
           </div>
         </div>
