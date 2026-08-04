@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { optimizeImage } from './lib/img';
 
 const SLIDES = [
   {
@@ -53,8 +54,9 @@ export default function HeroCarousel({ onViewCatalog }: Props) {
         {SLIDES.map((s, i) => (
           <img
             key={i}
-            src={s.image}
+            src={optimizeImage(s.image, 700)}
             alt=""
+            decoding="async"
             className={`absolute right-0 md:right-[5%] top-1/2 -translate-y-1/2 h-[80%] md:h-[90%] object-contain transition-all duration-1000 drop-shadow-[0_0_40px_rgba(0,200,255,0.3)] ${
               i === current ? 'opacity-80 scale-100' : 'opacity-0 scale-90'
             }`}

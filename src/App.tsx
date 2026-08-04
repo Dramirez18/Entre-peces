@@ -44,6 +44,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from './constants';
 import { Product, CartItem, Category, User, AunapNews } from './types';
 import { supabase } from './lib/supabase';
+import { optimizeImage } from './lib/img';
 import CompatibilityTable from './CompatibilityTable';
 import HeroCarousel from './HeroCarousel';
 import UserProfilePage from './UserProfilePage';
@@ -56,6 +57,7 @@ const FREE_SHIPPING_THRESHOLD = 200000;
 const PRODUCTS_PER_PAGE = 20;
 const API_URL = import.meta.env.DEV ? 'http://localhost:3001' : '';
 const PLACEHOLDER_IMG = 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=60&w=400';
+const LOGO_URL = 'https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png';
 
 // Payment methods
 const PAYMENT_METHODS = [
@@ -762,7 +764,7 @@ export default function App() {
               onClick={() => { setActiveTab('Inicio'); setSearchQuery(''); setSortBy('relevance'); setCurrentPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             >
               <img
-                src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
+                src={optimizeImage(LOGO_URL, 40)}
                 alt="Entre Peces Logo"
                 className="w-10 h-10 object-contain"
                 referrerPolicy="no-referrer"
@@ -839,7 +841,7 @@ export default function App() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <img
-                      src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
+                      src={optimizeImage(LOGO_URL, 40)}
                       alt="Logo"
                       className="w-10 h-10"
                       referrerPolicy="no-referrer"
@@ -1180,10 +1182,12 @@ export default function App() {
                     >
                       <div className="aspect-[3/4] md:aspect-[4/5]">
                         <img
-                          src={CATEGORY_IMAGES[name]}
+                          src={optimizeImage(CATEGORY_IMAGES[name], 360)}
                           alt={name}
                           className="absolute inset-0 w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500 p-2"
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                       {/* Gradient overlay */}
@@ -1379,10 +1383,11 @@ export default function App() {
               {/* Background: image or gradient */}
               {catImage ? (
                 <img
-                  src={catImage}
+                  src={optimizeImage(catImage, 700)}
                   alt={activeTab}
                   className={`absolute inset-0 w-full h-full object-cover ${activeTab === 'Acondicionadores' ? 'object-[center_35%]' : ''}`}
                   referrerPolicy="no-referrer"
+                  decoding="async"
                 />
               ) : (
                 <div className={`absolute inset-0 bg-gradient-to-br ${catData?.gradient || 'from-brand-blue to-cyan-700'}`}>
@@ -1501,11 +1506,12 @@ export default function App() {
               {/* Image */}
               <div className="aspect-[4/3] relative overflow-hidden bg-white">
                 <img
-                  src={product.image || PLACEHOLDER_IMG}
+                  src={optimizeImage(product.image, 480) || PLACEHOLDER_IMG}
                   alt={`${product.name}${product.scientificName ? ' - ' + product.scientificName : ''}`}
                   className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                   loading="lazy"
+                  decoding="async"
                   onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                 />
                 {/* Badges top */}
@@ -1641,10 +1647,11 @@ export default function App() {
               {/* Product Image */}
               <div className="aspect-[4/3] relative bg-slate-100 shrink-0">
                 <img
-                  src={selectedProduct.image || PLACEHOLDER_IMG}
+                  src={optimizeImage(selectedProduct.image, 700) || PLACEHOLDER_IMG}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
+                  decoding="async"
                   onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMG; }}
                 />
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/50 to-transparent h-20" />
@@ -2181,7 +2188,7 @@ export default function App() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 text-white mb-4">
               <img
-                src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
+                src={optimizeImage(LOGO_URL, 40)}
                 alt="Entre Peces Logo"
                 className="w-10 h-10 object-contain"
                 referrerPolicy="no-referrer"
@@ -2295,10 +2302,12 @@ export default function App() {
                     {cart.map((item) => (
                       <div key={item.id} className="flex gap-4">
                         <img
-                          src={item.image}
+                          src={optimizeImage(item.image, 80)}
                           alt={item.name}
                           className="w-20 h-20 rounded-xl object-cover"
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="flex-1">
                           <h4 className="font-bold text-slate-900">{item.name}</h4>
@@ -2443,7 +2452,7 @@ export default function App() {
                   className="relative z-10"
                 >
                   <motion.img
-                    src="https://i.postimg.cc/Z0zT6rJy/logo-entre-peces.png"
+                    src={optimizeImage(LOGO_URL, 40)}
                     alt="Entre Peces"
                     className="w-20 h-20 mx-auto mb-3 drop-shadow-lg"
                     referrerPolicy="no-referrer"

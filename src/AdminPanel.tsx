@@ -8,6 +8,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { Product, User, BugReport, ClientRow, OrderRow, OrderItemRow } from './types';
 import { supabase } from './lib/supabase';
+import { optimizeImage } from './lib/img';
 import { MIGRATIONS, getAppliedMigrations, markMigrationApplied, unmarkMigrationApplied, type Migration } from './migrations';
 
 // Display name mapping for categories (DB name → UI name)
@@ -470,7 +471,7 @@ export default function AdminPanel({
                   {products.filter(p => p.stock <= 3 && p.active !== false && p.stock > 0).map(p => (
                     <div key={p.id} className="flex items-center justify-between bg-white rounded-xl p-3 border border-orange-100">
                       <div className="flex items-center gap-3">
-                        <img src={p.image} alt="" className="w-10 h-10 rounded-lg object-cover bg-slate-100" />
+                        <img src={optimizeImage(p.image, 48)} alt="" className="w-10 h-10 rounded-lg object-cover bg-slate-100" loading="lazy" decoding="async" />
                         <div>
                           <p className="text-sm font-medium text-slate-800">{p.name}</p>
                           <p className="text-xs text-slate-400">{getCategoryDisplayName(p.category)}</p>
@@ -902,10 +903,12 @@ export default function AdminPanel({
                         >
                           <td className="px-4 py-3">
                             <img
-                              src={product.image}
+                              src={optimizeImage(product.image, 48)}
                               alt=""
                               className="w-12 h-12 rounded-xl object-cover bg-slate-100"
                               referrerPolicy="no-referrer"
+                              loading="lazy"
+                              decoding="async"
                               onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=60&w=100'; }}
                             />
                           </td>
