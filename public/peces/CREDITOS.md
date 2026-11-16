@@ -16,6 +16,8 @@ Las fotos originales de terceros provienen de Wikimedia Commons y se usan según
 | `tetra_rojito.webp` | Holger Krisp | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | [Commons](https://commons.wikimedia.org/wiki/File:Schmucksalmler_Hyphessobrycon_bentosi.jpg) |
 
 Fotos aportadas por el propietario de la tienda (sin crédito de terceros):
-`agujones.webp`, `crenicara_de_velo_xl.webp`, `disco_blue_diamond.webp`.
+`agujones.webp`, `crenicara_de_velo_xl.webp`, `disco_blue_diamond.webp`, `espada_doble_cola.webp`,
+`oscar_albino.webp`, `corydora_decker.webp`, `disco_white_diamond.webp`, `escalar_de_velo.webp`
+y `escalar_rosado.webp`.
 
 Las licencias CC BY-SA exigen compartir las obras derivadas (aquí, el recorte) bajo la misma licencia.

@@ -1056,4 +1056,23 @@ UPDATE "Product" SET image='/peces/pez_hoja.webp', "updatedAt"=NOW() WHERE id='p
 UPDATE "Product" SET image='/peces/tetra_neon.webp', "updatedAt"=NOW() WHERE id='tetra_neon_1_5cm';
 UPDATE "Product" SET image='/peces/tetra_rojito.webp', "updatedAt"=NOW() WHERE id='tetra_rojito_2cm';`,
   },
+  {
+    id: '022',
+    title: 'Fotos aportadas por el propietario (6 peces)',
+    description: 'Asigna foto a 6 productos de peces activos que seguían sin imagen tras la migración 021: Espada doble cola, Oscar albino, Corydora decker, Disco White Diamond, Escalar de velo y Escalar rosado. Fotos aportadas por el propietario; recortadas (WebP con fondo transparente) en public/peces/ y servidas desde /peces/<archivo>.webp. EJECUTAR DESPUÉS de desplegar public/peces/ a producción. La foto de Corydora decker es de baja resolución (346×220). Queda sin foto: Bailarina Oranda Tricolor. Pendiente de ejecutar en el SQL Editor (RLS bloquea escritura anon).',
+    createdAt: '2026-11-16',
+    sql: `-- ============================================================
+-- Migration 022: Fotos aportadas por el propietario (6 peces)
+-- ============================================================
+-- WebP con fondo transparente en public/peces/ (se sirven desde el
+-- propio dominio). Ejecutar DESPUES de desplegar public/peces/.
+-- Ejecutar en el SQL Editor (RLS bloquea escritura anon).
+
+UPDATE "Product" SET image='/peces/espada_doble_cola.webp', "updatedAt"=NOW() WHERE id='espada_doble_cola_4cm';
+UPDATE "Product" SET image='/peces/oscar_albino.webp', "updatedAt"=NOW() WHERE id='oscar_albino_6cm';
+UPDATE "Product" SET image='/peces/corydora_decker.webp', "updatedAt"=NOW() WHERE id='corydora_decker_3cm';
+UPDATE "Product" SET image='/peces/disco_white_diamond.webp', "updatedAt"=NOW() WHERE id='disco_white_diamond_seleccionado_6_5cm';
+UPDATE "Product" SET image='/peces/escalar_de_velo.webp', "updatedAt"=NOW() WHERE id='escalar_de_velo_6cm';
+UPDATE "Product" SET image='/peces/escalar_rosado.webp', "updatedAt"=NOW() WHERE id='escalar_rosado_3cm';`,
+  },
 ];
