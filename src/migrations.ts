@@ -1075,4 +1075,23 @@ UPDATE "Product" SET image='/peces/disco_white_diamond.webp', "updatedAt"=NOW() 
 UPDATE "Product" SET image='/peces/escalar_de_velo.webp', "updatedAt"=NOW() WHERE id='escalar_de_velo_6cm';
 UPDATE "Product" SET image='/peces/escalar_rosado.webp', "updatedAt"=NOW() WHERE id='escalar_rosado_3cm';`,
   },
+  {
+    id: '023',
+    title: 'Actualización noticias AUNAP (sección Conocimiento)',
+    description: 'Refresca las 3 noticias de la tabla AunapNews con las más recientes del feed oficial de AUNAP (https://aunap.gov.co/feed/): decomiso de pescado bajo talla mínima en el Aeropuerto El Dorado (13 nov), AUNAP y Policía de Carabineros (13 nov) y Plan Regional para la Conservación de Tiburones, Rayas y Quimeras (11 nov). Usa las fechas reales de publicación como createdAt (la app ordena por createdAt DESC). Contenido rutinario que se repite cada pocas semanas. Pendiente de ejecutar en el SQL Editor (RLS bloquea escritura anon).',
+    createdAt: '2026-11-16',
+    sql: `-- ============================================================
+-- Migration 023: Actualización noticias AUNAP (sección Conocimiento)
+-- ============================================================
+-- Refresca las 3 noticias de la tabla AunapNews con las más recientes
+-- del feed oficial (https://aunap.gov.co/feed/). La app las ordena por
+-- createdAt DESC, por eso se usan las fechas reales de publicación.
+-- Contenido rutinario (se repite cada pocas semanas). Ejecutar en el
+-- SQL Editor de Supabase (RLS bloquea escritura anon).
+-- ============================================================
+
+UPDATE "AunapNews" SET title='AUNAP decomisa más de media tonelada de pescado por debajo de la talla mínima en el Aeropuerto El Dorado', url='https://aunap.gov.co/comunicado-oficiicomunicado-de-prensaaunap-decomisa-mas-de-media-tonelada-de-pescado-por-debajo-de-la-talla-minima-en-el-aeropuerto-el-doradofico-colombiano/', "publishedDate"='13 noviembre, 2026', "imageUrl"='https://aunap.gov.co/wp-content/uploads/2026/11/AUNAP-6-1-1-1024x682.jpeg', "createdAt"='2026-11-13 15:36:56' WHERE id=1;
+UPDATE "AunapNews" SET title='AUNAP y Policía de Carabineros unen esfuerzos para proteger los recursos pesqueros del país', url='https://aunap.gov.co/aunap-y-policia-de-carabineros-unen-esfuerzos-para-proteger-los-recursos-pesqueros-del-pais/', "publishedDate"='13 noviembre, 2026', "imageUrl"='https://aunap.gov.co/wp-content/uploads/2026/11/AUNAP-CARABINEROS-2.jpeg', "createdAt"='2026-11-13 00:24:29' WHERE id=2;
+UPDATE "AunapNews" SET title='Colombia participó en Perú en la actualización del Plan Regional para la Conservación de Tiburones, Rayas y Quimeras', url='https://aunap.gov.co/colombia-participo-en-peru-en-la-actualizacion-del-plan-regional-para-la-conservacion-de-tiburones-rayas-y-quimeras/', "publishedDate"='11 noviembre, 2026', "imageUrl"='https://aunap.gov.co/wp-content/uploads/2026/11/AUNAP-6-1-1024x632.jpeg', "createdAt"='2026-11-11 16:10:54' WHERE id=3;`,
+  },
 ];
