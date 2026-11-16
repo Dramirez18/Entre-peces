@@ -1029,4 +1029,31 @@ UPDATE "AunapNews" SET title='AUNAP lidera la Mesa Nacional de Pesca para fortal
 UPDATE "AunapNews" SET title='AUNAP y Gobierno nacional benefician a más de 280 familias de pescadores artesanales en el Caribe colombiano', url='https://aunap.gov.co/aunap-y-gobierno-nacional-benefician-a-mas-de-280-familias-de-pescadores-artesanales-en-el-caribe-colombiano/', "publishedDate"='13 junio, 2026', "imageUrl"='https://aunap.gov.co/wp-content/uploads/2026/06/AUNAP-ENTREGA-EMBARCACIONES-1024x576.jpeg', "createdAt"='2026-06-13 22:43:07' WHERE id=2;
 UPDATE "AunapNews" SET title='AUNAP advierte sobre cobros irregulares a pescadores y aclara que no se requiere pagar para ejercer la actividad pesquera', url='https://aunap.gov.co/aunap-advierte-sobre-cobros-irregulares-a-pescadores-y-aclara-que-no-se-requiere-pagar-para-ejercer-la-actividad-pesquera/', "publishedDate"='12 junio, 2026', "imageUrl"='https://aunap.gov.co/wp-content/uploads/2026/06/PESCAR-AUNAP-1024x576.jpeg', "createdAt"='2026-06-12 19:40:51' WHERE id=3;`,
   },
+  {
+    id: '021',
+    title: 'Fotos recortadas (sin fondo) para peces sin foto',
+    description: 'Asigna foto a 14 productos de peces activos que tenían la imagen vacía (se veían con la genérica de Unsplash): Agujones, Crenicara de velo XL, Disco Blue Diamond (2 tallas), Escalar Altum, Hemiodo colirojo, Leporino 3 puntos, Tetra silver, Colisa roja macho, Moneda, Pez hoja (2 tallas), Tetra Neon y Tetra rojito. Las imágenes son WebP con fondo transparente en public/peces/ (se sirven desde /peces/<archivo>.webp). Tres fotos las aportó el propietario; el resto viene de Wikimedia Commons (créditos en public/peces/CREDITOS.md). EJECUTAR DESPUÉS de desplegar public/peces/ a producción. Pendientes sin foto: Oranda tricolor, Corydora decker, Disco White Diamond, Escalar de velo, Escalar rosado, Espada doble cola, Oscar albino. Pendiente de ejecutar en el SQL Editor (RLS bloquea escritura anon).',
+    createdAt: '2026-11-16',
+    sql: `-- ============================================================
+-- Migration 021: Fotos recortadas (sin fondo) para peces sin foto
+-- ============================================================
+-- Imagenes WebP con fondo transparente en public/peces/ (se sirven
+-- desde el propio dominio). Ejecutar DESPUES de desplegar public/peces/.
+-- Ejecutar en el SQL Editor (RLS bloquea escritura anon).
+
+UPDATE "Product" SET image='/peces/agujones.webp', "updatedAt"=NOW() WHERE id='agujones_10cm';
+UPDATE "Product" SET image='/peces/crenicara_de_velo_xl.webp', "updatedAt"=NOW() WHERE id='crenicara_de_velo_xl_4_5cm';
+UPDATE "Product" SET image='/peces/disco_blue_diamond.webp', "updatedAt"=NOW() WHERE id='disco_blue_diamond_pequeno_defecto_6cm';
+UPDATE "Product" SET image='/peces/disco_blue_diamond.webp', "updatedAt"=NOW() WHERE id='disco_blue_diamond_pequeno_defecto_5cm';
+UPDATE "Product" SET image='/peces/escalar_altum.webp', "updatedAt"=NOW() WHERE id='escalar_altum_3cm';
+UPDATE "Product" SET image='/peces/hemiodo_colirojo.webp', "updatedAt"=NOW() WHERE id='hemiodo_colirojo_8cm';
+UPDATE "Product" SET image='/peces/leporino_3_puntos.webp', "updatedAt"=NOW() WHERE id='leporino_3_puntos_3cm';
+UPDATE "Product" SET image='/peces/tetra_silver.webp', "updatedAt"=NOW() WHERE id='tetra_silver_2_5cm';
+UPDATE "Product" SET image='/peces/colisa_roja_macho.webp', "updatedAt"=NOW() WHERE id='colisa_roja_macho_5cm';
+UPDATE "Product" SET image='/peces/moneda.webp', "updatedAt"=NOW() WHERE id='moneda_3_5cm';
+UPDATE "Product" SET image='/peces/pez_hoja.webp', "updatedAt"=NOW() WHERE id='pez_hoja_4cm';
+UPDATE "Product" SET image='/peces/pez_hoja.webp', "updatedAt"=NOW() WHERE id='pez_hoja_7cm';
+UPDATE "Product" SET image='/peces/tetra_neon.webp', "updatedAt"=NOW() WHERE id='tetra_neon_1_5cm';
+UPDATE "Product" SET image='/peces/tetra_rojito.webp', "updatedAt"=NOW() WHERE id='tetra_rojito_2cm';`,
+  },
 ];
