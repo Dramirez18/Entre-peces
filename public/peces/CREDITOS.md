@@ -20,4 +20,7 @@ Fotos aportadas por el propietario de la tienda (sin crédito de terceros):
 `oscar_albino.webp`, `corydora_decker.webp`, `disco_white_diamond.webp`, `escalar_de_velo.webp`
 y `escalar_rosado.webp`.
 
+La carpeta `fb/` contiene versiones PNG cuadradas (800×800, fondo transparente) de estas mismas fotos,
+usadas solo por la automatización de publicaciones en Facebook (n8n). Aplican los mismos créditos.
+
 Las licencias CC BY-SA exigen compartir las obras derivadas (aquí, el recorte) bajo la misma licencia.
